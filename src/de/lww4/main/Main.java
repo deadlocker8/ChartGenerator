@@ -32,8 +32,7 @@ public class Main extends Application
 			Scene scene = new Scene(root, 800, 600);		
 
 			((Controller)loader.getController()).init(stage);
-
-			stage.setResizable(false);
+			
 			stage.getIcons().add(new Image("/de/lww4/resources/icon.png"));
 			stage.setTitle(bundle.getString("app.name"));
 			stage.setScene(scene);
