@@ -4,8 +4,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -13,6 +15,8 @@ import tools.Worker;
 
 public class Controller
 {
+	@FXML private Button button;
+	
 	public Stage stage;
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
@@ -27,7 +31,7 @@ public class Controller
 			{
 				Worker.shutdown();
 				System.exit(0);
-			};
+			}
 		});				
 	}
 	
