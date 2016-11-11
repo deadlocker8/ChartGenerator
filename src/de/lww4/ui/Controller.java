@@ -32,7 +32,7 @@ public class Controller
 				Worker.shutdown();
 				System.exit(0);
 			}
-		});				
+		});	
 	}
 	
 	public void about()
