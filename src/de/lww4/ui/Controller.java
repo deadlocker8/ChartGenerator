@@ -126,7 +126,7 @@ public class Controller
 				Alert alert = new Alert(AlertType.WARNING);
 				alert.setTitle("Warnung");
 				alert.setHeaderText("");
-				alert.setContentText("Das Feld für den Dashboardnamen darf nicht leer sein.");
+				alert.setContentText("Das Feld f?r den Dashboardnamen darf nicht leer sein.");
 				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 				dialogStage.getIcons().add(icon);
@@ -279,9 +279,9 @@ public class Controller
 	private void deleteChart(int position)
 	{
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Diagramm löschen");
+		alert.setTitle("Diagramm l?schen");
 		alert.setHeaderText("");
-		alert.setContentText("Möchten Sie dieses Diagramm wirklich unwiderruflich löschen?");
+		alert.setContentText("M?chten Sie dieses Diagramm wirklich unwiderruflich l?schen?");
 		Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 		dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 		dialogStage.getIcons().add(icon);
@@ -297,7 +297,7 @@ public class Controller
 	public void about()
 	{
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Über " + bundle.getString("app.name"));
+		alert.setTitle("?ber " + bundle.getString("app.name"));
 		alert.setHeaderText(bundle.getString("app.name"));
 		alert.setContentText("Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n");
 		Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
