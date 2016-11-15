@@ -53,7 +53,7 @@ public class ImportCSVController
                 char delimiter = getDelimiterFromChoiceBox();
                 if (currentFile != null)
                 {
-                    importer = new Importer(currentFile, delimiter);
+                    importer = new Importer(currentFile, delimiter, "0");
                     stage.close();
                 }
                 else

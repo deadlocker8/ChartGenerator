@@ -18,9 +18,11 @@ public class Importer
     private char delimiter;
     private ArrayList<ArrayList<String>> data;
     private ArrayList<String> columnNamesArrayList;
+    private String fillValue;
 
-    public Importer(File file, char delimiter)
+    public Importer(File file, char delimiter, String fillValue)
     {
+        this.fillValue = fillValue;
         columnNamesArrayList = new ArrayList<>();
         data = new ArrayList<>();
         this.file = file;
@@ -68,10 +70,45 @@ public class Importer
             //close the parser and reader
             parser.close();
             inputStreamReader.close();
+            fillEmptyCells();
         }
         catch (IOException io)
         {
             io.printStackTrace();
+        }
+    }
+
+    private int getLongestRow()
+    {
+        int length = 0;
+        for(ArrayList<String> row : data)
+        {
+            if(row.size() > length)
+            {
+                length = row.size();
+            }
+        }
+        return length;
+    }
+
+    private void fillEmptyCells()
+    {
+        int longestRow = getLongestRow();
+        for(int i=0; i < data.size(); i++)
+        {
+            ArrayList<String> row = data.get(i);
+            while (row.size() < longestRow)
+            {
+                row.add(fillValue);
+            }
+
+            for(int j=0; j < row.size(); j++)
+            {
+                if(row.get(j).equals("") || row.get(j).equals(" "))
+                {
+                    row.set(j, fillValue);
+                }
+            }
         }
     }
 
@@ -99,7 +136,7 @@ public class Importer
      */
     public static void main(String args[])
     {
-        Importer importer = new Importer(new File("test.csv"), ';');
+        Importer importer = new Importer(new File("test.csv"), ';', "0");
         System.out.println(importer.getColumnNames());
         System.out.println(importer.getData());
     }
