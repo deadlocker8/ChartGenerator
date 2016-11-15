@@ -10,7 +10,7 @@ public class Dashboard
 	
 	public Dashboard() 
 	{
-		cells= new ArrayList<Integer>();
+		cells = new ArrayList<Integer>();
 	}
 
 	public Dashboard(int id, String name, int cell1, int cell2, int cell3, int cell4, int cell5, int cell6)

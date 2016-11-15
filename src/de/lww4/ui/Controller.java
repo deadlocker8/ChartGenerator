@@ -5,6 +5,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import de.lww4.main.Dashboard;
+import de.lww4.main.DashboardHandler;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -44,6 +46,8 @@ public class Controller
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
+	private DashboardHandler dashboardHandler;
+	private Dashboard currentDashboard;
 
 	public void init(Stage stage)
 	{
@@ -86,6 +90,12 @@ public class Controller
 		AnchorPane.setRightAnchor(gridPane, 25.0);
 		AnchorPane.setBottomAnchor(gridPane, 25.0);
 		AnchorPane.setLeftAnchor(gridPane, 25.0);
+		
+		//TODO import existing dashboards from DB
+		dashboardHandler = new DashboardHandler();
+		
+		//DEBUG
+		currentDashboard = new Dashboard();
 		
 		initGridPane(true);		
 		
@@ -251,20 +261,21 @@ public class Controller
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
-			newStage.setScene(new Scene(root, 600, 600));
-			if(edit)
-			{
-				newStage.setTitle("Diagramm bearbeiten");
-			}
-			else
-			{
-				newStage.setTitle("Neues Diagramm");
-			}		
+			newStage.setScene(new Scene(root, 600, 600));			
 			newStage.initOwner(stage);
 
 			newStage.getIcons().add(icon);
 			NewChartController newController = fxmlLoader.getController();
-			newController.init(newStage, this, edit);
+			if(edit)
+			{
+				newStage.setTitle("Diagramm bearbeiten");
+				newController.init(newStage, this, edit, currentDashboard, position);
+			}
+			else
+			{
+				newStage.setTitle("Neues Diagramm");
+				newController.init(newStage, this, edit, null, -1);
+			}			
 
 			newStage.initModality(Modality.APPLICATION_MODAL);
 			newStage.setResizable(true);

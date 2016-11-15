@@ -15,4 +15,17 @@ public class DashboardHandler
 	{
 		return dashboards;
 	}
+	
+	public Dashboard getDashboardByName(String name)
+	{
+		for(Dashboard currentDashboard : dashboards)
+		{
+			if(name.equals(currentDashboard.getName()))
+			{
+				return currentDashboard;
+			}
+		}
+		
+		return null;
+	}
 }
