@@ -37,7 +37,7 @@ public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private Label labelTitle;
-    @FXML private MenuItem importCSVMenuItem;
+	@FXML private MenuItem importCSVMenuItem;
 
 	public Stage stage;
 	public Image icon = new Image("de/lww4/resources/icon.png");
@@ -87,15 +87,15 @@ public class Controller
 		AnchorPane.setRightAnchor(gridPane, 25.0);
 		AnchorPane.setBottomAnchor(gridPane, 25.0);
 		AnchorPane.setLeftAnchor(gridPane, 25.0);
-		
-		//TODO import existing dashboards from DB
+
+		// TODO import existing dashboards from DB
 		dashboardHandler = new DashboardHandler();
-		
-		//DEBUG
+
+		// DEBUG
 		currentDashboard = new Dashboard();
-		
-		initGridPane(true);		
-		
+
+		initGridPane(true);
+
 		labelTitle.setText("Unbenanntes Dashboard");
 		FontIcon iconEdit = new FontIcon(FontIconType.PENCIL);
 		iconEdit.setSize(18);
@@ -106,7 +106,7 @@ public class Controller
 			public void handle(MouseEvent event)
 			{
 				if(event.getButton() == MouseButton.PRIMARY)
-				{					
+				{
 					TextInputDialog dialog = new TextInputDialog(labelTitle.getText());
 					dialog.setTitle("Dashboardname");
 					dialog.setHeaderText("");
@@ -119,42 +119,38 @@ public class Controller
 				}
 			}
 		});
-
-        handleMenuItems();
 	}
 
-	private void importCSVMenuItem()
-    {
-        importCSVMenuItem.setOnAction(new EventHandler<ActionEvent>()
-        {
-            @Override
-            public void handle(ActionEvent event)
-            {
-                try
-                {
-                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
-                    Parent root = (Parent) fxmlLoader.load();
-                    Stage stage = new Stage();
-                    stage.initModality(Modality.APPLICATION_MODAL);
-                    stage.setTitle("Import CSV");
-                    stage.setScene(new Scene(root));
-                    ImportCSVController importCSVController = fxmlLoader.getController();
-                    importCSVController.init(stage);
-                    stage.show();
+	public void importCSVMenuItem()
+	{	
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
+			Parent root = (Parent)fxmlLoader.load();
+			Stage stage = new Stage();
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.setTitle("Import CSV");
+			stage.setScene(new Scene(root));
+			ImportCSVController importCSVController = fxmlLoader.getController();
+			importCSVController.init(stage);
+			stage.show();
 
-                }
-                catch (IOException io)
-                {
-                    io.printStackTrace();
-                }
-            }
-        });
-    }
+		}
+		catch(IOException io)
+		{
+			io.printStackTrace();
+		}		
+	}
 
-	private void handleMenuItems()
-    {
-        importCSVMenuItem();
-    }
+	public void selectDashboardMenuItem()
+	{
+		// TODO
+	}
+
+	public void exportDashboardMenuItem()
+	{
+		// TODO
+	}
 
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
@@ -176,7 +172,7 @@ public class Controller
 				alert.showAndWait();
 
 				checkTextInputTitle(dialog);
-				
+
 				// TODO edit DashboardName in class
 			}
 			else
@@ -188,7 +184,7 @@ public class Controller
 
 	private void initGridPane(boolean empty)
 	{
-		gridPane.getChildren().clear();		
+		gridPane.getChildren().clear();
 
 		for(int i = 0; i < 6; i++)
 		{
@@ -200,12 +196,12 @@ public class Controller
 			HBox hbox = new HBox();
 			hbox.setSpacing(5);
 			hbox.setAlignment(Pos.CENTER);
-			
-			Label labelChartTitle = new Label("Diagramm " + (i+1));
+
+			Label labelChartTitle = new Label("Diagramm " + (i + 1));
 			labelChartTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 18;");
 			labelChartTitle.setAlignment(Pos.CENTER);
 			labelChartTitle.setMaxWidth(Double.MAX_VALUE);
-			hbox.getChildren().add(labelChartTitle);				
+			hbox.getChildren().add(labelChartTitle);
 			HBox.setHgrow(labelChartTitle, Priority.ALWAYS);
 
 			Button buttonEdit = new Button();
@@ -243,7 +239,7 @@ public class Controller
 			AnchorPane.setRightAnchor(hbox, 5.0);
 			AnchorPane.setLeftAnchor(hbox, 5.0);
 
-			StackPane currentStackPane = new StackPane();			
+			StackPane currentStackPane = new StackPane();
 			currentAnchorPane.getChildren().add(currentStackPane);
 			AnchorPane.setTopAnchor(currentStackPane, 40.0);
 			AnchorPane.setRightAnchor(currentStackPane, 10.0);
@@ -254,14 +250,14 @@ public class Controller
 			{
 				buttonEdit.setDisable(true);
 				buttonDelete.setDisable(true);
-				
+
 				FontIcon iconAdd = new FontIcon(FontIconType.PLUS);
 				iconAdd.setSize(25);
-	
+
 				Button buttonAdd = new Button();
 				buttonAdd.setGraphic(iconAdd);
 				buttonAdd.setStyle("-fx-background-color: transparent");
-	
+
 				buttonAdd.setOnAction(new EventHandler<ActionEvent>()
 				{
 					@Override
@@ -282,7 +278,7 @@ public class Controller
 			{
 				gridPane.add(currentAnchorPane, i % 3, 1);
 			}
-		}	
+		}
 	}
 
 	private void addChart(int position, boolean edit)
@@ -293,7 +289,7 @@ public class Controller
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
-			newStage.setScene(new Scene(root, 800, 600));	
+			newStage.setScene(new Scene(root, 800, 600));
 			newStage.setMinHeight(400);
 			newStage.setMinWidth(500);
 			newStage.initOwner(stage);
@@ -309,7 +305,7 @@ public class Controller
 			{
 				newStage.setTitle("Neues Diagramm");
 				newController.init(newStage, this, edit, null, -1);
-			}			
+			}
 
 			newStage.initModality(Modality.APPLICATION_MODAL);
 			newStage.setResizable(true);
@@ -335,7 +331,7 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
-			//TODO delete Chart from dashboard
+			// TODO delete Chart from dashboard
 		}
 	}
 

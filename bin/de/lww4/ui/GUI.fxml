@@ -7,15 +7,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPaneMain" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.102-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.Controller">
+<AnchorPane fx:id="anchorPaneMain" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.Controller">
    <children>
       <MenuBar layoutX="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="Datei">
             <items>
-                  <MenuItem fx:id="importCSVMenuItem" mnemonicParsing="false" text="CSV-Datei importieren..." />
-              <MenuItem mnemonicParsing="false" text="Dashboard laden..." />
-                  <MenuItem mnemonicParsing="false" text="Dashboard exportieren..." />
+                  <MenuItem mnemonicParsing="false" onAction="#importCSVMenuItem" text="CSV-Datei importieren..." />
+              <MenuItem mnemonicParsing="false" onAction="#selectDashboardMenuItem" text="Dashboard laden..." />
+                  <MenuItem mnemonicParsing="false" onAction="#exportDashboardMenuItem" text="Dashboard exportieren..." />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Hilfe">
