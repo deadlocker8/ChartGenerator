@@ -14,18 +14,5 @@ public class DashboardHandler
 	public ArrayList<Dashboard> getDashboards()
 	{
 		return dashboards;
-	}
-	
-	public Dashboard getDashboardByName(String name)
-	{
-		for(Dashboard currentDashboard : dashboards)
-		{
-			if(name.equals(currentDashboard.getName()))
-			{
-				return currentDashboard;
-			}
-		}
-		
-		return null;
-	}
+	}	
 }

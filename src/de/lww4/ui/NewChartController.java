@@ -41,11 +41,17 @@ public class NewChartController
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private ToggleGroup toggleGroupChartTypes;
+	private boolean edit;
+	private Dashboard dashboard;
+	private int position;
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
 		this.stage = stage;
 		this.controller = controller;
+		this.edit = edit;
+		this.dashboard = dashboard;
+		this.position = position;
 		
 		toggleGroupChartTypes = new ToggleGroup();
 		
