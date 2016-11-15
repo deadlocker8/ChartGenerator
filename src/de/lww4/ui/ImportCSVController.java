@@ -2,13 +2,12 @@ package de.lww4.ui;
 
 
 import de.lww4.main.Importer;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -18,7 +17,7 @@ import java.io.File;
 public class ImportCSVController
 {
     @FXML private Button csvFileDialogButton;
-    @FXML private TextField delimiterCharTextField;
+    @FXML private ChoiceBox delimiterChoiceBox;
     @FXML private Button csvFileImportButton;
     @FXML private Label filenameLabel;
 
@@ -29,6 +28,7 @@ public class ImportCSVController
     public void init(Stage stage)
     {
         this.stage = stage;
+        delimiterChoiceBox.getSelectionModel().select("Semicolon");
         csvFileDialogButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
@@ -37,7 +37,7 @@ public class ImportCSVController
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("CSV File", "csv"));
                 File selectedFile = fileChooser.showOpenDialog(stage.getOwner());
-                if(selectedFile != null && selectedFile.exists() && selectedFile.getName().toLowerCase().endsWith("csv"))
+                if (selectedFile != null && selectedFile.exists() && selectedFile.getName().toLowerCase().endsWith("csv"))
                 {
                     currentFile = selectedFile;
                     filenameLabel.setText(currentFile.getName());
@@ -50,46 +50,36 @@ public class ImportCSVController
             @Override
             public void handle(ActionEvent event)
             {
-                String delimiterText = delimiterCharTextField.getText();
-                if(isValidDelimiter(delimiterText) && currentFile != null)
+                char delimiter = getDelimiterFromChoiceBox();
+                if (currentFile != null)
                 {
-                    importer = new Importer(currentFile, delimiterText.charAt(0));
+                    importer = new Importer(currentFile, delimiter);
                     stage.close();
                 }
                 else
                 {
-                    if(!isValidDelimiter(delimiterText) && currentFile == null)
-                    {
-                        showAlertDialog('b');
-                    }
-                    else
-                    {
-                        if(!isValidDelimiter(delimiterText))
-                        {
-                            showAlertDialog('d');
-                        }
-
-                        if(currentFile == null)
-                        {
-                            showAlertDialog('f');
-                        }
-                    }
+                    showAlertDialog('f');
                 }
 
             }
         });
     }
 
-    private boolean isValidDelimiter(String delimiterText)
+    private char getDelimiterFromChoiceBox()
     {
-        if(delimiterText == null || delimiterText.equals("")
-                || delimiterText.length() < 1 || delimiterText.length() > 1)
+        switch ((String)delimiterChoiceBox.getSelectionModel().getSelectedItem())
         {
-            return false;
-        }
-        else
-        {
-            return true;
+            case "Tabulator":
+                return '\t';
+            case "Leerzeichen":
+                return ' ';
+            case "Komma":
+                return ',';
+            case "Semicolon":
+                return ';';
+            case "Punkt":
+                return '.';
+            default: return '@';
         }
     }
 
