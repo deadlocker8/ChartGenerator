@@ -141,6 +141,11 @@ public class Controller
 			io.printStackTrace();
 		}		
 	}
+	
+	public void newDashboardMenuItem()
+	{
+		// TODO
+	}
 
 	public void selectDashboardMenuItem()
 	{
@@ -333,6 +338,12 @@ public class Controller
 		{
 			// TODO delete Chart from dashboard
 		}
+	}
+	
+	public void setDashboard(Dashboard dashboard)
+	{
+		this.currentDashboard = dashboard;
+		initGridPane(false);
 	}
 
 	public void about()
