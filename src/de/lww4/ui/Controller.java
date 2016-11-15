@@ -16,12 +16,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -41,6 +37,7 @@ public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private Label labelTitle;
+    @FXML private MenuItem importCSVMenuItem;
 
 	public Stage stage;
 	public Image icon = new Image("de/lww4/resources/icon.png");
@@ -122,7 +119,42 @@ public class Controller
 				}
 			}
 		});
+
+        handleMenuItems();
 	}
+
+	private void importCSVMenuItem()
+    {
+        importCSVMenuItem.setOnAction(new EventHandler<ActionEvent>()
+        {
+            @Override
+            public void handle(ActionEvent event)
+            {
+                try
+                {
+                    FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
+                    Parent root = (Parent) fxmlLoader.load();
+                    Stage stage = new Stage();
+                    stage.initModality(Modality.APPLICATION_MODAL);
+                    stage.setTitle("Import CSV");
+                    stage.setScene(new Scene(root));
+                    ImportCSVController importCSVController = fxmlLoader.getController();
+                    importCSVController.init(stage);
+                    stage.show();
+
+                }
+                catch (IOException io)
+                {
+                    io.printStackTrace();
+                }
+            }
+        });
+    }
+
+	private void handleMenuItems()
+    {
+        importCSVMenuItem();
+    }
 
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
