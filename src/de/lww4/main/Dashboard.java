@@ -6,25 +6,25 @@ public class Dashboard
 {
 	private int id;
 	private String name;
-	private ArrayList<Integer> columns;
+	private ArrayList<Integer> cells;
 	
 	public Dashboard() 
 	{
-		columns= new ArrayList<Integer>();
+		cells= new ArrayList<Integer>();
 	}
 
-	public Dashboard(int id, String name, int col1, int col2, int col3, int col4, int col5, int col6)
+	public Dashboard(int id, String name, int cell1, int cell2, int cell3, int cell4, int cell5, int cell6)
 	{
 		this.id = id;
 		this.name = name;
 		
-		columns= new ArrayList<Integer>();
-		columns.add(col1);
-		columns.add(col2);
-		columns.add(col3);
-		columns.add(col4);
-		columns.add(col5);
-		columns.add(col6);
+		cells= new ArrayList<Integer>();
+		cells.add(cell1);
+		cells.add(cell2);
+		cells.add(cell3);
+		cells.add(cell4);
+		cells.add(cell5);
+		cells.add(cell6);
 	}
 	
 	public int getId()
@@ -36,8 +36,9 @@ public class Dashboard
 	{
 		return name;
 	}
-	public ArrayList<Integer> getColumns()
+	
+	public ArrayList<Integer> getCells()
 	{
-		return columns;
+		return cells;
 	}
 }
