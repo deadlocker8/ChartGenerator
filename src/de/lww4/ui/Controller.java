@@ -293,7 +293,9 @@ public class Controller
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
-			newStage.setScene(new Scene(root, 600, 600));			
+			newStage.setScene(new Scene(root, 800, 600));	
+			newStage.setMinHeight(400);
+			newStage.setMinWidth(500);
 			newStage.initOwner(stage);
 
 			newStage.getIcons().add(icon);

@@ -35,7 +35,7 @@
                   </ColorPicker>
                </children>
             </HBox>
-            <HBox alignment="CENTER" prefHeight="25.0" prefWidth="557.0" />
+            <HBox fx:id="hboxChartTypes" alignment="CENTER" prefHeight="25.0" prefWidth="557.0" spacing="14.0" />
             <HBox alignment="CENTER" prefHeight="351.0" prefWidth="772.0" spacing="25.0" VBox.vgrow="ALWAYS">
                <children>
                   <TreeView fx:id="treeView" prefHeight="429.0" prefWidth="243.0" />
