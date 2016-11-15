@@ -37,6 +37,8 @@ public class Main extends Application
 			stage.setTitle(bundle.getString("app.name"));
 			stage.setScene(scene);
 			stage.setResizable(true);
+			stage.setMinWidth(600);
+			stage.setMinHeight(400);
 
 			stage.setOnCloseRequest(new EventHandler<WindowEvent>()
 			{
