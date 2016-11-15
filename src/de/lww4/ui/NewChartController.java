@@ -31,7 +31,12 @@ public class NewChartController
 			//dashboard.getCells().get(position);
 			//TODO fill form with existing data
 		}
-	}	
+	}
+	
+	public void save()
+	{
+		//TODO
+	}
 	
 	public void cancel()
 	{
