@@ -1,22 +1,27 @@
 package de.lww4.ui;
 
 
+import java.io.File;
+import java.util.ArrayList;
+
 import de.lww4.main.ErrorType;
 import de.lww4.main.Importer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class ImportCSVController
 {
     @FXML private Button csvFileDialogButton;
-    @FXML private ChoiceBox delimiterChoiceBox;
+    @FXML private ChoiceBox<String> delimiterChoiceBox;
     @FXML private Button csvFileImportButton;
     @FXML private Label filenameLabel;
     @FXML private TextField chartNameTextField;
@@ -25,18 +30,20 @@ public class ImportCSVController
     private File currentFile;
     private Importer importer;
     private Stage stage;
+    private Image icon;
 
-    public void init(Stage stage)
+    public void init(Stage stage, Image icon)
     {
         this.stage = stage;
-        delimiterChoiceBox.getSelectionModel().select("Semicolon");
+        this.icon = icon;
+        delimiterChoiceBox.getSelectionModel().select("Semicolon");        
         csvFileDialogButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
             public void handle(ActionEvent event)
             {
                 FileChooser fileChooser = new FileChooser();
-                fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("CSV File", "csv"));
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("CSV Datei (*.csv)", "*.csv", "*.CSV"));
                 File selectedFile = fileChooser.showOpenDialog(stage.getOwner());
                 if (selectedFile != null && selectedFile.exists() && selectedFile.getName().toLowerCase().endsWith("csv"))
                 {
@@ -113,8 +120,9 @@ public class ImportCSVController
 
     private void showAlertDialog(ArrayList<ErrorType> errorTypes)
     {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText(null);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText("");
+        alert.setTitle("Hinweis");
         if(errorTypes.size() == 1)
         {
             alert.setContentText(errorTypes.get(0).getErrorMessage());
@@ -123,7 +131,10 @@ public class ImportCSVController
         {
             alert.setContentText(ErrorType.getErrorMessage(errorTypes));
         }
-        alert.show();
+    	Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+		dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+		dialogStage.getIcons().add(icon);
+		dialogStage.centerOnScreen();
+		alert.showAndWait();
     }
-
 }

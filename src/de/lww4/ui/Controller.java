@@ -121,19 +121,25 @@ public class Controller
 		});
 	}
 
+	/**
+	 * handles menuItem "import CSV"
+	 */
 	public void importCSVMenuItem()
 	{	
 		try
 		{
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
 			Parent root = (Parent)fxmlLoader.load();
-			Stage stage = new Stage();
-			stage.initModality(Modality.APPLICATION_MODAL);
-			stage.setTitle("Import CSV");
-			stage.setScene(new Scene(root));
+			Stage newStage = new Stage();
+			newStage.initOwner(stage);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setTitle("Import CSV");
+			newStage.setScene(new Scene(root));
+			newStage.getIcons().add(icon);
+			newStage.setResizable(false);
 			ImportCSVController importCSVController = fxmlLoader.getController();
-			importCSVController.init(stage);
-			stage.show();
+			importCSVController.init(newStage, icon);
+			newStage.show();
 
 		}
 		catch(IOException io)
@@ -142,21 +148,34 @@ public class Controller
 		}		
 	}
 	
+	/**
+	 * handles menuItem "new Dashboard"
+	 */
 	public void newDashboardMenuItem()
 	{
 		// TODO
 	}
 
+	/**
+	 * handles menuItem "select Dashboard"
+	 */
 	public void selectDashboardMenuItem()
 	{
 		// TODO
 	}
 
+	/**
+	 * handles menuItem "export Dashboard"
+	 */
 	public void exportDashboardMenuItem()
 	{
 		// TODO
 	}
 
+	/**
+	 * checks if the input is empty 
+	 * @param dialog TextInputDialog
+	 */
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
 		Optional<String> result = dialog.showAndWait();
@@ -187,6 +206,10 @@ public class Controller
 		}
 	}
 
+	/**
+	 * inits the dashboard gridPane
+	 * @param empty boolean
+	 */
 	private void initGridPane(boolean empty)
 	{
 		gridPane.getChildren().clear();
@@ -286,6 +309,11 @@ public class Controller
 		}
 	}
 
+	/**
+	 * opens a new UI for new chart generation
+	 * @param position int - position in dashboard [0,5]
+	 * @param edit boolean - editing already existing chart at given position
+	 */
 	private void addChart(int position, boolean edit)
 	{
 		try
@@ -322,6 +350,10 @@ public class Controller
 		}
 	}
 
+	/**
+	 * deletes chart at given position after confirmation dialog
+	 * @param position
+	 */
 	private void deleteChart(int position)
 	{
 		Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -340,12 +372,18 @@ public class Controller
 		}
 	}
 	
+	/** 
+	 * @param dashboard Dashboard
+	 */
 	public void setDashboard(Dashboard dashboard)
 	{
 		this.currentDashboard = dashboard;
 		initGridPane(false);
 	}
 
+	/**
+	 * opens about dialog
+	 */
 	public void about()
 	{
 		Alert alert = new Alert(AlertType.INFORMATION);
