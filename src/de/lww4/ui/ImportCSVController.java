@@ -1,18 +1,17 @@
 package de.lww4.ui;
 
 
+import de.lww4.main.ErrorType;
 import de.lww4.main.Importer;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class ImportCSVController
 {
@@ -20,6 +19,8 @@ public class ImportCSVController
     @FXML private ChoiceBox delimiterChoiceBox;
     @FXML private Button csvFileImportButton;
     @FXML private Label filenameLabel;
+    @FXML private TextField chartNameTextField;
+    @FXML private TextField fillValueTextField;
 
     private File currentFile;
     private Importer importer;
@@ -40,7 +41,9 @@ public class ImportCSVController
                 if (selectedFile != null && selectedFile.exists() && selectedFile.getName().toLowerCase().endsWith("csv"))
                 {
                     currentFile = selectedFile;
-                    filenameLabel.setText(currentFile.getName());
+                    String filename = currentFile.getName();
+                    filenameLabel.setText(filename);
+                    chartNameTextField.setText(filename);
                 }
             }
         });
@@ -51,18 +54,43 @@ public class ImportCSVController
             public void handle(ActionEvent event)
             {
                 char delimiter = getDelimiterFromChoiceBox();
-                if (currentFile != null)
+                if (!isUserError())
                 {
-                    importer = new Importer(currentFile, delimiter, "0");
+                    importer = new Importer(currentFile, delimiter, fillValueTextField.getText(), chartNameTextField.getText());
                     stage.close();
-                }
-                else
-                {
-                    showAlertDialog('f');
                 }
 
             }
         });
+    }
+
+    private boolean isUserError()
+    {
+        ArrayList<ErrorType> errorTypes = new ArrayList<>();
+        String chartName = chartNameTextField.getText();
+        String fillValue = fillValueTextField.getText();
+        if(currentFile == null)
+        {
+            errorTypes.add(ErrorType.NO_FILE);
+        }
+
+        if(chartName.equals(""))
+        {
+            errorTypes.add(ErrorType.NO_CHARTNAME);
+        }
+
+        if(fillValue.equals(""))
+        {
+            errorTypes.add(ErrorType.NO_FILLER);
+        }
+
+        if(errorTypes.size() > 0)
+        {
+            showAlertDialog(errorTypes);
+            return true;
+        }
+
+        return false;
     }
 
     private char getDelimiterFromChoiceBox()
@@ -83,24 +111,17 @@ public class ImportCSVController
         }
     }
 
-    private void showAlertDialog(char reason)
+    private void showAlertDialog(ArrayList<ErrorType> errorTypes)
     {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setHeaderText(null);
-        switch (reason)
+        if(errorTypes.size() == 1)
         {
-            case 'd':
-                alert.setContentText("Bitte Trennzeichen auswaehlen!");
-                break;
-            case 'f':
-                alert.setContentText("Bitte Datei auswaehlen!");
-                break;
-            case 'b':
-                alert.setContentText("Bitte Datei und Trennzeichen waehlen!");
-                break;
-            default:
-                alert.setContentText("ERROR");
-                break;
+            alert.setContentText(errorTypes.get(0).getErrorMessage());
+        }
+        else
+        {
+            alert.setContentText(ErrorType.getErrorMessage(errorTypes));
         }
         alert.show();
     }
