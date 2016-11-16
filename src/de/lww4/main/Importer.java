@@ -19,13 +19,15 @@ public class Importer
     private ArrayList<ArrayList<String>> data;
     private ArrayList<String> columnNamesArrayList;
     private String fillValue;
+    private String chartName;
 
-    public Importer(File file, char delimiter, String fillValue)
+    public Importer(File file, char delimiter, String fillValue, String chartName)
     {
         this.fillValue = fillValue;
         columnNamesArrayList = new ArrayList<>();
         data = new ArrayList<>();
         this.file = file;
+        this.chartName = chartName;
         this.delimiter = delimiter;
         importData();
     }
@@ -136,7 +138,7 @@ public class Importer
      */
     public static void main(String args[])
     {
-        Importer importer = new Importer(new File("test.csv"), ';', "0");
+        Importer importer = new Importer(new File("test.csv"), ';', "0", "Testing");
         System.out.println(importer.getColumnNames());
         System.out.println(importer.getData());
     }

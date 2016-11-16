@@ -20,6 +20,7 @@ public class ImportCSVController
     @FXML private ChoiceBox delimiterChoiceBox;
     @FXML private Button csvFileImportButton;
     @FXML private Label filenameLabel;
+    @FXML private TextField chartNameTextField;
 
     private File currentFile;
     private Importer importer;
@@ -40,7 +41,9 @@ public class ImportCSVController
                 if (selectedFile != null && selectedFile.exists() && selectedFile.getName().toLowerCase().endsWith("csv"))
                 {
                     currentFile = selectedFile;
-                    filenameLabel.setText(currentFile.getName());
+                    String filename = currentFile.getName();
+                    filenameLabel.setText(filename);
+                    chartNameTextField.setText(filename);
                 }
             }
         });
@@ -51,14 +54,26 @@ public class ImportCSVController
             public void handle(ActionEvent event)
             {
                 char delimiter = getDelimiterFromChoiceBox();
-                if (currentFile != null)
+                if(currentFile == null && chartNameTextField.getText().equals(""))
                 {
-                    importer = new Importer(currentFile, delimiter, "0");
-                    stage.close();
+                    showAlertDialog('b');
                 }
                 else
                 {
-                    showAlertDialog('f');
+                    if(chartNameTextField.getText().equals(""))
+                    {
+                        showAlertDialog('c');
+                    }
+                    else
+                    if (currentFile != null)
+                    {
+                        importer = new Importer(currentFile, delimiter, "0", chartNameTextField.getText());
+                        stage.close();
+                    }
+                    else
+                    {
+                        showAlertDialog('f');
+                    }
                 }
 
             }
@@ -89,14 +104,14 @@ public class ImportCSVController
         alert.setHeaderText(null);
         switch (reason)
         {
-            case 'd':
-                alert.setContentText("Bitte Trennzeichen auswaehlen!");
+            case 'c':
+                alert.setContentText("Bitte Chartname auswaehlen!");
                 break;
             case 'f':
                 alert.setContentText("Bitte Datei auswaehlen!");
                 break;
             case 'b':
-                alert.setContentText("Bitte Datei und Trennzeichen waehlen!");
+                alert.setContentText("Bitte Datei und Chartname waehlen!");
                 break;
             default:
                 alert.setContentText("ERROR");
