@@ -1,12 +1,16 @@
 package de.lww4.main;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.ArrayList;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-
-import java.io.*;
-import java.util.ArrayList;
 
 /**
  * this class has methods for reading and parsing csv files and returns their column rows and their data
@@ -15,13 +19,13 @@ import java.util.ArrayList;
 public class Importer
 {
     private File file;
-    private char delimiter;
+    private DelimiterType delimiter;
     private ArrayList<ArrayList<String>> data;
     private ArrayList<String> columnNamesArrayList;
     private String fillValue;
     private String name;
 
-    public Importer(File file, char delimiter, String fillValue, String name)
+    public Importer(File file, DelimiterType delimiter, String fillValue, String name)
     {
         this.fillValue = fillValue;
         columnNamesArrayList = new ArrayList<>();
@@ -43,7 +47,7 @@ public class Importer
             //Read file
             FileInputStream fileInputStream = new FileInputStream(file);
             Reader inputStreamReader = new InputStreamReader(fileInputStream);
-            CSVParser parser = new CSVParser(inputStreamReader, CSVFormat.newFormat(delimiter));
+            CSVParser parser = new CSVParser(inputStreamReader, CSVFormat.newFormat(delimiter.getDelimiter()));
 
             //loops through all the rows in the csv file
             for (CSVRecord record : parser)
@@ -138,7 +142,7 @@ public class Importer
      */
     public static void main(String args[])
     {
-        Importer importer = new Importer(new File("test.csv"), ';', "0", "Testing");
+        Importer importer = new Importer(new File("test.csv"), DelimiterType.SEMICOLON, "0", "Testing");
         System.out.println(importer.getColumnNames());
         System.out.println(importer.getData());
     }

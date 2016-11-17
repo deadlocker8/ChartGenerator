@@ -4,6 +4,7 @@ package de.lww4.ui;
 import java.io.File;
 import java.util.ArrayList;
 
+import de.lww4.main.DelimiterType;
 import de.lww4.main.ErrorType;
 import de.lww4.main.Importer;
 import javafx.event.ActionEvent;
@@ -11,7 +12,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -21,7 +22,7 @@ import javafx.stage.Stage;
 public class ImportCSVController
 {
     @FXML private Button csvFileDialogButton;
-    @FXML private ChoiceBox<String> delimiterChoiceBox;
+    @FXML private ComboBox<DelimiterType> delimiterChoiceBox;
     @FXML private Button csvFileImportButton;
     @FXML private Label filenameLabel;
     @FXML private TextField chartNameTextField;
@@ -35,8 +36,9 @@ public class ImportCSVController
     public void init(Stage stage, Image icon)
     {
         this.stage = stage;
-        this.icon = icon;
-        delimiterChoiceBox.getSelectionModel().select("Semicolon");        
+        this.icon = icon;       
+        delimiterChoiceBox.getSelectionModel().select(DelimiterType.SEMICOLON);
+        delimiterChoiceBox.getItems().addAll(DelimiterType.values());
         csvFileDialogButton.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
@@ -60,7 +62,7 @@ public class ImportCSVController
             @Override
             public void handle(ActionEvent event)
             {
-                char delimiter = getDelimiterFromChoiceBox();
+            	DelimiterType delimiter = delimiterChoiceBox.getSelectionModel().getSelectedItem();
                 if (!isUserError())
                 {
                     importer = new Importer(currentFile, delimiter, fillValueTextField.getText(), chartNameTextField.getText());
@@ -98,24 +100,6 @@ public class ImportCSVController
         }
 
         return false;
-    }
-
-    private char getDelimiterFromChoiceBox()
-    {
-        switch ((String)delimiterChoiceBox.getSelectionModel().getSelectedItem())
-        {
-            case "Tabulator":
-                return '\t';
-            case "Leerzeichen":
-                return ' ';
-            case "Komma":
-                return ',';
-            case "Semicolon":
-                return ';';
-            case "Punkt":
-                return '.';
-            default: return '@';
-        }
     }
 
     private void showAlertDialog(ArrayList<ErrorType> errorTypes)
