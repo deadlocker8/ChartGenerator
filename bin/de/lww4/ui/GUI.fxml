@@ -13,9 +13,10 @@
         <menus>
           <Menu mnemonicParsing="false" text="Datei">
             <items>
-                  <MenuItem mnemonicParsing="false" text="CSV-Datei importieren..." />
-              <MenuItem mnemonicParsing="false" text="Dashboard laden..." />
-                  <MenuItem mnemonicParsing="false" text="Dashboard exportieren..." />
+                  <MenuItem mnemonicParsing="false" onAction="#importCSVMenuItem" text="CSV-Datei importieren..." />
+                  <MenuItem mnemonicParsing="false" onAction="#newDashboardMenuItem" text="Neues Dashboard" />
+              <MenuItem mnemonicParsing="false" onAction="#selectDashboardMenuItem" text="Dashboard laden..." />
+                  <MenuItem mnemonicParsing="false" onAction="#exportDashboardMenuItem" text="Dashboard exportieren..." />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="Hilfe">

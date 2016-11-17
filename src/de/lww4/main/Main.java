@@ -58,7 +58,8 @@ public class Main extends Application
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args)
+	{
 		if(Arrays.asList(args).contains("debug"))
 		{
 			Logger.setLevel(LogLevel.ALL);
@@ -68,7 +69,8 @@ public class Main extends Application
 		else
 		{
 			Logger.setLevel(LogLevel.ERROR);
-		}	
+		}
+		}
 
 		DBHandler dbHandler = new DBHandler();
 

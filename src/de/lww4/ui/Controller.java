@@ -5,6 +5,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import de.lww4.main.Dashboard;
+import de.lww4.main.DashboardHandler;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -19,6 +21,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -39,11 +42,14 @@ public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private Label labelTitle;
+	@FXML private MenuItem importCSVMenuItem;
 
 	public Stage stage;
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
+	private DashboardHandler dashboardHandler;
+	private Dashboard currentDashboard;
 
 	public void init(Stage stage)
 	{
@@ -86,9 +92,15 @@ public class Controller
 		AnchorPane.setRightAnchor(gridPane, 25.0);
 		AnchorPane.setBottomAnchor(gridPane, 25.0);
 		AnchorPane.setLeftAnchor(gridPane, 25.0);
-		
-		initGridPane(true);		
-		
+
+		// TODO import existing dashboards from DB
+		dashboardHandler = new DashboardHandler();
+
+		// DEBUG
+		currentDashboard = new Dashboard();
+
+		initGridPane(true);
+
 		labelTitle.setText("Unbenanntes Dashboard");
 		FontIcon iconEdit = new FontIcon(FontIconType.PENCIL);
 		iconEdit.setSize(18);
@@ -99,7 +111,7 @@ public class Controller
 			public void handle(MouseEvent event)
 			{
 				if(event.getButton() == MouseButton.PRIMARY)
-				{					
+				{
 					TextInputDialog dialog = new TextInputDialog(labelTitle.getText());
 					dialog.setTitle("Dashboardname");
 					dialog.setHeaderText("");
@@ -114,6 +126,61 @@ public class Controller
 		});
 	}
 
+	/**
+	 * handles menuItem "import CSV"
+	 */
+	public void importCSVMenuItem()
+	{	
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.initOwner(stage);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setTitle("Import CSV");
+			newStage.setScene(new Scene(root));
+			newStage.getIcons().add(icon);
+			newStage.setResizable(false);
+			ImportCSVController importCSVController = fxmlLoader.getController();
+			importCSVController.init(newStage, icon);
+			newStage.show();
+
+		}
+		catch(IOException io)
+		{
+			io.printStackTrace();
+		}		
+	}
+	
+	/**
+	 * handles menuItem "new Dashboard"
+	 */
+	public void newDashboardMenuItem()
+	{
+		// TODO
+	}
+
+	/**
+	 * handles menuItem "select Dashboard"
+	 */
+	public void selectDashboardMenuItem()
+	{
+		// TODO
+	}
+
+	/**
+	 * handles menuItem "export Dashboard"
+	 */
+	public void exportDashboardMenuItem()
+	{
+		// TODO
+	}
+
+	/**
+	 * checks if the input is empty 
+	 * @param dialog TextInputDialog
+	 */
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
 		Optional<String> result = dialog.showAndWait();
@@ -134,7 +201,7 @@ public class Controller
 				alert.showAndWait();
 
 				checkTextInputTitle(dialog);
-				
+
 				// TODO edit DashboardName in class
 			}
 			else
@@ -144,9 +211,13 @@ public class Controller
 		}
 	}
 
+	/**
+	 * inits the dashboard gridPane
+	 * @param empty boolean
+	 */
 	private void initGridPane(boolean empty)
 	{
-		gridPane.getChildren().clear();		
+		gridPane.getChildren().clear();
 
 		for(int i = 0; i < 6; i++)
 		{
@@ -158,12 +229,12 @@ public class Controller
 			HBox hbox = new HBox();
 			hbox.setSpacing(5);
 			hbox.setAlignment(Pos.CENTER);
-			
-			Label labelChartTitle = new Label("Diagramm " + (i+1));
+
+			Label labelChartTitle = new Label("Diagramm " + (i + 1));
 			labelChartTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 18;");
 			labelChartTitle.setAlignment(Pos.CENTER);
 			labelChartTitle.setMaxWidth(Double.MAX_VALUE);
-			hbox.getChildren().add(labelChartTitle);				
+			hbox.getChildren().add(labelChartTitle);
 			HBox.setHgrow(labelChartTitle, Priority.ALWAYS);
 
 			Button buttonEdit = new Button();
@@ -195,13 +266,28 @@ public class Controller
 					deleteChart(position);
 				}
 			});
+			
+			Button buttonExport = new Button();
+			buttonExport.setStyle("-fx-background-color: transparent");
+			FontIcon iconExport = new FontIcon(FontIconType.DOWNLOAD);
+			iconExport.setSize(18);
+			buttonExport.setGraphic(iconExport);
+			hbox.getChildren().add(buttonExport);
+			buttonExport.setOnAction(new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle(ActionEvent event)
+				{
+					exportChart(position);
+				}
+			});
 
 			currentAnchorPane.getChildren().add(hbox);
 			AnchorPane.setTopAnchor(hbox, 5.0);
 			AnchorPane.setRightAnchor(hbox, 5.0);
 			AnchorPane.setLeftAnchor(hbox, 5.0);
 
-			StackPane currentStackPane = new StackPane();			
+			StackPane currentStackPane = new StackPane();
 			currentAnchorPane.getChildren().add(currentStackPane);
 			AnchorPane.setTopAnchor(currentStackPane, 40.0);
 			AnchorPane.setRightAnchor(currentStackPane, 10.0);
@@ -212,14 +298,15 @@ public class Controller
 			{
 				buttonEdit.setDisable(true);
 				buttonDelete.setDisable(true);
-				
+				buttonExport.setDisable(true);
+
 				FontIcon iconAdd = new FontIcon(FontIconType.PLUS);
 				iconAdd.setSize(25);
-	
+
 				Button buttonAdd = new Button();
 				buttonAdd.setGraphic(iconAdd);
 				buttonAdd.setStyle("-fx-background-color: transparent");
-	
+
 				buttonAdd.setOnAction(new EventHandler<ActionEvent>()
 				{
 					@Override
@@ -240,9 +327,14 @@ public class Controller
 			{
 				gridPane.add(currentAnchorPane, i % 3, 1);
 			}
-		}	
+		}
 	}
 
+	/**
+	 * opens a new UI for new chart generation
+	 * @param position int - position in dashboard [0,5]
+	 * @param edit boolean - editing already existing chart at given position
+	 */
 	private void addChart(int position, boolean edit)
 	{
 		try
@@ -251,20 +343,23 @@ public class Controller
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
-			newStage.setScene(new Scene(root, 600, 600));
-			if(edit)
-			{
-				newStage.setTitle("Diagramm bearbeiten");
-			}
-			else
-			{
-				newStage.setTitle("Neues Diagramm");
-			}		
+			newStage.setScene(new Scene(root, 800, 600));
+			newStage.setMinHeight(400);
+			newStage.setMinWidth(500);
 			newStage.initOwner(stage);
 
 			newStage.getIcons().add(icon);
 			NewChartController newController = fxmlLoader.getController();
-			newController.init(newStage, this, edit);
+			if(edit)
+			{
+				newStage.setTitle("Diagramm bearbeiten");
+				newController.init(newStage, this, edit, currentDashboard, position);
+			}
+			else
+			{
+				newStage.setTitle("Neues Diagramm");
+				newController.init(newStage, this, edit, null, -1);
+			}
 
 			newStage.initModality(Modality.APPLICATION_MODAL);
 			newStage.setResizable(true);
@@ -276,6 +371,10 @@ public class Controller
 		}
 	}
 
+	/**
+	 * deletes chart at given position after confirmation dialog
+	 * @param position
+	 */
 	private void deleteChart(int position)
 	{
 		Alert alert = new Alert(AlertType.CONFIRMATION);
@@ -290,10 +389,31 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
-			//TODO delete Chart from dashboard
+			// TODO delete Chart from dashboard
 		}
 	}
+	
+	/**
+	 * exports chart at given position
+	 * @param position
+	 */
+	private void exportChart(int position)
+	{
+		
+	}
+	
+	/** 
+	 * @param dashboard Dashboard
+	 */
+	public void setDashboard(Dashboard dashboard)
+	{
+		this.currentDashboard = dashboard;
+		initGridPane(false);
+	}
 
+	/**
+	 * opens about dialog
+	 */
 	public void about()
 	{
 		Alert alert = new Alert(AlertType.INFORMATION);
