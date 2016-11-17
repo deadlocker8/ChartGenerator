@@ -16,7 +16,6 @@ import javafx.stage.WindowEvent;
 import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
-import de.lww4.db.DBHandler;
 
 public class Main extends Application
 {
@@ -70,9 +69,6 @@ public class Main extends Application
 		{
 			Logger.setLevel(LogLevel.ERROR);
 		}
-		}
-
-		DBHandler dbHandler = new DBHandler();
 
 		launch(args);
 	}
