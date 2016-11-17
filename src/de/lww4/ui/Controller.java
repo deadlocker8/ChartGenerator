@@ -16,8 +16,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -261,6 +266,21 @@ public class Controller
 					deleteChart(position);
 				}
 			});
+			
+			Button buttonExport = new Button();
+			buttonExport.setStyle("-fx-background-color: transparent");
+			FontIcon iconExport = new FontIcon(FontIconType.DOWNLOAD);
+			iconExport.setSize(18);
+			buttonExport.setGraphic(iconExport);
+			hbox.getChildren().add(buttonExport);
+			buttonExport.setOnAction(new EventHandler<ActionEvent>()
+			{
+				@Override
+				public void handle(ActionEvent event)
+				{
+					exportChart(position);
+				}
+			});
 
 			currentAnchorPane.getChildren().add(hbox);
 			AnchorPane.setTopAnchor(hbox, 5.0);
@@ -278,6 +298,7 @@ public class Controller
 			{
 				buttonEdit.setDisable(true);
 				buttonDelete.setDisable(true);
+				buttonExport.setDisable(true);
 
 				FontIcon iconAdd = new FontIcon(FontIconType.PLUS);
 				iconAdd.setSize(25);
@@ -370,6 +391,15 @@ public class Controller
 		{
 			// TODO delete Chart from dashboard
 		}
+	}
+	
+	/**
+	 * exports chart at given position
+	 * @param position
+	 */
+	private void exportChart(int position)
+	{
+		
 	}
 	
 	/** 
