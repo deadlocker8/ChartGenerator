@@ -69,6 +69,7 @@ public class Main extends Application
 		{
 			Logger.setLevel(LogLevel.ERROR);
 		}
+
 		launch(args);
 	}
 }
