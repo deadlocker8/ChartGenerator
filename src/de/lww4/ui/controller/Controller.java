@@ -537,7 +537,7 @@ public class Controller
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.setScene(new Scene(root, 800, 600));
-			newStage.setMinHeight(500);
+			newStage.setMinHeight(600);
 			newStage.setMinWidth(700);
 			newStage.initOwner(stage);
 
