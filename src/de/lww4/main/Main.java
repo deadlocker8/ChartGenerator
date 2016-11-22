@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import de.lww4.ui.Controller;
+import de.lww4.ui.controller.Controller;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -26,7 +26,7 @@ public class Main extends Application
 	{
 		try
 		{
-			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("de/lww4/ui/GUI.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("de/lww4/ui/fxml/GUI.fxml"));
 			Parent root = (Parent)loader.load();
 
 			Scene scene = new Scene(root, 800, 600);		

@@ -1,4 +1,4 @@
-package de.lww4.ui;
+package de.lww4.ui.controller;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -55,7 +55,7 @@ public class Controller
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
-	private DatabaseHandler database;
+	public DatabaseHandler database;
 	public DashboardHandler dashboardHandler;
 	private Dashboard currentDashboard;
 
@@ -133,7 +133,7 @@ public class Controller
 			database = new DatabaseHandler();
 			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
 			//TODO select last opened dashboard
-			currentDashboard = new Dashboard("");		
+			currentDashboard = new Dashboard("");			
 			
 			initDashboard();
 		}
@@ -177,7 +177,7 @@ public class Controller
 	{	
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ImportCSVDialog.fxml"));
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.initOwner(stage);
@@ -279,7 +279,7 @@ public class Controller
 	{
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SelectDashboardGUI.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/SelectDashboardGUI.fxml"));
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
@@ -532,13 +532,13 @@ public class Controller
 	{
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/NewChartGUI.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/NewChartGUI.fxml"));
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.setScene(new Scene(root, 800, 600));
-			newStage.setMinHeight(400);
-			newStage.setMinWidth(500);
+			newStage.setMinHeight(600);
+			newStage.setMinWidth(700);
 			newStage.initOwner(stage);
 
 			newStage.getIcons().add(icon);
@@ -582,7 +582,26 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
-			// TODO delete Chart from dashboard
+			currentDashboard.getCells().set(position, -1);
+			try
+			{
+				database.saveDashboard(currentDashboard);
+				dashboardHandler = new DashboardHandler(database.getAllDashboards());
+			}
+			catch(Exception e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				
+				Alert alert2 = new Alert(AlertType.ERROR);
+				alert2.setTitle("Fehler");
+				alert2.setHeaderText("");
+				alert2.setContentText("Beim Löschen ist ein Fehler aufgetreten.");
+				Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage2.getIcons().add(icon);
+				dialogStage2.centerOnScreen();
+				alert2.showAndWait();
+			}			
 		}
 	}
 	

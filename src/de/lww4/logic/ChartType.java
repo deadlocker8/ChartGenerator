@@ -4,7 +4,7 @@ public enum ChartType
 {
 	BAR_HORIZONTAL(0, "Balkendiagramm"),
 	BAR_VERTICAL(1, "Säulendiagramm"),
-	PI(2, "Tortendiagramm");
+	PIE(2, "Tortendiagramm");
 
 	private int ID;
 	private String name;

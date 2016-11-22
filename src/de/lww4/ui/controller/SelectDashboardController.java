@@ -1,4 +1,4 @@
-package de.lww4.ui;
+package de.lww4.ui.controller;
 
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -8,6 +8,7 @@ import de.lww4.ui.cells.DashboardCell;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -57,6 +58,10 @@ public class SelectDashboardController
 				}				
 			}
 		});
+		
+		Label labelPlaceholder = new Label("Keine Dashboards verfügbar.");
+		labelPlaceholder.setStyle("-fx-font-size: 14");
+		listView.setPlaceholder(labelPlaceholder);
 		
 		refreshListView();			
 	}	

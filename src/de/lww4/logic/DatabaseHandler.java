@@ -1,15 +1,18 @@
 package de.lww4.logic;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
+
 import javafx.scene.paint.Color;
 import logger.LogLevel;
 import logger.Logger;
@@ -41,7 +44,8 @@ public class DatabaseHandler
 			// create chart and dashboard table
 			statement.executeUpdate("PRAGMA foreign_keys = ON");
 			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR UNIQUE, color VARCHAR);");
-			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
+			statement.executeUpdate(
+					"CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
 			connection.close();
 		}
 		catch(SQLException e)
@@ -59,11 +63,11 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			//statement.setQueryTimeout(30); // set timeout to 30 sec.
+			// statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM Dashboard ORDER BY ID");
 
 			ArrayList<Dashboard> dashboards = extractDashboards(result);
-			
+
 			connection.close();
 
 			return dashboards;
@@ -80,7 +84,7 @@ public class DatabaseHandler
 	{
 		ArrayList<Dashboard> dashboards = new ArrayList<Dashboard>();
 		while(result.next())
-		{		
+		{
 			int ID = result.getInt("ID");
 			String name = result.getString("name");
 			int cell_1_1 = result.getInt("cell_1_1");
@@ -184,7 +188,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,			
+			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,
 			statement.executeUpdate("INSERT INTO Dashboard VALUES(NULL,\"" + dashboard.getName() + "\"," + cells.get(0) + "," + cells.get(1) + "," + cells.get(2) + "," + cells.get(3) + "," + cells.get(4) + "," + cells.get(5) + ")");
 			connection.close();
 		}
@@ -313,15 +317,22 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// TODO: exclude label and settings tables
-			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
-			connection.close();
-
+//			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
+			ResultSet result = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+			
 			ArrayList<CSVTable> tables = new ArrayList<CSVTable>();
 
 			while(result.next())
 			{
-				tables.add(getCSVTable(result.getString("name")));
+				String name = result.getString("TABLE_NAME");
+				//TODO add settings table
+				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence"))
+				{					
+					tables.add(getCSVTable(name));
+				}
 			}
+			
+			connection.close();
 
 			return tables;
 		}
@@ -346,17 +357,20 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("PRAGMA TABLE_INFO(" + uuid + ")");
-
-			while(result.next())
+			ResultSet result = statement.executeQuery("SELECT * FROM " + uuid);
+			ResultSetMetaData metadata = result.getMetaData();			
+			int columnCount = metadata.getColumnCount();
+			
+			for(int i = 1; i <= columnCount; i++)
 			{
-				if(!result.getString("name").equals("name") || !result.getString("name").equals("date"))
+				String columnName = metadata.getColumnName(i);
+				if(!columnName.equals("ID") && !columnName.equals("name") && !columnName.equals("date"))
 				{
-					columnNames.add(result.getString("name"));
+					columnNames.add(columnName);
 				}
 			}
-
-			result = statement.executeQuery("SELECT 'name', 'date' FROM " + uuid);
+			
+			result = statement.executeQuery("SELECT name, date FROM " + uuid);
 			name = result.getString("name");
 			date = result.getString("date");
 			connection.close();
@@ -373,10 +387,12 @@ public class DatabaseHandler
 
 	/**
 	 * save CSV from importer to database
+	 * 
 	 * @param importer
 	 * @throws Exception
 	 */
-	public void saveCSVTable(Importer importer) throws Exception{
+	public void saveCSVTable(Importer importer) throws Exception
+	{
 		Connection connection = null;
 		try
 		{
@@ -385,7 +401,7 @@ public class DatabaseHandler
 			String sqlData;
 
 			String name = importer.getName();
-			String uuid = "test";
+			String uuid = UUID.randomUUID().toString();
 
 			DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 			Date date = new Date();
@@ -396,17 +412,20 @@ public class DatabaseHandler
 			ArrayList<ArrayList<String>> data = importer.getData();
 
 			sqlCreateTable = "CREATE TABLE " + uuid + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, date VARCHAR";
-			for (int i = 0; i < columnNamesSize; i++){
+			for(int i = 0; i < columnNamesSize; i++)
+			{
 				sqlCreateTable += ", " + columnNames.get(i) + " VARCHAR";
 			}
 			sqlCreateTable += ");";
 
-			sqlMetaData = "INSERT INTO " + uuid + "(name, date) VALUES('" +name + "', '" + dateString + "');";
+			sqlMetaData = "INSERT INTO " + uuid + "(name, date) VALUES('" + name + "', '" + dateString + "');";
 
 			sqlData = "INSERT INTO " + uuid + "(";
 
-			for(int i = 0; i < columnNamesSize; i++){
-				if(i > 0){
+			for(int i = 0; i < columnNamesSize; i++)
+			{
+				if(i > 0)
+				{
 					sqlData += ",";
 				}
 				sqlData += columnNames.get(i);
@@ -416,19 +435,24 @@ public class DatabaseHandler
 
 			sqlData += " VALUES";
 
-			for(int i = 0; i < data.size(); i++){
+			for(int i = 0; i < data.size(); i++)
+			{
 				sqlData += "('";
-				for(int j = 0; j < columnNamesSize; j++){
-					if(j > 0){
+				for(int j = 0; j < columnNamesSize; j++)
+				{
+					if(j > 0)
+					{
 						sqlData += "','";
 					}
 					sqlData += data.get(i).get(j);
 				}
 				sqlData += "')";
-				if(i < importer.getData().size() -1){
+				if(i < importer.getData().size() - 1)
+				{
 					sqlData += ",";
 				}
-				else{
+				else
+				{
 					sqlData += ";";
 				}
 			}
@@ -436,7 +460,7 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(60);  // set timeout to 60 sec.
+			statement.setQueryTimeout(60); // set timeout to 60 sec.
 			statement.executeUpdate("drop table if exists " + uuid);
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
@@ -454,6 +478,7 @@ public class DatabaseHandler
 
 	/**
 	 * test method for class
+	 * 
 	 * @param args
 	 * @throws Exception
 	 */
