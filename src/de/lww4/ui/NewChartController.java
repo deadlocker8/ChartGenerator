@@ -148,6 +148,8 @@ public class NewChartController
 			alert.showAndWait();
 			return;
 		}
+		
+		
 
 		// TODO null check other values
 		// TODO save to DB

@@ -582,7 +582,26 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
-			// TODO delete Chart from dashboard
+			currentDashboard.getCells().set(position, -1);
+			try
+			{
+				database.saveDashboard(currentDashboard);
+				dashboardHandler = new DashboardHandler(database.getAllDashboards());
+			}
+			catch(Exception e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				
+				Alert alert2 = new Alert(AlertType.ERROR);
+				alert2.setTitle("Fehler");
+				alert2.setHeaderText("");
+				alert2.setContentText("Beim Löschen ist ein Fehler aufgetreten.");
+				Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage2.getIcons().add(icon);
+				dialogStage2.centerOnScreen();
+				alert2.showAndWait();
+			}			
 		}
 	}
 	
