@@ -103,7 +103,7 @@ public class NewChartController
 		TreeItem<String> rootItem;
 		if(tables.size() == 0)
 		{
-			rootItem = new TreeItem<String>("Keine Daten verf�gbar");					
+			rootItem = new TreeItem<String>("Keine Daten verfügbar");					
 		}
 		else
 		{				
@@ -140,7 +140,7 @@ public class NewChartController
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Warnung");
 			alert.setHeaderText("");
-			alert.setContentText("Bitte geben Sie einen Namen f�r das Diagramm an.");
+			alert.setContentText("Bitte geben Sie einen Namen für das Diagramm an.");
 			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage.getIcons().add(icon);

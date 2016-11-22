@@ -10,6 +10,7 @@ public class Dashboard
 	
 	public Dashboard(String name) 
 	{
+		this.id = -1;
 		this.name = name;
 		cells = new ArrayList<Integer>();
 	}
@@ -36,6 +37,11 @@ public class Dashboard
 	public String getName()
 	{
 		return name;
+	}
+	
+	public void setName(String name)
+	{
+		this.name = name;
 	}
 	
 	public ArrayList<Integer> getCells()

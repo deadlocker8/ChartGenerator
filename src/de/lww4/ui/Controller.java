@@ -131,8 +131,17 @@ public class Controller
 		}
 		catch(Exception e)
 		{
-			//ERRORHANDLING
-			e.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Fehler");
+			alert.setHeaderText("");
+			alert.setContentText("Beim Laden der Datenbank ist ein Fehler aufgetreten.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
 		}	
 	}
 	
@@ -216,7 +225,7 @@ public class Controller
 					Alert alert = new Alert(AlertType.WARNING);
 					alert.setTitle("Warnung");
 					alert.setHeaderText("");
-					alert.setContentText("Dieser Name wird bereits verwendet.");
+					alert.setContentText("Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.");
 					Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
 					dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
 					dialogStage2.getIcons().add(icon);
@@ -315,15 +324,58 @@ public class Controller
 				dialogStage.centerOnScreen();
 				alert.showAndWait();
 
-				checkTextInputTitle(dialog);
-
-				//TODO edit DashboardName in class
-				//TODO check if name not already exists
-				//TODO if is "Unbenanntes Dashboard" then create new one and load
+				checkTextInputTitle(dialog);			
 			}
 			else
 			{
-				labelTitle.setText(result.get());
+				if(dashboardHandler.isNameAlreadyInUse(name))
+				{
+					Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Warnung");
+					alert.setHeaderText("");
+					alert.setContentText("Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.");
+					Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+					dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+					dialogStage.getIcons().add(icon);
+					dialogStage.centerOnScreen();
+					alert.showAndWait();
+					
+					checkTextInputTitle(dialog);
+				}
+				else
+				{
+					labelTitle.setText(result.get());
+					currentDashboard.setName(name);
+					
+					try
+					{						
+						// Dashboard is not existing in DB ("Unbenanntes Dashboard")
+						if(currentDashboard.getId() == -1)
+						{
+							database.saveDashboard(currentDashboard);
+						}
+						else
+						{
+							database.updateDashboard(currentDashboard);
+						}	
+						
+						dashboardHandler = new DashboardHandler(database.getAllDashboards());
+					}
+					catch(Exception e)
+					{
+						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+						
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Fehler");
+						alert.setHeaderText("");
+						alert.setContentText("Beim Speichern ist ein Fehler aufgetreten.");
+						Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+						dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+						dialogStage.getIcons().add(icon);
+						dialogStage.centerOnScreen();
+						alert.showAndWait();
+					}
+				}			
 			}
 		}
 	}
@@ -550,8 +602,17 @@ public class Controller
 		}
 		catch(Exception e)
 		{
-			//ERRORHANDLING
-			e.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Fehler");
+			alert.setHeaderText("");
+			alert.setContentText("Beim Löschen ist ein Fehler aufgetreten.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
 		}
 	}
 
