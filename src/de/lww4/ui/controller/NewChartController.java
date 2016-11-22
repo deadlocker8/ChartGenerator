@@ -7,15 +7,19 @@ import java.util.ResourceBundle;
 
 import de.lww4.logic.CSVTable;
 import de.lww4.logic.ChartType;
+import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.Dashboard;
-import de.lww4.ui.controller.subcontroller.SubControllerEditBarChartHorizontal;
+import de.lww4.logic.DataFormats;
+import de.lww4.ui.cells.ColumnTreeCell;
 import de.lww4.ui.controller.subcontroller.SubControllerEditChart;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -26,15 +30,20 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
@@ -43,7 +52,7 @@ public class NewChartController
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private TextField textFieldTitle;
 	@FXML private ColorPicker colorPicker;
-	@FXML private TreeView<String> treeView;
+	@FXML private TreeView<ColumnTreeItem> treeView;
 	@FXML private StackPane stackPaneChart;
 	@FXML private Button buttonSave;
 	@FXML private Button buttonCancel;
@@ -56,7 +65,7 @@ public class NewChartController
 	private ToggleGroup toggleGroupChartTypes;
 	private boolean edit;
 	private Dashboard dashboard;
-	private int position;
+	private int position;	
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
@@ -68,7 +77,7 @@ public class NewChartController
 
 		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");
 
-		generatePreview(ChartType.BAR_VERTICAL);
+		generatePreview(ChartType.BAR_HORIZONTAL);
 
 		toggleGroupChartTypes = new ToggleGroup();
 
@@ -111,8 +120,7 @@ public class NewChartController
 	}
 
 	private void initTreeView()
-	{
-		// DEBUG get from DB
+	{		
 		ArrayList<CSVTable> tables;
 		try
 		{
@@ -125,22 +133,22 @@ public class NewChartController
 			tables = new ArrayList<>();
 		}
 
-		TreeItem<String> rootItem;
+		TreeItem<ColumnTreeItem> rootItem;
 		if(tables.size() == 0)
 		{
-			rootItem = new TreeItem<String>("Keine Daten verfügbar");
+			rootItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(null, "Keine Daten verfügbar", false));
 		}
 		else
 		{
-			rootItem = new TreeItem<String>("CSV Tabellen");
+			rootItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(null, "CSV Tabellen", false));
 
 			for(CSVTable currentTable : tables)
 			{
-				TreeItem<String> currentMainItem = new TreeItem<String>(currentTable.getName());
+				TreeItem<ColumnTreeItem> currentMainItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(null, currentTable.getName(), false));
 
 				for(String currentColumn : currentTable.getColumnNames())
 				{
-					TreeItem<String> currentSubItem = new TreeItem<String>(currentColumn);
+					TreeItem<ColumnTreeItem> currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, true));
 					currentMainItem.getChildren().add(currentSubItem);
 				}
 
@@ -149,6 +157,17 @@ public class NewChartController
 		}
 		rootItem.setExpanded(true);
 		treeView.setRoot(rootItem);
+
+		treeView.setCellFactory(new Callback<TreeView<ColumnTreeItem>, TreeCell<ColumnTreeItem>>()
+		{
+			@Override
+			public TreeCell<ColumnTreeItem> call(TreeView<ColumnTreeItem> param)
+			{
+				ColumnTreeCell treeCell = new ColumnTreeCell();
+				prepareDragAndDropForTreeCell(treeCell);
+				return treeCell;
+			}
+		});
 	}
 
 	private void generatePreview(ChartType type)
@@ -163,23 +182,23 @@ public class NewChartController
 			switch(type)
 			{
 				case BAR_HORIZONTAL:
-					fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/subfxml/SubEditBarChartHorizontalGUI.fxml"));					
+					fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/subfxml/SubEditBarChartHorizontalGUI.fxml"));
 					break;
 				case BAR_VERTICAL:
-					fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/subfxml/SubEditBarChartVerticalGUI.fxml"));					
+					fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/subfxml/SubEditBarChartVerticalGUI.fxml"));
 					break;
 				case PIE:
-					fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/subfxml/SubEditPieChartGUI.fxml"));					
+					fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/subfxml/SubEditPieChartGUI.fxml"));
 					break;
 				default:
 					break;
-			}		
-			
+			}
+
 			Parent root = (Parent)fxmlLoader.load();
 			stackPaneChart.getChildren().add(root);
-			subController = fxmlLoader.getController();		
-			subController.init(this);	
-			
+			subController = fxmlLoader.getController();
+			subController.init(this);
+
 		}
 		catch(IOException e)
 		{
@@ -216,5 +235,36 @@ public class NewChartController
 	public void cancel()
 	{
 		stage.close();
+	}
+
+	private void prepareDragAndDropForTreeCell(TreeCell<ColumnTreeItem> row)
+	{
+		row.setOnDragDetected(event -> {
+			if(!row.isEmpty())
+			{
+				if(row.getItem().isDragable())
+				{				
+					Dragboard db = row.startDragAndDrop(TransferMode.ANY);
+	
+					SnapshotParameters snapshotParameters = new SnapshotParameters();
+					snapshotParameters.setFill(Color.TRANSPARENT);
+	
+					VBox vboxSeledtedItems = new VBox();
+					vboxSeledtedItems.setAlignment(Pos.TOP_LEFT);
+				
+					Label label = new Label(row.getItem().getText());
+					label.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");						
+					
+					new Scene(label);
+					db.setDragView(label.snapshot(snapshotParameters, null));
+	
+					ClipboardContent content = new ClipboardContent();
+					content.put(DataFormats.DATAFORMAT_COLUMN_TREE_ITEM, row.getItem());
+					db.setContent(content);
+				}
+			}
+
+			event.consume();
+		});
 	}
 }

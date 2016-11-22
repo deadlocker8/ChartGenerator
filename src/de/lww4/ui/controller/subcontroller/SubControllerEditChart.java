@@ -12,7 +12,7 @@ public abstract class SubControllerEditChart
 	@FXML protected StackPane stackPaneChart;
 	
 	protected NewChartController newChartController;
-	protected final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
+	protected final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);	
 
 	public void init(NewChartController newChartController)
 	{
