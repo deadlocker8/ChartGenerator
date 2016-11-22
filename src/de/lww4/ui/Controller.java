@@ -133,9 +133,7 @@ public class Controller
 			database = new DatabaseHandler();
 			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
 			//TODO select last opened dashboard
-			currentDashboard = new Dashboard("");	
-			
-			System.out.println(database.getAllCSVTables());
+			currentDashboard = new Dashboard("");			
 			
 			initDashboard();
 		}
@@ -539,8 +537,8 @@ public class Controller
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.setScene(new Scene(root, 800, 600));
-			newStage.setMinHeight(400);
-			newStage.setMinWidth(500);
+			newStage.setMinHeight(500);
+			newStage.setMinWidth(700);
 			newStage.initOwner(stage);
 
 			newStage.getIcons().add(icon);

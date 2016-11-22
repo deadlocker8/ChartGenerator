@@ -15,6 +15,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Toggle;
@@ -57,6 +58,18 @@ public class NewChartController
 		this.edit = edit;
 		this.dashboard = dashboard;
 		this.position = position;
+		
+		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");
+		Label labelPlaceholder = new Label("Verfügbare Daten hier her ziehen, um ein Diagramm zu erstellen.");		
+		stackPaneChart.getChildren().add(labelPlaceholder);
+		stackPaneChart.widthProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				labelPlaceholder.setStyle("-fx-font-size: " + (newValue.doubleValue() / 35));
+			}
+		});
 
 		toggleGroupChartTypes = new ToggleGroup();
 
