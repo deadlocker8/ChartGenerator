@@ -8,8 +8,9 @@ public class Dashboard
 	private String name;
 	private ArrayList<Integer> cells;
 	
-	public Dashboard() 
+	public Dashboard(String name) 
 	{
+		this.name = name;
 		cells = new ArrayList<Integer>();
 	}
 

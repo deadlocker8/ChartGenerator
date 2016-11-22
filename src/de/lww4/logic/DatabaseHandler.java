@@ -21,6 +21,7 @@ public class DatabaseHandler
 		File db = new File(path);
 		if(!db.exists())
 		{
+			PathUtils.checkFolder(new File(PathUtils.getOSindependentPath() + "ChartGenerator/"));
 			createDB();
 		}
 	}
@@ -55,11 +56,12 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
+			//statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM Dashboard ORDER BY ID");
-			connection.close();
 
 			ArrayList<Dashboard> dashboards = extractDashboards(result);
+			
+			connection.close();
 
 			return dashboards;
 		}
@@ -75,7 +77,7 @@ public class DatabaseHandler
 	{
 		ArrayList<Dashboard> dashboards = new ArrayList<Dashboard>();
 		while(result.next())
-		{
+		{		
 			int ID = result.getInt("ID");
 			String name = result.getString("name");
 			int cell_1_1 = result.getInt("cell_1_1");
@@ -168,12 +170,19 @@ public class DatabaseHandler
 		try
 		{
 			ArrayList<Integer> cells = dashboard.getCells();
+			if(cells.size() == 0)
+			{
+				for(int i = 0; i < 6; i++)
+				{
+					cells.add(-1);
+				}
+			}
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,
-			statement.executeUpdate("INSERT INTO Dashboard VALUES( NULL," + cells.get(0) + "," + cells.get(1) + "," + cells.get(2) + "," + cells.get(3) + "," + cells.get(4) + "," + cells.get(5) + ")");
+			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,			
+			statement.executeUpdate("INSERT INTO Dashboard VALUES(NULL,\"" + dashboard.getName() + "\"," + cells.get(0) + "," + cells.get(1) + "," + cells.get(2) + "," + cells.get(3) + "," + cells.get(4) + "," + cells.get(5) + ")");
 			connection.close();
 		}
 		catch(SQLException e)
