@@ -4,9 +4,9 @@ package de.lww4.ui;
 import java.io.File;
 import java.util.ArrayList;
 
-import de.lww4.main.DelimiterType;
-import de.lww4.main.ErrorType;
-import de.lww4.main.Importer;
+import de.lww4.logic.DelimiterType;
+import de.lww4.logic.ErrorType;
+import de.lww4.logic.Importer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

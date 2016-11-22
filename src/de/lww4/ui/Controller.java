@@ -5,8 +5,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import de.lww4.main.Dashboard;
-import de.lww4.main.DashboardHandler;
+import de.lww4.logic.Dashboard;
+import de.lww4.logic.DashboardHandler;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
