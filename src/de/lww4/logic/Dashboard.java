@@ -4,20 +4,20 @@ import java.util.ArrayList;
 
 public class Dashboard 
 {
-	private int id;
+	private int ID;
 	private String name;
 	private ArrayList<Integer> cells;
 	
 	public Dashboard(String name) 
 	{
-		this.id = -1;
+		this.ID = -1;
 		this.name = name;
 		cells = new ArrayList<Integer>();
 	}
 
-	public Dashboard(int id, String name, int cell1, int cell2, int cell3, int cell4, int cell5, int cell6)
+	public Dashboard(int ID, String name, int cell1, int cell2, int cell3, int cell4, int cell5, int cell6)
 	{
-		this.id = id;
+		this.ID = ID;
 		this.name = name;
 		
 		cells= new ArrayList<Integer>();
@@ -29,9 +29,9 @@ public class Dashboard
 		cells.add(cell6);
 	}
 	
-	public int getId()
+	public int getID()
 	{
-		return id;
+		return ID;
 	}
 	
 	public String getName()
@@ -47,5 +47,10 @@ public class Dashboard
 	public ArrayList<Integer> getCells()
 	{
 		return cells;
+	}
+	
+	public String toString()
+	{
+		return "Dashboard [ID=" + ID + ", name=" + name + ", cells=" + cells + "]";
 	}
 }

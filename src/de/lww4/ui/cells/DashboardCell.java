@@ -74,7 +74,7 @@ public class DashboardCell extends ListCell<Dashboard>
 					Optional<ButtonType> result = alert.showAndWait();
 					if(result.get() == ButtonType.OK)
 					{
-						controller.deleteDashboard(item.getId());
+						controller.deleteDashboard(item.getID());
 						selectDashboardController.refreshListView();						
 					}					
 				}

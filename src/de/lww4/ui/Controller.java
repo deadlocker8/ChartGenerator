@@ -361,7 +361,7 @@ public class Controller
 					try
 					{						
 						// Dashboard is not existing in DB ("Unbenanntes Dashboard")
-						if(currentDashboard.getId() == -1)
+						if(currentDashboard.getID() == -1)
 						{
 							database.saveDashboard(currentDashboard);
 						}
