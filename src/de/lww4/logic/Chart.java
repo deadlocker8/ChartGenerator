@@ -1,19 +1,19 @@
-package de.lww4.main;
+package de.lww4.logic;
 
 import javafx.scene.paint.Color;
 
 public class Chart
 {
-	private int id;
+	private int ID;
 	private ChartType type;
 	private String title;
 	private String x, y;
 	private String tableUUID;
 	private Color color;
 
-	public Chart(int id, ChartType type, String title, String x, String y, String tableUUID, Color color)
+	public Chart(int ID, ChartType type, String title, String x, String y, String tableUUID, Color color)
 	{
-		this.id = id;
+		this.ID = ID;
 		this.type = type;
 		this.title = title;
 		this.x = x;
@@ -22,14 +22,14 @@ public class Chart
 		this.color = color;
 	}
 
-	public int getId()
+	public int getID()
 	{
-		return id;
+		return ID;
 	}
 
-	public void setId(int id)
+	public void setID(int ID)
 	{
-		this.id = id;
+		this.ID = ID;
 	}
 
 	public ChartType getType()
@@ -91,4 +91,9 @@ public class Chart
 	{
 		this.color = color;
 	}
+	
+	public String toString()
+	{
+		return "Chart [ID=" + ID + ", type=" + type + ", title=" + title + ", x=" + x + ", y=" + y + ", tableUUID=" + tableUUID + ", color=" + color + "]";
+	}	
 }

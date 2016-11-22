@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import de.lww4.main.CSVTable;
-import de.lww4.main.ChartType;
-import de.lww4.main.Dashboard;
+import de.lww4.logic.CSVTable;
+import de.lww4.logic.ChartType;
+import de.lww4.logic.Dashboard;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -103,7 +103,7 @@ public class NewChartController
 		TreeItem<String> rootItem;
 		if(tables.size() == 0)
 		{
-			rootItem = new TreeItem<String>("Keine Daten verfügbar");					
+			rootItem = new TreeItem<String>("Keine Daten verfÃ¼gbar");					
 		}
 		else
 		{				
@@ -140,7 +140,7 @@ public class NewChartController
 			Alert alert = new Alert(AlertType.WARNING);
 			alert.setTitle("Warnung");
 			alert.setHeaderText("");
-			alert.setContentText("Bitte geben Sie einen Namen für das Diagramm an.");
+			alert.setContentText("Bitte geben Sie einen Namen fÃ¼r das Diagramm an.");
 			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage.getIcons().add(icon);
