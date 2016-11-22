@@ -1,12 +1,12 @@
 package de.lww4.main;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import javafx.scene.paint.Color;
 import tools.PathUtils;
 
@@ -285,7 +285,7 @@ public class DatabaseHandler {
             ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
             connection.close();
 
-            ArrayList<CSVTable> tables = new ArrayList<CSVTable>();
+            ArrayList<CSVTable> tables = new ArrayList<>();
 
             while (result.next()){
                 tables.add(getCSVTable(result.getString("name")));
@@ -334,5 +334,101 @@ public class DatabaseHandler {
             System.err.println(e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * save CSV from importer to database
+     * @param importer
+     * @throws Exception
+     */
+    public void saveCSVTable(Importer importer) throws Exception{
+        Connection connection = null;
+        try
+        {
+            String sqlCreateTable;
+            String sqlMetaData;
+            String sqlData;
+
+            String name = importer.getName();
+            String uuid = "test";
+
+            DateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Date date = new Date();
+            String dateString = sdf.format(date);
+
+            ArrayList<String> columnNames = importer.getColumnNames();
+            int columnNamesSize = columnNames.size();
+            ArrayList<ArrayList<String>> data = importer.getData();
+
+            sqlCreateTable = "CREATE TABLE " + uuid + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, date VARCHAR";
+            for (int i = 0; i < columnNamesSize; i++){
+                sqlCreateTable += ", " + columnNames.get(i) + " VARCHAR";
+            }
+            sqlCreateTable += ");";
+
+            sqlMetaData = "INSERT INTO " + uuid + "(name, date) VALUES('" +name + "', '" + dateString + "');";
+
+            sqlData = "INSERT INTO " + uuid + "(";
+
+            for(int i = 0; i < columnNamesSize; i++){
+                if(i > 0){
+                    sqlData += ",";
+                }
+                sqlData += columnNames.get(i);
+            }
+
+            sqlData += ")";
+
+            sqlData += " VALUES";
+
+            for(int i = 0; i < data.size(); i++){
+                sqlData += "('";
+                for(int j = 0; j < columnNamesSize; j++){
+                    if(j > 0){
+                        sqlData += "','";
+                    }
+                    System.out.println("Line " + i + " " + j);
+                    sqlData += data.get(i).get(j);
+                }
+                sqlData += "')";
+                if(i < importer.getData().size() -1){
+                    sqlData += ",";
+                }
+                else{
+                    sqlData += ";";
+                }
+            }
+
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+            Statement statement = connection.createStatement();
+            statement.setQueryTimeout(60);  // set timeout to 60 sec.
+            statement.executeUpdate("drop table if exists " + uuid);
+            statement.executeUpdate(sqlCreateTable);
+            statement.executeUpdate(sqlMetaData);
+            statement.executeUpdate(sqlData);
+
+            connection.close();
+
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory", it probably means no database file is found
+            System.err.println(e.getMessage());
+        }
+    }
+
+    /**
+     * test method for class
+     * @param args
+     * @throws Exception
+     */
+    public static void main(String args[]) throws Exception
+    {
+        Importer importer = new Importer(new File("test.csv"), DelimiterType.SEMICOLON, "0", "Testing");
+        DatabaseHandler dbHandler = null;
+
+        dbHandler = new DatabaseHandler();
+        dbHandler.saveCSVTable(importer);
     }
 }
