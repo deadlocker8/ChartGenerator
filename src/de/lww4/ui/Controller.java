@@ -52,7 +52,7 @@ public class Controller
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
 	private DatabaseHandler database;
-	private DashboardHandler dashboardHandler;
+	public DashboardHandler dashboardHandler;
 	private Dashboard currentDashboard;
 
 	public void init(Stage stage)
@@ -173,7 +173,7 @@ public class Controller
 		}
 		catch(IOException io)
 		{
-			io.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
 		}		
 	}
 	
@@ -257,7 +257,31 @@ public class Controller
 	 */
 	public void selectDashboardMenuItem()
 	{
-		// TODO
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SelectDashboardGUI.fxml"));
+
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root, 500, 400));
+			newStage.setMinHeight(400);
+			newStage.setMinWidth(500);
+			newStage.initOwner(stage);
+			newStage.setTitle("Dashboard laden");
+			newStage.getScene().getStylesheets().add("de/lww4/main/style.css");
+
+			newStage.getIcons().add(icon);
+			SelectDashboardController newController = fxmlLoader.getController();
+			newController.init(newStage, this);
+
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(true);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}		
 	}
 
 	/**
@@ -473,7 +497,7 @@ public class Controller
 		}
 		catch(IOException e1)
 		{
-			e1.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e1));
 		}
 	}
 
@@ -515,6 +539,20 @@ public class Controller
 	{
 		this.currentDashboard = dashboard;
 		initDashboard();
+	}
+	
+	public void deleteDashboard(int ID)
+	{
+		try
+		{
+			database.deleteDashboard(ID);
+			dashboardHandler = new DashboardHandler(database.getAllDashboards());
+		}
+		catch(Exception e)
+		{
+			//ERRORHANDLING
+			e.printStackTrace();
+		}
 	}
 
 	/**

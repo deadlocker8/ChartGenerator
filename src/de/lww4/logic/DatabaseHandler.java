@@ -261,7 +261,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			statement.executeUpdate("DELETE FROM Dashboard WHERE ID = " + ID + ")");
+			statement.executeUpdate("DELETE FROM Dashboard WHERE ID=" + ID);
 			connection.close();
 		}
 		catch(SQLException e)
