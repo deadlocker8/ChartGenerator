@@ -137,6 +137,12 @@ public class Importer
     }
 
     /**
+     *
+     * @return name of the csv file
+     */
+    public String getName() {return name;}
+
+    /**
      * test method for class
      * @param args
      */
