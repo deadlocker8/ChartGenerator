@@ -1,4 +1,4 @@
-package de.lww4.ui;
+package de.lww4.ui.controller;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

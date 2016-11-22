@@ -3,8 +3,8 @@ package de.lww4.ui.cells;
 import java.util.Optional;
 
 import de.lww4.logic.Dashboard;
-import de.lww4.ui.Controller;
-import de.lww4.ui.SelectDashboardController;
+import de.lww4.ui.controller.Controller;
+import de.lww4.ui.controller.SelectDashboardController;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;

@@ -1,4 +1,4 @@
-package de.lww4.ui;
+package de.lww4.ui.controller;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -59,19 +59,11 @@ public class NewChartController
 		this.dashboard = dashboard;
 		this.position = position;
 		
-		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");
-		Label labelPlaceholder = new Label("Verfügbare Daten hier her ziehen, um ein Diagramm zu erstellen.");		
-		stackPaneChart.getChildren().add(labelPlaceholder);
-		stackPaneChart.widthProperty().addListener(new ChangeListener<Number>()
-		{
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-			{
-				labelPlaceholder.setStyle("-fx-font-size: " + (newValue.doubleValue() / 35));
-			}
-		});
+		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");		
+		
+		generatePreview();
 
-		toggleGroupChartTypes = new ToggleGroup();
+		toggleGroupChartTypes = new ToggleGroup();		
 
 		for(ChartType currentType : ChartType.values())
 		{
@@ -154,7 +146,16 @@ public class NewChartController
 	private void generatePreview()
 	{
 		stackPaneChart.getChildren().clear();
-		// TODO generate chart
+		Label labelPlaceholder = new Label("Verfügbare Daten hier her ziehen, um ein Diagramm zu erstellen.");		
+		stackPaneChart.getChildren().add(labelPlaceholder);
+		stackPaneChart.widthProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				labelPlaceholder.setStyle("-fx-font-size: " + (newValue.doubleValue() / 35));
+			}
+		});
 	}
 
 	public void save()

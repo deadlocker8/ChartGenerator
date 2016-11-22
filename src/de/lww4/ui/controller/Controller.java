@@ -1,4 +1,4 @@
-package de.lww4.ui;
+package de.lww4.ui.controller;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -177,7 +177,7 @@ public class Controller
 	{	
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("ImportCSVDialog.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ImportCSVDialog.fxml"));
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.initOwner(stage);
@@ -279,7 +279,7 @@ public class Controller
 	{
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SelectDashboardGUI.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/SelectDashboardGUI.fxml"));
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
@@ -532,7 +532,7 @@ public class Controller
 	{
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/NewChartGUI.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/NewChartGUI.fxml"));
 
 			Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
