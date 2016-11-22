@@ -55,7 +55,7 @@ public class Controller
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
-	private DatabaseHandler database;
+	public DatabaseHandler database;
 	public DashboardHandler dashboardHandler;
 	private Dashboard currentDashboard;
 
@@ -133,7 +133,9 @@ public class Controller
 			database = new DatabaseHandler();
 			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
 			//TODO select last opened dashboard
-			currentDashboard = new Dashboard("");		
+			currentDashboard = new Dashboard("");	
+			
+			System.out.println(database.getAllCSVTables());
 			
 			initDashboard();
 		}

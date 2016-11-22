@@ -27,6 +27,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import logger.LogLevel;
+import logger.Logger;
 
 public class NewChartController
 {
@@ -98,7 +100,17 @@ public class NewChartController
 	private void initTreeView()
 	{		
 		//DEBUG get from DB
-		ArrayList<CSVTable> tables = new ArrayList<>(); 		
+		ArrayList<CSVTable> tables;
+		try
+		{
+			tables = controller.database.getAllCSVTables();
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			tables = new ArrayList<>();
+		} 		
 		
 		TreeItem<String> rootItem;
 		if(tables.size() == 0)

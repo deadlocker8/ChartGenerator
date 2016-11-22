@@ -21,16 +21,24 @@ public class CSVTable
 	{
 		return uuid;
 	}
+	
 	public String getName()
 	{
 		return name;
 	}
+	
 	public String getCreationDate()
 	{
 		return creationDate;
 	}
+	
 	public ArrayList<String> getColumnNames()
 	{
 		return columnNames;
 	}
+
+	public String toString()
+	{
+		return "CSVTable [uuid=" + uuid + ", name=" + name + ", creationDate=" + creationDate + ", columnNames=" + columnNames + "]";
+	}	
 }

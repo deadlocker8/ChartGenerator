@@ -1,11 +1,12 @@
 package de.lww4.logic;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -316,15 +317,22 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// TODO: exclude label and settings tables
-			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
-			connection.close();
-
+//			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
+			ResultSet result = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
+			
 			ArrayList<CSVTable> tables = new ArrayList<CSVTable>();
 
 			while(result.next())
 			{
-				tables.add(getCSVTable(result.getString("name")));
+				String name = result.getString("TABLE_NAME");
+				//TODO add settings table
+				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence"))
+				{					
+					tables.add(getCSVTable(name));
+				}
 			}
+			
+			connection.close();
 
 			return tables;
 		}
@@ -349,17 +357,20 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("PRAGMA TABLE_INFO(" + uuid + ")");
-
-			while(result.next())
+			ResultSet result = statement.executeQuery("SELECT * FROM " + uuid);
+			ResultSetMetaData metadata = result.getMetaData();			
+			int columnCount = metadata.getColumnCount();
+			
+			for(int i = 1; i <= columnCount; i++)
 			{
-				if(!result.getString("name").equals("name") || !result.getString("name").equals("date"))
+				String columnName = metadata.getColumnName(i);
+				if(!columnName.equals("ID") && !columnName.equals("name") && !columnName.equals("date"))
 				{
-					columnNames.add(result.getString("name"));
+					columnNames.add(columnName);
 				}
 			}
-
-			result = statement.executeQuery("SELECT 'name', 'date' FROM " + uuid);
+			
+			result = statement.executeQuery("SELECT name, date FROM " + uuid);
 			name = result.getString("name");
 			date = result.getString("date");
 			connection.close();
