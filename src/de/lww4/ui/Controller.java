@@ -41,6 +41,10 @@ import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
 
+/**
+ * Main Controller Class
+ * @author Robert
+ */
 public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
@@ -52,9 +56,13 @@ public class Controller
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
 	private DatabaseHandler database;
-	private DashboardHandler dashboardHandler;
+	public DashboardHandler dashboardHandler;
 	private Dashboard currentDashboard;
 
+	/**
+	 * init method
+	 * @param stage Stage
+	 */
 	public void init(Stage stage)
 	{
 		this.stage = stage;
@@ -131,11 +139,23 @@ public class Controller
 		}
 		catch(Exception e)
 		{
-			//ERRORHANDLING
-			e.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Fehler");
+			alert.setHeaderText("");
+			alert.setContentText("Beim Laden der Datenbank ist ein Fehler aufgetreten.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
 		}	
 	}
 	
+	/**
+	 * initalizes label for dashboard title and gridPane
+	 */
 	private void initDashboard()
 	{		
 		if(currentDashboard.getName() == null || currentDashboard.getName().equals(""))
@@ -173,7 +193,7 @@ public class Controller
 		}
 		catch(IOException io)
 		{
-			io.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
 		}		
 	}
 	
@@ -216,7 +236,7 @@ public class Controller
 					Alert alert = new Alert(AlertType.WARNING);
 					alert.setTitle("Warnung");
 					alert.setHeaderText("");
-					alert.setContentText("Dieser Name wird bereits verwendet.");
+					alert.setContentText("Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.");
 					Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
 					dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
 					dialogStage2.getIcons().add(icon);
@@ -257,7 +277,31 @@ public class Controller
 	 */
 	public void selectDashboardMenuItem()
 	{
-		// TODO
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SelectDashboardGUI.fxml"));
+
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root, 500, 400));
+			newStage.setMinHeight(400);
+			newStage.setMinWidth(500);
+			newStage.initOwner(stage);
+			newStage.setTitle("Dashboard laden");
+			newStage.getScene().getStylesheets().add("de/lww4/main/style.css");
+
+			newStage.getIcons().add(icon);
+			SelectDashboardController newController = fxmlLoader.getController();
+			newController.init(newStage, this);
+
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(true);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}		
 	}
 
 	/**
@@ -291,15 +335,58 @@ public class Controller
 				dialogStage.centerOnScreen();
 				alert.showAndWait();
 
-				checkTextInputTitle(dialog);
-
-				//TODO edit DashboardName in class
-				//TODO check if name not already exists
-				//TODO if is "Unbenanntes Dashboard" then create new one and load
+				checkTextInputTitle(dialog);			
 			}
 			else
 			{
-				labelTitle.setText(result.get());
+				if(dashboardHandler.isNameAlreadyInUse(name))
+				{
+					Alert alert = new Alert(AlertType.WARNING);
+					alert.setTitle("Warnung");
+					alert.setHeaderText("");
+					alert.setContentText("Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.");
+					Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+					dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+					dialogStage.getIcons().add(icon);
+					dialogStage.centerOnScreen();
+					alert.showAndWait();
+					
+					checkTextInputTitle(dialog);
+				}
+				else
+				{
+					labelTitle.setText(result.get());
+					currentDashboard.setName(name);
+					
+					try
+					{						
+						// Dashboard is not existing in DB ("Unbenanntes Dashboard")
+						if(currentDashboard.getID() == -1)
+						{
+							database.saveDashboard(currentDashboard);
+						}
+						else
+						{
+							database.updateDashboard(currentDashboard);
+						}	
+						
+						dashboardHandler = new DashboardHandler(database.getAllDashboards());
+					}
+					catch(Exception e)
+					{
+						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+						
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setTitle("Fehler");
+						alert.setHeaderText("");
+						alert.setContentText("Beim Speichern ist ein Fehler aufgetreten.");
+						Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+						dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+						dialogStage.getIcons().add(icon);
+						dialogStage.centerOnScreen();
+						alert.showAndWait();
+					}
+				}			
 			}
 		}
 	}
@@ -473,7 +560,7 @@ public class Controller
 		}
 		catch(IOException e1)
 		{
-			e1.printStackTrace();
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e1));
 		}
 	}
 
@@ -515,6 +602,33 @@ public class Controller
 	{
 		this.currentDashboard = dashboard;
 		initDashboard();
+	}
+	
+	/**
+	 * deletes dashboard with given ID in database
+	 * @param ID int
+	 */
+	public void deleteDashboard(int ID)
+	{
+		try
+		{
+			database.deleteDashboard(ID);
+			dashboardHandler = new DashboardHandler(database.getAllDashboards());
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Fehler");
+			alert.setHeaderText("");
+			alert.setContentText("Beim Löschen ist ein Fehler aufgetreten.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
+		}
 	}
 
 	/**
