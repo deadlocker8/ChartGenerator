@@ -41,6 +41,10 @@ import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
 
+/**
+ * Main Controller Class
+ * @author Robert
+ */
 public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
@@ -55,6 +59,10 @@ public class Controller
 	public DashboardHandler dashboardHandler;
 	private Dashboard currentDashboard;
 
+	/**
+	 * init method
+	 * @param stage Stage
+	 */
 	public void init(Stage stage)
 	{
 		this.stage = stage;
@@ -145,6 +153,9 @@ public class Controller
 		}	
 	}
 	
+	/**
+	 * initalizes label for dashboard title and gridPane
+	 */
 	private void initDashboard()
 	{		
 		if(currentDashboard.getName() == null || currentDashboard.getName().equals(""))
@@ -593,6 +604,10 @@ public class Controller
 		initDashboard();
 	}
 	
+	/**
+	 * deletes dashboard with given ID in database
+	 * @param ID int
+	 */
 	public void deleteDashboard(int ID)
 	{
 		try
