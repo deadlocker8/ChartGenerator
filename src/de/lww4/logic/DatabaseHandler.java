@@ -361,7 +361,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT " + columnName + " FROM " + uuid);
+            ResultSet result = statement.executeQuery("SELECT " + columnName + " FROM '" + uuid + "'");
 			
 			ArrayList<Double> column = new ArrayList<Double>();
 
