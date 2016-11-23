@@ -35,9 +35,22 @@ public class DatabaseTests
         }
     }
 
+    private boolean containsAllMultiple(ArrayList<String> allColumns, String[] searchArray)
+    {
+        for(String searchName : searchArray)
+        {
+            if(!allColumns.contains(searchName))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Test
     public void CSVTableSavedInDataBaseTest()
     {
+        ArrayList<String> stringArrayList = new ArrayList<>();
         try
         {
             DatabaseHandler databaseHandler = new DatabaseHandler();
@@ -49,11 +62,7 @@ public class DatabaseTests
             {
                 for(String columnName : currentTable.getColumnNames())
                 {
-                    if(columnName.equals("TestData3"))
-                    {
-                        assertTrue(true);
-                        return;
-                    }
+                    stringArrayList.add(columnName);
                 }
             }
         }
@@ -61,6 +70,8 @@ public class DatabaseTests
         {
             assertTrue(false);
         }
-        assertTrue(false);
+
+        assertTrue(containsAllMultiple(stringArrayList,new String[]{"TestData0", "TestData1", "TestData2", "TestData3"}));
+
     }
 }
