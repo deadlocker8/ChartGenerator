@@ -93,8 +93,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			final CategoryAxis yAxis = new CategoryAxis();
 			final BarChart<Number, String> bc = new BarChart<Number, String>(xAxis, yAxis);
 			bc.setTitle(null);
-			xAxis.setLabel("");
-			xAxis.setTickLabelRotation(90);
+			xAxis.setLabel("");			
 			yAxis.setLabel("");
 
 			XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();
