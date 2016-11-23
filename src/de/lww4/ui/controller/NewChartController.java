@@ -53,7 +53,7 @@ public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private TextField textFieldTitle;
-	@FXML private ColorPicker colorPicker;
+	@FXML public ColorPicker colorPicker;
 	@FXML private TreeView<ColumnTreeItem> treeView;
 	@FXML private StackPane stackPaneChart;
 	@FXML private Button buttonSave;
@@ -98,7 +98,16 @@ public class NewChartController
 			@Override
 			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue)
 			{
-				generatePreview((ChartType)newValue.getUserData());
+				ChartType selectedType = (ChartType)newValue.getUserData();
+				generatePreview(selectedType);
+				if(selectedType.equals(ChartType.PIE))
+				{
+					colorPicker.setDisable(true);
+				}		
+				else
+				{
+					colorPicker.setDisable(false);
+				}
 			}
 		});
 
@@ -108,7 +117,10 @@ public class NewChartController
 			@Override
 			public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue)
 			{
-				updatePreview(null, null);
+				if(subController != null)
+				{
+					updatePreview(subController.getItemX(), subController.getItemY());
+				}
 			}
 		});
 
