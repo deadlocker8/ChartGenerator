@@ -57,7 +57,7 @@ public class Controller
 	private GridPane gridPane;
 	public DatabaseHandler database;
 	public DashboardHandler dashboardHandler;
-	private Dashboard currentDashboard;
+	public Dashboard currentDashboard;
 
 	/**
 	 * init method

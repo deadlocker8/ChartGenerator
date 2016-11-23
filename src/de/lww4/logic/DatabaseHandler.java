@@ -151,7 +151,7 @@ public class DatabaseHandler
 		}
 	}
 
-	public void saveChart(Chart chart) throws Exception
+	public int saveChart(Chart chart) throws Exception
 	{
 		Connection connection = null;
 		try
@@ -162,12 +162,17 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, type, title, x, y, uuid, color
 			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "')");
+			ResultSet result = statement.executeQuery("SELECT * FROM Chart");
+			result.last();
+			
 			connection.close();
+			return result.getInt("ID");			
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return -1;
 		}
 	}
 
@@ -288,14 +293,15 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT " + columnName + " FROM " + uuid);
-			connection.close();
-
+			
 			ArrayList<Double> column = new ArrayList<Double>();
 
 			while(result.next())
 			{
-				column.add(result.getDouble(0));
+				column.add(result.getDouble(1));
 			}
+			
+			connection.close();
 
 			return column;
 		}

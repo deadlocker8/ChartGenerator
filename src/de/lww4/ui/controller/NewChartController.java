@@ -6,9 +6,11 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import de.lww4.logic.CSVTable;
+import de.lww4.logic.Chart;
 import de.lww4.logic.ChartType;
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.Dashboard;
+import de.lww4.logic.DashboardHandler;
 import de.lww4.logic.DataFormats;
 import de.lww4.ui.cells.ColumnTreeCell;
 import de.lww4.ui.controller.subcontroller.SubControllerEditChart;
@@ -59,13 +61,14 @@ public class NewChartController
 	@FXML private HBox hboxChartTypes;
 
 	public Stage stage;
-	private Controller controller;
+	public Controller controller;
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private ToggleGroup toggleGroupChartTypes;
-	private boolean edit;
+	public boolean edit;
 	private Dashboard dashboard;
-	private int position;	
+	private int position;		
+	private SubControllerEditChart subController;
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
@@ -105,7 +108,7 @@ public class NewChartController
 			@Override
 			public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue)
 			{
-				updatePreview();
+				updatePreview(null, null);
 			}
 		});
 
@@ -113,9 +116,21 @@ public class NewChartController
 
 		if(edit)
 		{
-			// TODO get Chart from DB
-			// dashboard.getCells().get(position);
-			// TODO fill form with existing data
+			try
+			{
+				Chart chart = controller.database.getChart(dashboard.getCells().get(position));
+				textFieldTitle.setText(chart.getTitle());
+				colorPicker.setValue(chart.getColor());		
+				
+				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
+				ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
+				updatePreview(itemX, itemY);
+			}
+			catch(Exception e)
+			{
+				//ERRORHANDLING
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			}
 		}
 	}
 
@@ -176,8 +191,7 @@ public class NewChartController
 
 		try
 		{
-			FXMLLoader fxmlLoader = null;
-			SubControllerEditChart subController;
+			FXMLLoader fxmlLoader = null;			
 
 			switch(type)
 			{
@@ -206,9 +220,9 @@ public class NewChartController
 		}
 	}
 
-	private void updatePreview()
+	private void updatePreview(ColumnTreeItem itemX, ColumnTreeItem itemY)
 	{
-		// TODO
+		subController.updateChart(itemX, itemY);
 	}
 
 	public void save()
@@ -227,9 +241,52 @@ public class NewChartController
 			alert.showAndWait();
 			return;
 		}
-
-		// TODO null check other values
-		// TODO save to DB
+		
+		if(!subController.isFilled())
+		{
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Warnung");
+			alert.setHeaderText("");
+			alert.setContentText("Bitte wählen Sie Werte für das Diagramm aus.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
+			return;
+		}
+		
+		Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
+		try
+		{			
+			int chartID = controller.database.saveChart(chart);
+			if(chartID != -1)
+			{
+				dashboard.getCells().set(position, chartID);
+				controller.database.saveDashboard(dashboard);
+				controller.dashboardHandler = new DashboardHandler(controller.database.getAllDashboards());
+				controller.setDashboard(dashboard);
+				stage.close();
+			}
+			else
+			{
+				throw new Exception("Can't save Chart in DB");
+			}
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.DEBUG, Logger.exceptionToString(e));
+			
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Fehler");
+			alert.setHeaderText("");
+			alert.setContentText("Beim Speichern des Diagramms ist ein Fehler aufgetreten.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
+		}		
 	}
 
 	public void cancel()
