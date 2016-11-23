@@ -51,7 +51,7 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// create chart and dashboard table
 			statement.executeUpdate("PRAGMA foreign_keys = ON");
-			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR UNIQUE, color VARCHAR);");
+			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR, color VARCHAR);");
 			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
 			statement.executeUpdate("CREATE TABLE Settings (ID VARCHAR, value INT REFERENCES Dashboard(ID));");
 			statement.executeUpdate("INSERT INTO Settings(ID) VALUES('lastDashboard');");
@@ -555,7 +555,7 @@ public class DatabaseHandler
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
-			System.err.println(e.getMessage());
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 		}
 	}
 
