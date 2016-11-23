@@ -457,6 +457,7 @@ public class DatabaseHandler
 				}
 			}
 
+            System.out.println(sqlData);
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
@@ -465,6 +466,7 @@ public class DatabaseHandler
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
 			statement.executeUpdate(sqlData);
+			System.out.println(statement.getWarnings());
 
 			connection.close();
 

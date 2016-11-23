@@ -613,7 +613,7 @@ public class Controller
 	{
 		
 	}
-	
+
 	/** 
 	 * @param dashboard Dashboard
 	 */
@@ -664,4 +664,9 @@ public class Controller
 		dialogStage.centerOnScreen();
 		alert.showAndWait();
 	}
+
+    public DatabaseHandler getDatabase()
+    {
+        return database;
+    }
 }

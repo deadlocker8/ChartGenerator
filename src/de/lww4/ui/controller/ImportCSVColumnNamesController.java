@@ -15,6 +15,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import logger.LogLevel;
+import logger.Logger;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -24,18 +26,21 @@ public class ImportCSVColumnNamesController
 {
 	@FXML private TableView<ObservableList<StringProperty>> tableView;
 	@FXML private Button buttonCancel;
+	@FXML private Button buttonSave;
 
 	public Stage stage;
-	private Controller controller;
+	private Controller mainController;
 	public Image icon = new Image("de/lww4/resources/icon.png");
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private Importer importer;
 	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
+	private ImportCSVController importCSVController;
 
-	public void init(Stage stage, Controller controller, Importer importer)
+	public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
 	{
+	    this.importCSVController = importCSVController;
 		this.stage = stage;
-		this.controller = controller;
+		this.mainController = mainController;
 		this.importer = importer;
 		populateTableViewHead();
 		populateTableViewBody();
@@ -73,21 +78,6 @@ public class ImportCSVColumnNamesController
 				tableView.getColumns().add(generateColumn(DEFAULT_EMPTY_COLUMN_NAME, i));
 			}			
 		}
-		
-		buttonCancel.setOnMouseClicked(new EventHandler<MouseEvent>()
-		{
-			@Override
-			public void handle(MouseEvent event)
-			{
-				ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
-				for(TableColumn tableColumn : tableView.getColumns())
-				{
-					newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
-				}
-
-				importer.setColumnNamesArrayList(newColumnNamesArrayList);
-			}
-		});
 	}
 
 	private void populateTableViewBody()
@@ -119,7 +109,30 @@ public class ImportCSVColumnNamesController
 		}
 	}
 
-	public void cancel()
+    @FXML
+    private void save()
+    {
+        ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
+        for(TableColumn tableColumn : tableView.getColumns())
+        {
+            newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
+        }
+
+        importer.setColumnNamesArrayList(newColumnNamesArrayList);
+        try
+        {
+            mainController.getDatabase().saveCSVTable(importer);
+        }
+        catch (Exception e)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+        }
+
+        stage.close();
+    }
+
+	@FXML
+	private void cancel()
 	{
 		stage.close();
 	}

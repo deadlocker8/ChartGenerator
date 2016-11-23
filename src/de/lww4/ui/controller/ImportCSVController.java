@@ -98,7 +98,7 @@ public class ImportCSVController
 
             newStage.getIcons().add(icon);
             ImportCSVColumnNamesController newController = fxmlLoader.getController();
-            newController.init(newStage, mainController, importer);
+            newController.init(newStage, this, mainController, importer);
 
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.setResizable(true);
