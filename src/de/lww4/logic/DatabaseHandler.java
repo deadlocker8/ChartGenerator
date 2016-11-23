@@ -165,14 +165,14 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT * FROM Chart WHERE ID = " + ID);
-			connection.close();
+			ResultSet result = statement.executeQuery("SELECT * FROM Chart WHERE ID = " + ID);			
 
 			Color color = Color.web(result.getString("color"));
 			ChartType type = ChartType.valueOf(result.getInt("type"));
 
 			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color);
 
+			connection.close();
 			return chart;
 		}
 		catch(SQLException e)
@@ -199,11 +199,11 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, type, title, x, y, uuid, color
 			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "')");
-			ResultSet result = statement.executeQuery("SELECT * FROM Chart");
-			result.last();
-			
+			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Chart");
+						
+			int id = result.getInt(1);
 			connection.close();
-			return result.getInt("ID");			
+			return id;		
 		}
 		catch(SQLException e)
 		{
@@ -396,7 +396,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// TODO: exclude label and settings tables
+			// TODO: exclude label table
 //			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
 			ResultSet result = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
 			
@@ -406,7 +406,7 @@ public class DatabaseHandler
 			{
 				String name = result.getString("TABLE_NAME");
 				//TODO add settings table
-				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence"))
+				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
 				{					
 					tables.add(getCSVTable(name));
 				}
@@ -444,7 +444,7 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM " + uuid);
 			ResultSetMetaData metadata = result.getMetaData();			
-			int columnCount = metadata.getColumnCount();
+			int columnCount = metadata.getColumnCount();			
 			
 			for(int i = 1; i <= columnCount; i++)
 			{

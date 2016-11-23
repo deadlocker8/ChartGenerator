@@ -67,7 +67,7 @@ public class NewChartController
 	private ToggleGroup toggleGroupChartTypes;
 	public boolean edit;
 	private Dashboard dashboard;
-	private int position;		
+	private int position;
 	private SubControllerEditChart subController;
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
@@ -120,22 +120,22 @@ public class NewChartController
 			{
 				Chart chart = controller.database.getChart(dashboard.getCells().get(position));
 				textFieldTitle.setText(chart.getTitle());
-				colorPicker.setValue(chart.getColor());		
-				
+				colorPicker.setValue(chart.getColor());
+
 				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
 				ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
 			{
-				//ERRORHANDLING
+				// ERRORHANDLING
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			}
 		}
 	}
 
 	private void initTreeView()
-	{		
+	{
 		ArrayList<CSVTable> tables;
 		try
 		{
@@ -191,7 +191,7 @@ public class NewChartController
 
 		try
 		{
-			FXMLLoader fxmlLoader = null;			
+			FXMLLoader fxmlLoader = null;
 
 			switch(type)
 			{
@@ -241,7 +241,7 @@ public class NewChartController
 			alert.showAndWait();
 			return;
 		}
-		
+
 		if(!subController.isFilled())
 		{
 			Alert alert = new Alert(AlertType.WARNING);
@@ -255,28 +255,38 @@ public class NewChartController
 			alert.showAndWait();
 			return;
 		}
-		
+
 		Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
 		try
-		{			
-			int chartID = controller.database.saveChart(chart);
-			if(chartID != -1)
+		{
+			if(edit)
 			{
-				dashboard.getCells().set(position, chartID);
-				controller.database.saveDashboard(dashboard);
-				controller.dashboardHandler = new DashboardHandler(controller.database.getAllDashboards());
-				controller.setDashboard(dashboard);
-				stage.close();
+				controller.database.updateChart(chart);
 			}
 			else
 			{
-				throw new Exception("Can't save Chart in DB");
+				int chartID = controller.database.saveChart(chart);
+				if(chartID != -1)
+				{
+					dashboard.getCells().set(position, chartID);
+					controller.database.updateDashboard(dashboard);
+				}
+				else
+				{
+					throw new Exception("Can't save Chart in DB");
+				}				
 			}
-		}
-		catch(Exception e)
-		{
-			Logger.log(LogLevel.DEBUG, Logger.exceptionToString(e));
 			
+			controller.dashboardHandler = new DashboardHandler(controller.database.getAllDashboards());
+			controller.setDashboard(dashboard);
+			stage.close();
+		}
+		catch(
+
+		Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Fehler");
 			alert.setHeaderText("");
@@ -286,7 +296,7 @@ public class NewChartController
 			dialogStage.getIcons().add(icon);
 			dialogStage.centerOnScreen();
 			alert.showAndWait();
-		}		
+		}
 	}
 
 	public void cancel()
@@ -300,21 +310,21 @@ public class NewChartController
 			if(!row.isEmpty())
 			{
 				if(row.getItem().isDragable())
-				{				
+				{
 					Dragboard db = row.startDragAndDrop(TransferMode.ANY);
-	
+
 					SnapshotParameters snapshotParameters = new SnapshotParameters();
 					snapshotParameters.setFill(Color.TRANSPARENT);
-	
+
 					VBox vboxSeledtedItems = new VBox();
 					vboxSeledtedItems.setAlignment(Pos.TOP_LEFT);
-				
+
 					Label label = new Label(row.getItem().getText());
-					label.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");						
-					
+					label.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+
 					new Scene(label);
 					db.setDragView(label.snapshot(snapshotParameters, null));
-	
+
 					ClipboardContent content = new ClipboardContent();
 					content.put(DataFormats.DATAFORMAT_COLUMN_TREE_ITEM, row.getItem());
 					db.setContent(content);

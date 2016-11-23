@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import de.lww4.logic.Chart;
 import de.lww4.logic.Dashboard;
 import de.lww4.logic.DashboardHandler;
 import de.lww4.logic.DatabaseHandler;
@@ -319,7 +320,7 @@ public class Controller
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
 		Optional<String> result = dialog.showAndWait();
-		if(result.isPresent())
+		if(result.isPresent()) 
 		{
 			String name = result.get();
 			name.trim();
@@ -402,7 +403,7 @@ public class Controller
 		
 		for(int i = 0; i < 6; i++)
 		{
-			final int position = i;
+			final int position = i;		
 			
 			if(currentDashboard.getCells().size() > 0)
 			{
@@ -415,6 +416,20 @@ public class Controller
 					empty = false;
 				}
 			}
+			
+			Chart chart = null;
+			if(!empty)
+			{
+				try
+				{
+					chart = database.getChart(currentDashboard.getCells().get(i));
+				}
+				catch(Exception e)
+				{
+					//ERRORHANDLINGs
+					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				}
+			}		
 
 			AnchorPane currentAnchorPane = new AnchorPane();
 			currentAnchorPane.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
@@ -423,7 +438,16 @@ public class Controller
 			hbox.setSpacing(5);
 			hbox.setAlignment(Pos.CENTER);
 
-			Label labelChartTitle = new Label("Diagramm " + (i + 1));
+			Label labelChartTitle = new Label();
+			if(chart == null)
+			{
+				labelChartTitle.setText("Diagramm " + (i + 1));
+			}
+			else
+			{			
+				labelChartTitle.setText(chart.getTitle());
+			}		
+			
 			labelChartTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 18;");
 			labelChartTitle.setAlignment(Pos.CENTER);
 			labelChartTitle.setMaxWidth(Double.MAX_VALUE);
@@ -504,12 +528,16 @@ public class Controller
 				{
 					@Override
 					public void handle(ActionEvent event)
-					{
+					{						
 						addChart(position, false);
 					}
 				});
 
 				currentStackPane.getChildren().add(buttonAdd);
+			}
+			else
+			{
+				//TODO load chart into stackPane
 			}
 
 			if(i < 3)
@@ -530,6 +558,20 @@ public class Controller
 	 */
 	private void addChart(int position, boolean edit)
 	{
+		if(currentDashboard.getName().equals(""))
+		{
+			Alert alert = new Alert(AlertType.WARNING);
+			alert.setTitle("Warnung");
+			alert.setHeaderText("");
+			alert.setContentText("Bitte geben Sie zuerst einen Namen für das Dashboard an.");
+			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+			dialogStage.getIcons().add(icon);
+			dialogStage.centerOnScreen();
+			alert.showAndWait();
+			return;
+		}
+		
 		try
 		{
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/NewChartGUI.fxml"));
@@ -545,15 +587,13 @@ public class Controller
 			NewChartController newController = fxmlLoader.getController();
 			if(edit)
 			{
-				newStage.setTitle("Diagramm bearbeiten");
-				newController.init(newStage, this, edit, currentDashboard, position);
+				newStage.setTitle("Diagramm bearbeiten");				
 			}
 			else
 			{
-				newStage.setTitle("Neues Diagramm");
-				newController.init(newStage, this, edit, null, -1);
+				newStage.setTitle("Neues Diagramm");				
 			}
-
+			newController.init(newStage, this, edit, currentDashboard, position);
 			newStage.initModality(Modality.APPLICATION_MODAL);
 			newStage.setResizable(true);
 			newStage.show();
@@ -585,7 +625,7 @@ public class Controller
 			currentDashboard.getCells().set(position, -1);
 			try
 			{
-				database.saveDashboard(currentDashboard);
+				database.updateDashboard(currentDashboard);
 				dashboardHandler = new DashboardHandler(database.getAllDashboards());
 			}
 			catch(Exception e)
