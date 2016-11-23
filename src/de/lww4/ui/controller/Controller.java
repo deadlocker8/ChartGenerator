@@ -187,7 +187,7 @@ public class Controller
 			newStage.getIcons().add(icon);
 			newStage.setResizable(false);
 			ImportCSVController importCSVController = fxmlLoader.getController();
-			importCSVController.init(newStage, icon);
+			importCSVController.init(newStage, icon, this);
 			newStage.show();
 
 		}
