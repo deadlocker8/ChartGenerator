@@ -442,7 +442,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT * FROM " + uuid);
+			ResultSet result = statement.executeQuery("SELECT * FROM '" + uuid + "'");
 			ResultSetMetaData metadata = result.getMetaData();			
 			int columnCount = metadata.getColumnCount();			
 			
@@ -455,7 +455,7 @@ public class DatabaseHandler
 				}
 			}
 			
-			result = statement.executeQuery("SELECT name, date FROM " + uuid);
+			result = statement.executeQuery("SELECT name, date FROM '" + uuid + "'");
 			name = result.getString("name");
 			date = result.getString("date");
 			connection.close();
@@ -496,16 +496,16 @@ public class DatabaseHandler
 			int columnNamesSize = columnNames.size();
 			ArrayList<ArrayList<String>> data = importer.getData();
 
-			sqlCreateTable = "CREATE TABLE " + uuid + "(ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, date VARCHAR";
+			sqlCreateTable = "CREATE TABLE '" + uuid + "'(ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, date VARCHAR";
 			for(int i = 0; i < columnNamesSize; i++)
 			{
 				sqlCreateTable += ", " + columnNames.get(i) + " VARCHAR";
 			}
 			sqlCreateTable += ");";
 
-			sqlMetaData = "INSERT INTO " + uuid + "(name, date) VALUES('" + name + "', '" + dateString + "');";
+			sqlMetaData = "INSERT INTO '" + uuid + "' (name, date) VALUES('" + name + "', '" + dateString + "');";
 
-			sqlData = "INSERT INTO " + uuid + "(";
+			sqlData = "INSERT INTO '" + uuid + "'(";
 
 			for(int i = 0; i < columnNamesSize; i++)
 			{
@@ -542,7 +542,6 @@ public class DatabaseHandler
 				}
 			}
 
-            System.out.println(sqlData);
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
@@ -550,7 +549,6 @@ public class DatabaseHandler
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
 			statement.executeUpdate(sqlData);
-			System.out.println(statement.getWarnings());
 
 			connection.close();
 		}
