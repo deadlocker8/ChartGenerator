@@ -44,8 +44,9 @@ public class DatabaseHandler
 			// create chart and dashboard table
 			statement.executeUpdate("PRAGMA foreign_keys = ON");
 			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR UNIQUE, color VARCHAR);");
-			statement.executeUpdate(
-					"CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
+			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
+			statement.executeUpdate("CREATE TABLE Settings (ID VARCHAR, value INT REFERENCES Dashboard(ID));");
+			statement.executeUpdate("INSERT INTO Settings(ID) VALUES('lastDashboard');");
 			connection.close();
 		}
 		catch(SQLException e)
@@ -461,13 +462,11 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(60); // set timeout to 60 sec.
-			statement.executeUpdate("drop table if exists " + uuid);
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
 			statement.executeUpdate(sqlData);
 
 			connection.close();
-
 		}
 		catch(SQLException e)
 		{
@@ -476,18 +475,43 @@ public class DatabaseHandler
 		}
 	}
 
-	/**
-	 * test method for class
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String args[]) throws Exception
-	{
-		Importer importer = new Importer(new File("test.csv"), DelimiterType.SEMICOLON, "0", "Testing");
-		DatabaseHandler dbHandler = null;
+	public void updateLastDashboard(int lastID) throws Exception{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30); // set timeout to 30 sec.
+			// id, type, title, x, y, uuid, color
+			statement.executeUpdate("UPDATE Settings SET value = " + lastID + " WHERE ID = 'lastDashboard'");
+			connection.close();
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+	}
 
-		dbHandler = new DatabaseHandler();
-		dbHandler.saveCSVTable(importer);
+	public int getLastDashboard() throws Exception{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30); // set timeout to 30 sec.
+			ResultSet result = statement.executeQuery("SELECT value FROM Settings WHERE ID = 'lastDashboard'");
+			connection.close();
+
+			return result.getInt("value");
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return 0;
+		}
 	}
 }
