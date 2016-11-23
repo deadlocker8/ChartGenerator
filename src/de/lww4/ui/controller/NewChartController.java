@@ -142,9 +142,19 @@ public class NewChartController
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
-			{
-				// ERRORHANDLING
+			{				
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Fehler");
+				alert.setHeaderText("");
+				alert.setContentText("Beim Laden der Datenist ein Fehler aufgetreten.");
+				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage.getIcons().add(icon);
+				dialogStage.centerOnScreen();
+				alert.showAndWait();
+				return;
 			}
 		}
 	}
