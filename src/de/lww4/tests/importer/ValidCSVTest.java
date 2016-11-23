@@ -41,7 +41,7 @@ public class ValidCSVTest
     public void FillValueTest()
     {
         assertTrue(importer.getData().get(14).get(1).equals(fillValue));
-        assertTrue(importer.getData().get(0).get(importer.getLongestRow()-1).equals(fillValue));
+        assertTrue(importer.getData().get(0).get(importer.getLongestRowSize()-1).equals(fillValue));
     }
 
 }

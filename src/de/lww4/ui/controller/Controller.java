@@ -188,7 +188,7 @@ public class Controller
 			newStage.getIcons().add(icon);
 			newStage.setResizable(false);
 			ImportCSVController importCSVController = fxmlLoader.getController();
-			importCSVController.init(newStage, icon);
+			importCSVController.init(newStage, icon, this);
 			newStage.show();
 
 		}
@@ -653,7 +653,7 @@ public class Controller
 	{
 		
 	}
-	
+
 	/** 
 	 * @param dashboard Dashboard
 	 */
@@ -704,4 +704,9 @@ public class Controller
 		dialogStage.centerOnScreen();
 		alert.showAndWait();
 	}
+
+    public DatabaseHandler getDatabase()
+    {
+        return database;
+    }
 }

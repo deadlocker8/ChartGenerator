@@ -84,7 +84,7 @@ public class Importer
         }
     }
 
-    public int getLongestRow()
+    public int getLongestRowSize()
     {
         int length = 0;
         for(ArrayList<String> row : data)
@@ -99,7 +99,7 @@ public class Importer
 
     private void fillEmptyCells()
     {
-        int longestRow = getLongestRow();
+        int longestRow = getLongestRowSize();
         for(int i=0; i < data.size(); i++)
         {
             ArrayList<String> row = data.get(i);
@@ -134,6 +134,11 @@ public class Importer
     public ArrayList<String> getColumnNames()
     {
         return columnNamesArrayList;
+    }
+
+    public void setColumnNamesArrayList(ArrayList<String> columnNamesArrayList)
+    {
+        this.columnNamesArrayList = columnNamesArrayList;
     }
 
     /**
