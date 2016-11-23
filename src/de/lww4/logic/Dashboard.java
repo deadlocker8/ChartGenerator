@@ -13,6 +13,10 @@ public class Dashboard
 		this.ID = -1;
 		this.name = name;
 		cells = new ArrayList<Integer>();
+		for(int i = 0; i < 6; i++)
+		{
+			cells.add(-1);
+		}	
 	}
 
 	public Dashboard(int ID, String name, int cell1, int cell2, int cell3, int cell4, int cell5, int cell6)

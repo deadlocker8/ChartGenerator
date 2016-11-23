@@ -22,6 +22,10 @@ public class DatabaseHandler
 {
 	private String path = PathUtils.getOSindependentPath() + "ChartGenerator/db.sqlite";
 
+    /**
+     * checks if the sqlite file is there and creates a new one if needed
+     * @throws Exception
+     */
 	public DatabaseHandler() throws Exception
 	{
 		File db = new File(path);
@@ -32,6 +36,10 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * creates the db and all tables
+     * @throws Exception
+     */
 	private void createDB() throws Exception
 	{
 		Connection connection = null;
@@ -43,9 +51,10 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// create chart and dashboard table
 			statement.executeUpdate("PRAGMA foreign_keys = ON");
-			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR UNIQUE, color VARCHAR);");
-			statement.executeUpdate(
-					"CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
+			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR, color VARCHAR);");
+			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
+			statement.executeUpdate("CREATE TABLE Settings (ID VARCHAR, value INT REFERENCES Dashboard(ID));");
+			statement.executeUpdate("INSERT INTO Settings(ID) VALUES('lastDashboard');");
 			connection.close();
 		}
 		catch(SQLException e)
@@ -55,6 +64,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * returns all the dashboards in the table
+     * @return
+     * @throws Exception
+     */
 	public ArrayList<Dashboard> getAllDashboards() throws Exception
 	{
 		Connection connection = null;
@@ -80,6 +94,12 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * takes the result set and creates a Dashboard object for each row
+     * @param result
+     * @return
+     * @throws Exception
+     */
 	private ArrayList<Dashboard> extractDashboards(ResultSet result) throws Exception
 	{
 		ArrayList<Dashboard> dashboards = new ArrayList<Dashboard>();
@@ -100,6 +120,12 @@ public class DatabaseHandler
 		return dashboards;
 	}
 
+    /**
+     * get data for one dashboard
+     * @param ID
+     * @return
+     * @throws Exception
+     */
 	public Dashboard getDashboard(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -124,6 +150,12 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get data for one chart
+     * @param ID
+     * @return
+     * @throws Exception
+     */
 	public Chart getChart(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -133,14 +165,14 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT * FROM Chart WHERE ID = " + ID);
-			connection.close();
+			ResultSet result = statement.executeQuery("SELECT * FROM Chart WHERE ID = " + ID);			
 
 			Color color = Color.web(result.getString("color"));
 			ChartType type = ChartType.valueOf(result.getInt("type"));
 
 			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color);
 
+			connection.close();
 			return chart;
 		}
 		catch(SQLException e)
@@ -151,7 +183,12 @@ public class DatabaseHandler
 		}
 	}
 
-	public void saveChart(Chart chart) throws Exception
+    /**
+     * save new chart in the table
+     * @param chart
+     * @throws Exception
+     */
+	public int saveChart(Chart chart) throws Exception
 	{
 		Connection connection = null;
 		try
@@ -162,15 +199,25 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, type, title, x, y, uuid, color
 			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "')");
+			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Chart");
+						
+			int id = result.getInt(1);
 			connection.close();
+			return id;		
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return -1;
 		}
 	}
 
+    /**
+     * save new Dashboard in the table
+     * @param dashboard
+     * @throws Exception
+     */
 	public void saveDashboard(Dashboard dashboard) throws Exception
 	{
 		Connection connection = null;
@@ -199,6 +246,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * update all data of a chart
+     * @param chart
+     * @throws Exception
+     */
 	public void updateChart(Chart chart) throws Exception
 	{
 		Connection connection = null;
@@ -219,6 +271,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * update the cells of a dashboard
+     * @param dashboard
+     * @throws Exception
+     */
 	public void updateDashboard(Dashboard dashboard) throws Exception
 	{
 		Connection connection = null;
@@ -240,6 +297,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * delete a chart from the table
+     * @param ID
+     * @throws Exception
+     */
 	public void deleteChartFromDB(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -259,6 +321,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * delete a dashboard from the table
+     * @param ID
+     * @throws Exception
+     */
 	public void deleteDashboard(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -278,6 +345,13 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get the data from one column in a csv table
+     * @param uuid
+     * @param columnName
+     * @return
+     * @throws Exception
+     */
 	public ArrayList<Double> getCSVColumn(String uuid, String columnName) throws Exception
 	{
 		Connection connection = null;
@@ -288,14 +362,15 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT " + columnName + " FROM " + uuid);
-			connection.close();
-
+			
 			ArrayList<Double> column = new ArrayList<Double>();
 
 			while(result.next())
 			{
-				column.add(result.getDouble(0));
+				column.add(result.getDouble(1));
 			}
+			
+			connection.close();
 
 			return column;
 		}
@@ -307,6 +382,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get all saved csv tables in the DB
+     * @return
+     * @throws Exception
+     */
 	public ArrayList<CSVTable> getAllCSVTables() throws Exception
 	{
 		Connection connection = null;
@@ -316,7 +396,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// TODO: exclude label and settings tables
+			// TODO: exclude label table
 //			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
 			ResultSet result = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
 			
@@ -326,7 +406,7 @@ public class DatabaseHandler
 			{
 				String name = result.getString("TABLE_NAME");
 				//TODO add settings table
-				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence"))
+				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
 				{					
 					tables.add(getCSVTable(name));
 				}
@@ -344,6 +424,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get information for one CSV Table and return a CSVTable object
+     * @param uuid
+     * @return
+     */
 	private CSVTable getCSVTable(String uuid)
 	{
 		Connection connection = null;
@@ -359,7 +444,7 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM " + uuid);
 			ResultSetMetaData metadata = result.getMetaData();			
-			int columnCount = metadata.getColumnCount();
+			int columnCount = metadata.getColumnCount();			
 			
 			for(int i = 1; i <= columnCount; i++)
 			{
@@ -461,33 +546,66 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(60); // set timeout to 60 sec.
-			statement.executeUpdate("drop table if exists " + uuid);
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
 			statement.executeUpdate(sqlData);
 
 			connection.close();
-
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
-			System.err.println(e.getMessage());
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 		}
 	}
 
-	/**
-	 * test method for class
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(String args[]) throws Exception
-	{
-		Importer importer = new Importer(new File("test.csv"), DelimiterType.SEMICOLON, "0", "Testing");
-		DatabaseHandler dbHandler = null;
+    /**
+     * update the id for the last open dashboard
+     * @param lastID
+     * @throws Exception
+     */
+	public void updateLastDashboard(int lastID) throws Exception{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30); // set timeout to 30 sec.
+			// id, type, title, x, y, uuid, color
+			statement.executeUpdate("UPDATE Settings SET value = " + lastID + " WHERE ID = 'lastDashboard'");
+			connection.close();
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+	}
 
-		dbHandler = new DatabaseHandler();
-		dbHandler.saveCSVTable(importer);
+    /**
+     * get the id of the last open dashboard
+     * @return
+     * @throws Exception
+     */
+	public int getLastDashboard() throws Exception{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.setQueryTimeout(30); // set timeout to 30 sec.
+			ResultSet result = statement.executeQuery("SELECT value FROM Settings WHERE ID = 'lastDashboard'");
+			connection.close();
+
+			return result.getInt("value");
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return 0;
+		}
 	}
 }
