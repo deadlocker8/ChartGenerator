@@ -1,14 +1,19 @@
 package de.lww4.ui.controller;
 
 import de.lww4.logic.Importer;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -40,8 +45,18 @@ public class ImportCSVColumnNamesController
         for(String columnName : importer.getColumnNames())
         {
             TextField textField = new TextField(columnName);
-            TableColumn column = new TableColumn();
+            TableColumn<String, String> column = new TableColumn<String, String>();
+            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String,String>, ObservableValue<String>>()
+			{				
+				@Override
+				public ObservableValue<String> call(CellDataFeatures<String, String> param)
+				{					
+					return new SimpleStringProperty(param.getValue());
+				}
+			});            		
+            		
             column.setGraphic(textField);
+            column.setSortable(false);
             tableView.getColumns().add(column);
         }
 
@@ -49,8 +64,17 @@ public class ImportCSVColumnNamesController
         while (tableView.getColumns().size() < importer.getLongestRowSize())
         {
             TextField textField = new TextField(DEFAULT_EMPTY_COLUMN_NAME);
-            TableColumn column = new TableColumn();
+            TableColumn<String, String> column = new TableColumn<String, String>();
+            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String,String>, ObservableValue<String>>()
+			{
+				@Override
+				public ObservableValue<String> call(CellDataFeatures<String, String> param)
+				{					
+					return new SimpleStringProperty(param.getValue());
+				}
+			});      
             column.setGraphic(textField);
+            column.setSortable(false);
             tableView.getColumns().add(column);
         }
 
@@ -77,8 +101,18 @@ public class ImportCSVColumnNamesController
         {
             row.addAll(rowData);
         }
-        tableView.setItems(row);
-        tableView.refresh();
+        tableView.setItems(row);  
+        
+        tableView.widthProperty().addListener(new ChangeListener<Number>()
+		{
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+			{
+				double width = newValue.doubleValue();
+				columnFileName.setPrefWidth(width * 0.83 - 3);
+				columnFileLength.setPrefWidth(width * 0.17 - 3);
+			}
+		});
     }
 
 	public void cancel()
