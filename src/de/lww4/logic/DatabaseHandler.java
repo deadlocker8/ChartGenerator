@@ -22,6 +22,10 @@ public class DatabaseHandler
 {
 	private String path = PathUtils.getOSindependentPath() + "ChartGenerator/db.sqlite";
 
+    /**
+     * checks if the sqlite file is there and creates a new one if needed
+     * @throws Exception
+     */
 	public DatabaseHandler() throws Exception
 	{
 		File db = new File(path);
@@ -32,6 +36,10 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * creates the db and all tables
+     * @throws Exception
+     */
 	private void createDB() throws Exception
 	{
 		Connection connection = null;
@@ -56,6 +64,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * returns all the dashboards in the table
+     * @return
+     * @throws Exception
+     */
 	public ArrayList<Dashboard> getAllDashboards() throws Exception
 	{
 		Connection connection = null;
@@ -81,6 +94,12 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * takes the result set and creates a Dashboard object for each row
+     * @param result
+     * @return
+     * @throws Exception
+     */
 	private ArrayList<Dashboard> extractDashboards(ResultSet result) throws Exception
 	{
 		ArrayList<Dashboard> dashboards = new ArrayList<Dashboard>();
@@ -101,6 +120,12 @@ public class DatabaseHandler
 		return dashboards;
 	}
 
+    /**
+     * get data for one dashboard
+     * @param ID
+     * @return
+     * @throws Exception
+     */
 	public Dashboard getDashboard(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -125,6 +150,12 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get data for one chart
+     * @param ID
+     * @return
+     * @throws Exception
+     */
 	public Chart getChart(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -152,6 +183,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * save new chart in the table
+     * @param chart
+     * @throws Exception
+     */
 	public void saveChart(Chart chart) throws Exception
 	{
 		Connection connection = null;
@@ -172,6 +208,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * save new Dashboard in the table
+     * @param dashboard
+     * @throws Exception
+     */
 	public void saveDashboard(Dashboard dashboard) throws Exception
 	{
 		Connection connection = null;
@@ -200,6 +241,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * update all data of a chart
+     * @param chart
+     * @throws Exception
+     */
 	public void updateChart(Chart chart) throws Exception
 	{
 		Connection connection = null;
@@ -220,6 +266,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * update the cells of a dashboard
+     * @param dashboard
+     * @throws Exception
+     */
 	public void updateDashboard(Dashboard dashboard) throws Exception
 	{
 		Connection connection = null;
@@ -241,6 +292,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * delete a chart from the table
+     * @param ID
+     * @throws Exception
+     */
 	public void deleteChartFromDB(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -260,6 +316,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * delete a dashboard from the table
+     * @param ID
+     * @throws Exception
+     */
 	public void deleteDashboard(int ID) throws Exception
 	{
 		Connection connection = null;
@@ -279,6 +340,13 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get the data from one column in a csv table
+     * @param uuid
+     * @param columnName
+     * @return
+     * @throws Exception
+     */
 	public ArrayList<Double> getCSVColumn(String uuid, String columnName) throws Exception
 	{
 		Connection connection = null;
@@ -308,6 +376,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get all saved csv tables in the DB
+     * @return
+     * @throws Exception
+     */
 	public ArrayList<CSVTable> getAllCSVTables() throws Exception
 	{
 		Connection connection = null;
@@ -345,6 +418,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get information for one CSV Table and return a CSVTable object
+     * @param uuid
+     * @return
+     */
 	private CSVTable getCSVTable(String uuid)
 	{
 		Connection connection = null;
@@ -475,6 +553,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * update the id for the last open dashboard
+     * @param lastID
+     * @throws Exception
+     */
 	public void updateLastDashboard(int lastID) throws Exception{
 		Connection connection = null;
 		try
@@ -494,6 +577,11 @@ public class DatabaseHandler
 		}
 	}
 
+    /**
+     * get the id of the last open dashboard
+     * @return
+     * @throws Exception
+     */
 	public int getLastDashboard() throws Exception{
 		Connection connection = null;
 		try
