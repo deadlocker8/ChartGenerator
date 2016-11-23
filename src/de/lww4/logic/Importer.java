@@ -84,7 +84,7 @@ public class Importer
         }
     }
 
-    private int getLongestRow()
+    public int getLongestRow()
     {
         int length = 0;
         for(ArrayList<String> row : data)
