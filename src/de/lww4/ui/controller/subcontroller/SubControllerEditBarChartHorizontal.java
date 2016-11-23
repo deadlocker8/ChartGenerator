@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
+import de.lww4.logic.Utils;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -15,6 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logger.LogLevel;
 import logger.Logger;
@@ -23,7 +26,7 @@ import logger.Logger;
 public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 {
 	@FXML private Label labelX;
-	@FXML private Label labelY;	
+	@FXML private Label labelY;
 
 	public void init(NewChartController newChartController)
 	{
@@ -76,25 +79,24 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 
 			event.consume();
 		});
-	}	
-	
-	@Override	
+	}
+
+	@Override
 	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY)
 	{
 		if(itemX != null && itemY != null)
 		{
 			this.itemX = itemX;
 			this.itemY = itemY;
-			
+
 			labelX.setText(itemX.getText());
-			labelY.setText(itemY.getText());			
-			
+			labelY.setText(itemY.getText());
+
 			final NumberAxis xAxis = new NumberAxis();
 			final CategoryAxis yAxis = new CategoryAxis();
-			final BarChart<Number, String> bc = new BarChart<Number, String>(xAxis, yAxis);
-			bc.setTitle(null);
+			final BarChart<Number, String> chart = new BarChart<Number, String>(xAxis, yAxis);
+			chart.setTitle(null);
 			xAxis.setLabel("");
-			xAxis.setTickLabelRotation(90);
 			yAxis.setLabel("");
 
 			XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();
@@ -107,11 +109,17 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 				{
 					series.getData().add(new XYChart.Data<Number, String>(xValues.get(i), String.valueOf(yValues.get(i))));
 				}
-				bc.getData().addAll(series);
-				bc.setLegendVisible(false);
+				chart.getData().addAll(series);
+				chart.setLegendVisible(false);
+				
+				Color color = newChartController.colorPicker.getValue();				
+				for(Node n : chart.lookupAll(".default-color0.chart-bar"))
+				{
+					n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");
+				}
 
 				stackPaneChart.getChildren().clear();
-				stackPaneChart.getChildren().add(bc);
+				stackPaneChart.getChildren().add(chart);
 			}
 			catch(Exception e)
 			{
@@ -129,7 +137,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean isFilled()
 	{

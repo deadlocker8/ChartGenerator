@@ -53,7 +53,7 @@ public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private TextField textFieldTitle;
-	@FXML private ColorPicker colorPicker;
+	@FXML public ColorPicker colorPicker;
 	@FXML private TreeView<ColumnTreeItem> treeView;
 	@FXML private StackPane stackPaneChart;
 	@FXML private Button buttonSave;
@@ -98,7 +98,16 @@ public class NewChartController
 			@Override
 			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue)
 			{
-				generatePreview((ChartType)newValue.getUserData());
+				ChartType selectedType = (ChartType)newValue.getUserData();
+				generatePreview(selectedType);
+				if(selectedType.equals(ChartType.PIE))
+				{
+					colorPicker.setDisable(true);
+				}		
+				else
+				{
+					colorPicker.setDisable(false);
+				}
 			}
 		});
 
@@ -108,7 +117,10 @@ public class NewChartController
 			@Override
 			public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue)
 			{
-				updatePreview(null, null);
+				if(subController != null)
+				{
+					updatePreview(subController.getItemX(), subController.getItemY());
+				}
 			}
 		});
 
@@ -121,15 +133,28 @@ public class NewChartController
 				Chart chart = controller.database.getChart(dashboard.getCells().get(position));
 				textFieldTitle.setText(chart.getTitle());
 				colorPicker.setValue(chart.getColor());
+			
+				toggleGroupChartTypes.getToggles().get(chart.getType().getID()).setSelected(true);
 
 				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
 				ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
+				generatePreview(chart.getType());
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
-			{
-				// ERRORHANDLING
+			{				
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("Fehler");
+				alert.setHeaderText("");
+				alert.setContentText("Beim Laden der Datenist ein Fehler aufgetreten.");
+				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+				dialogStage.getIcons().add(icon);
+				dialogStage.centerOnScreen();
+				alert.showAndWait();
+				return;
 			}
 		}
 	}
