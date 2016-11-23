@@ -608,4 +608,9 @@ public class DatabaseHandler
 			return 0;
 		}
 	}
+
+    public String getPath()
+    {
+        return path;
+    }
 }
