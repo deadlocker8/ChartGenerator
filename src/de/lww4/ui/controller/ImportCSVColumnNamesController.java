@@ -2,6 +2,7 @@ package de.lww4.ui.controller;
 
 import de.lww4.logic.Importer;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -21,92 +22,102 @@ import java.util.ResourceBundle;
 
 public class ImportCSVColumnNamesController
 {
-	@FXML private TableView<String> tableView;
+	@FXML private TableView<ObservableList<StringProperty>> tableView;
 	@FXML private Button buttonCancel;
 
 	public Stage stage;
 	private Controller controller;
 	public Image icon = new Image("de/lww4/resources/icon.png");
-	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);	
-    private Importer importer;
-    private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
+	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
+	private Importer importer;
+	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
 
 	public void init(Stage stage, Controller controller, Importer importer)
 	{
-		this.stage = stage;		
+		this.stage = stage;
 		this.controller = controller;
 		this.importer = importer;
 		populateTableViewHead();
 		populateTableViewBody();
-	}	
+	}
+
+	private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
+	{
+		TextField textField = new TextField(name);
+		TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<StringProperty>, String>, ObservableValue<String>>()
+		{
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<ObservableList<StringProperty>, String> cellDataFeatures)
+			{
+				return cellDataFeatures.getValue().get(position);
+			}
+		});
+
+		column.setGraphic(textField);
+		column.setSortable(false);
+
+		return column;
+	}
 
 	private void populateTableViewHead()
-    {
-        for(String columnName : importer.getColumnNames())
-        {
-            TextField textField = new TextField(columnName);
-            TableColumn<String, String> column = new TableColumn<String, String>();
-            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String,String>, ObservableValue<String>>()
-			{				
-				@Override
-				public ObservableValue<String> call(CellDataFeatures<String, String> param)
-				{					
-					return new SimpleStringProperty(param.getValue());
-				}
-			});            		
-            		
-            column.setGraphic(textField);
-            column.setSortable(false);
-            tableView.getColumns().add(column);
-        }
-
-        //generate more columns
-        while (tableView.getColumns().size() < importer.getLongestRowSize())
-        {
-            TextField textField = new TextField(DEFAULT_EMPTY_COLUMN_NAME);
-            TableColumn<String, String> column = new TableColumn<String, String>();
-            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<String,String>, ObservableValue<String>>()
+	{
+		for(int i = 0; i < importer.getLongestRowSize(); i++)
+		{
+			if(i < importer.getColumnNames().size() - 1)
 			{
-				@Override
-				public ObservableValue<String> call(CellDataFeatures<String, String> param)
-				{					
-					return new SimpleStringProperty(param.getValue());
+				tableView.getColumns().add(generateColumn(importer.getColumnNames().get(i), i));
+			}
+			else
+			{
+				tableView.getColumns().add(generateColumn(DEFAULT_EMPTY_COLUMN_NAME, i));
+			}			
+		}
+		
+		buttonCancel.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+			@Override
+			public void handle(MouseEvent event)
+			{
+				ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
+				for(TableColumn tableColumn : tableView.getColumns())
+				{
+					newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
 				}
-			});      
-            column.setGraphic(textField);
-            column.setSortable(false);
-            tableView.getColumns().add(column);
-        }
 
-        buttonCancel.setOnMouseClicked(new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
-                for(TableColumn tableColumn : tableView.getColumns())
-                {
-                    newColumnNamesArrayList.add(((TextField) tableColumn.getGraphic()).getText());
-                }
+				importer.setColumnNamesArrayList(newColumnNamesArrayList);
+			}
+		});
+	}
 
-                importer.setColumnNamesArrayList(newColumnNamesArrayList);
-            }
-        });
-    }
-
-    private void populateTableViewBody()
-    {
-        tableView.widthProperty().addListener(new ChangeListener<Number>()
+	private void populateTableViewBody()
+	{
+		tableView.widthProperty().addListener(new ChangeListener<Number>()
 		{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
 			{
 				double width = newValue.doubleValue();
-				//columnFileName.setPrefWidth(width * 0.83 - 3);
-				//columnFileLength.setPrefWidth(width * 0.17 - 3);
+				int numberOfColumns = tableView.getColumns().size();
+				double itemWidth = width / numberOfColumns - 3;
+
+				for(int i = 0; i < numberOfColumns; i++)
+				{
+					tableView.getColumns().get(i).setPrefWidth(itemWidth);
+				}
 			}
 		});
-    }
+
+		for(ArrayList<String> currentRow : importer.getData())
+		{
+			ObservableList<StringProperty> data = FXCollections.observableArrayList();
+			for(String value : currentRow)
+			{
+				data.add(new SimpleStringProperty(value));
+			}
+			tableView.getItems().add(data);
+		}
+	}
 
 	public void cancel()
 	{
