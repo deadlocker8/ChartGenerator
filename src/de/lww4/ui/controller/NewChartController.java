@@ -121,9 +121,12 @@ public class NewChartController
 				Chart chart = controller.database.getChart(dashboard.getCells().get(position));
 				textFieldTitle.setText(chart.getTitle());
 				colorPicker.setValue(chart.getColor());
+			
+				toggleGroupChartTypes.getToggles().get(chart.getType().getID()).setSelected(true);
 
 				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
 				ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
+				generatePreview(chart.getType());
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
