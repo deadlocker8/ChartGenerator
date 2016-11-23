@@ -98,7 +98,7 @@ public class ImportCSVController
 
             newStage.getIcons().add(icon);
             ImportCSVColumnNamesController newController = fxmlLoader.getController();
-            newController.init(newStage, mainController);
+            newController.init(newStage, mainController, importer);
 
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.setResizable(true);
@@ -152,8 +152,8 @@ public class ImportCSVController
         {
             alert.setContentText(ErrorType.getErrorMessage(errorTypes));
         }
-    	Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-		dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+
+        Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 		dialogStage.getIcons().add(icon);
 		dialogStage.centerOnScreen();
 		alert.showAndWait();
