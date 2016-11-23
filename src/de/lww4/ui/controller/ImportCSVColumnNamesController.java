@@ -96,21 +96,14 @@ public class ImportCSVColumnNamesController
 
     private void populateTableViewBody()
     {
-        ObservableList<String> row = FXCollections.observableArrayList();
-        for(ArrayList<String> rowData : importer.getData())
-        {
-            row.addAll(rowData);
-        }
-        tableView.setItems(row);  
-        
         tableView.widthProperty().addListener(new ChangeListener<Number>()
 		{
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
 			{
 				double width = newValue.doubleValue();
-				columnFileName.setPrefWidth(width * 0.83 - 3);
-				columnFileLength.setPrefWidth(width * 0.17 - 3);
+				//columnFileName.setPrefWidth(width * 0.83 - 3);
+				//columnFileLength.setPrefWidth(width * 0.17 - 3);
 			}
 		});
     }
