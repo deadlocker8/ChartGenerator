@@ -1,5 +1,6 @@
 package de.lww4.ui.controller;
 
+import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,14 +20,13 @@ import logger.LogLevel;
 import logger.Logger;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class ImportCSVColumnNamesController
 {
 	@FXML private TableView<ObservableList<StringProperty>> tableView;
-	@FXML private Button buttonCancel;
-	@FXML private Button buttonSave;
 
 	public Stage stage;
 	private Controller mainController;
@@ -109,26 +109,91 @@ public class ImportCSVColumnNamesController
 		}
 	}
 
-    @FXML
-    private void save()
+	private boolean hasDuplicatedColumns(ArrayList<String> newColumnNamesArrayList)
+    {
+        HashSet<String> hashSet = new HashSet<>(newColumnNamesArrayList);
+        if(newColumnNamesArrayList.size() > hashSet.size())
+        {
+            return true;
+        }
+        return false;
+    }
+
+    private ArrayList<Integer> getEmptyColumnNames(ArrayList<String> newColumnNamesArrayList)
+    {
+        ArrayList<Integer> emptyColumns = new ArrayList<>();
+        for(int i=0; i < newColumnNamesArrayList.size(); i++)
+        {
+            String columnName = newColumnNamesArrayList.get(i);
+            if(columnName.equals(""))
+            {
+                emptyColumns.add(i);
+            }
+        }
+        return emptyColumns;
+    }
+
+    private boolean isUserError(ArrayList<String> newColumnNamesArrayList)
+    {
+        boolean hasDuplicateColumns = hasDuplicatedColumns(newColumnNamesArrayList);
+        ArrayList<Integer> emptyColumns = getEmptyColumnNames(newColumnNamesArrayList);
+        boolean hasEmptyColumns = emptyColumns.size() > 0;
+
+        String errorMessage = null;
+        if(hasDuplicateColumns && hasEmptyColumns)
+        {
+            errorMessage = "Einige Spalten sind leer und/oder doppelt!";
+        }
+        else
+        {
+            if(hasDuplicateColumns)
+            {
+                errorMessage = "Einige Spalten sind doppelt!";
+            }
+
+            if(hasEmptyColumns)
+            {
+                errorMessage = "Folgende Spalten sind leer: " + emptyColumns;
+            }
+
+        }
+
+        if(errorMessage != null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private ArrayList<String> getColumnNamesArrayList()
     {
         ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
         for(TableColumn tableColumn : tableView.getColumns())
         {
             newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
         }
+        return newColumnNamesArrayList;
+    }
 
-        importer.setColumnNamesArrayList(newColumnNamesArrayList);
-        try
+    @FXML
+    private void save()
+    {
+        ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
+        if(!isUserError(newColumnNamesArrayList))
         {
-            mainController.getDatabase().saveCSVTable(importer);
-        }
-        catch (Exception e)
-        {
-            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-        }
+            importer.setColumnNamesArrayList(newColumnNamesArrayList);
+            try
+            {
+                mainController.getDatabase().saveCSVTable(importer);
+            }
+            catch (Exception e)
+            {
+                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+            }
 
-        stage.close();
+            stage.close();
+        }
     }
 
 	@FXML
