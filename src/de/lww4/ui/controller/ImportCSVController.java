@@ -4,6 +4,9 @@ package de.lww4.ui.controller;
 import de.lww4.logic.DelimiterType;
 import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.utils.AlertGenerator;
+import de.lww4.logic.utils.Utils;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,7 +22,10 @@ import logger.LogLevel;
 import logger.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class ImportCSVController
 {
@@ -57,6 +63,7 @@ public class ImportCSVController
                     String filename = currentFile.getName();
                     filenameLabel.setText(filename);
                     chartNameTextField.setText(filename);
+                    removeImpossibleDelimiters(currentFile);
                 }
             }
         });
@@ -76,6 +83,41 @@ public class ImportCSVController
 
             }
         });
+    }
+
+    private void removeImpossibleDelimiters(File file)
+    {
+        ArrayList<DelimiterType> delimiterTypeArrayList = new ArrayList<>(Arrays.asList(DelimiterType.values()));
+        try
+        {
+            String fileContent = Utils.getContentsFromInputStream(new FileInputStream(file));
+            Iterator<DelimiterType> iterator = delimiterTypeArrayList.iterator();
+            while (iterator.hasNext())
+            {
+                DelimiterType delimiterType = iterator.next();
+                if (!fileContent.contains(String.valueOf(delimiterType.getDelimiter())))
+                {
+                    iterator.remove();
+                }
+            }
+
+            delimiterChoiceBox.setItems(FXCollections.observableArrayList(delimiterTypeArrayList));
+            if (delimiterTypeArrayList.size() == 0)
+            {
+                String errorInvalidDelimiter = mainController.getBundle().getString("error.invalid.delimiter");
+                errorInvalidDelimiter = errorInvalidDelimiter.replace("{}", DelimiterType.getPossibleDelimiterString());
+                AlertGenerator.showAlert(Alert.AlertType.ERROR, errorInvalidDelimiter, mainController.getIcon());
+            }
+            else
+            {
+                delimiterChoiceBox.getSelectionModel().select(0);
+            }
+        }
+        catch (Exception e)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+        }
+
     }
 
     private void openCSVColumnNameDialog()
