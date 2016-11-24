@@ -213,7 +213,7 @@ public class DatabaseHandler
      * @param dashboard
      * @throws Exception
      */
-	public void saveDashboard(Dashboard dashboard) throws Exception
+	public int saveDashboard(Dashboard dashboard) throws Exception
 	{
 		Connection connection = null;
 		try
@@ -232,12 +232,18 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,
 			statement.executeUpdate("INSERT INTO Dashboard VALUES(NULL,\"" + dashboard.getName() + "\"," + cells.get(0) + "," + cells.get(1) + "," + cells.get(2) + "," + cells.get(3) + "," + cells.get(4) + "," + cells.get(5) + ")");
+			
+			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Dashboard");
+			
+			int id = result.getInt(1);
 			connection.close();
+			return id;		
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return -1;
 		}
 	}
 
