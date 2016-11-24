@@ -11,6 +11,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import logger.LogLevel;
 import logger.Logger;
 
@@ -20,6 +21,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 {
 	@FXML private Label labelX;
 	@FXML private Label labelY;
+	@FXML private AnchorPane anchorPane;
 
 	public void init(NewChartController newChartController)
 	{
@@ -72,6 +74,8 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 
 			event.consume();
 		});
+		
+		labelY.prefWidthProperty().bind(anchorPane.heightProperty());
 	}
 
 	@Override

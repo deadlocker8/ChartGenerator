@@ -256,7 +256,7 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, type, title, x, y, uuid, color
-			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "' WHERE ID = " + chart.getID());
+			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType().getID() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "' WHERE ID = " + chart.getID());
 			connection.close();
 		}
 		catch(SQLException e)

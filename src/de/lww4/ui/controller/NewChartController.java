@@ -238,16 +238,20 @@ public class NewChartController
             AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
             return;
         }
-
-		Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
+		
 		try
 		{
 			if(edit)
 			{
+				int chartID = dashboard.getCells().get(position);
+				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
 				controller.getDatabase().updateChart(chart);
+				dashboard.getCells().set(position, chartID);
+				controller.getDatabase().updateDashboard(dashboard);
 			}
 			else
 			{
+				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
 				int chartID = controller.getDatabase().saveChart(chart);
 				if(chartID != -1)
 				{
