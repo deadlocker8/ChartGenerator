@@ -131,8 +131,8 @@ public class Controller
 			database = new DatabaseHandler();
 			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
 			
-			int lastID = database.getLastDashboard();
-			if(lastID == 0)
+			int lastID = database.getLastDashboard();		
+			if(lastID <= 0)
 			{
 				setDashboard(new Dashboard(""));	
 			}
