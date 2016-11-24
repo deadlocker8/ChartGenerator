@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.function.UnaryOperator;
 
 public class ImportCSVController
 {
@@ -83,6 +84,19 @@ public class ImportCSVController
 
             }
         });
+
+        UnaryOperator<TextFormatter.Change> filter = change ->
+        {
+            String text = change.getText();
+
+            if (text.matches("-?[0-9]\\d*(?:[\\.\\,]\\d+)?"))
+            {
+                return change;
+            }
+
+            return null;
+        };
+        fillValueTextField.setTextFormatter(new TextFormatter<String>(filter));
     }
 
     private void removeImpossibleDelimiters(File file)
