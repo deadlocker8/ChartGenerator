@@ -140,7 +140,7 @@ public class NewChartController
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Laden der Daten ist ein Fehler aufgetreten.", controller.getIcon(), true);
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
 				return;
 			}
 		}
@@ -242,13 +242,13 @@ public class NewChartController
 		String title = textFieldTitle.getText();
 		if(title == null || title.equals(""))
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Bitte geben Sie einen Namen für das Diagramm an.", controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
 			return;
 		}
 
 		if(!subController.isFilled())
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Bitte wählen Sie die Werte für das Diagramm aus.", controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
 			return;
 		}
 
@@ -281,7 +281,7 @@ public class NewChartController
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Speichern des Diagramms ist ein Fehler aufgetreten.", controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), true);
 		}
 	}
 

@@ -99,7 +99,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Erzeugen des Diagramms ist ein Fehler aufgetreten.", newChartController.getController().getIcon(), true);
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), true);
 			}
 		}
 	}

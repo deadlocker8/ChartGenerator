@@ -150,7 +150,7 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Laden der Datenbank ist ein Fehler aufgetreten.", icon, true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.databse"), icon, true);
 		}
 	}
 
@@ -218,7 +218,7 @@ public class Controller
 			name.trim();
 			if(name.equals(""))
 			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Das Feld für den Dashboardnamen darf nicht leer sein.", icon, true);
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, true);
 
 				newDashboardMenuItem();
 			}
@@ -226,7 +226,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.", icon, true);
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.dashboard.alreadyinuse"), icon, true);
 
 					newDashboardMenuItem();
 				}
@@ -242,7 +242,7 @@ public class Controller
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-						AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Speichern ist ein Fehler aufgetreten", icon, true);
+						AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "",  bundle.getString("error.save"), icon, true);
 					}
 				}
 			}
@@ -304,7 +304,7 @@ public class Controller
 			name.trim();
 			if(name.equals(""))
 			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Das Feld für den Dashboardnamen darf nicht leer sein.", icon, true);
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, true);
 
 				checkTextInputTitle(dialog);
 			}
@@ -312,7 +312,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.", icon, true);
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.alreadyinuse"), icon, true);
 
 					checkTextInputTitle(dialog);
 				}
@@ -339,7 +339,7 @@ public class Controller
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-						AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", "Beim Speichern ist ein Fehler aufgetreten.", icon, true);
+						AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.save"), icon, true);
 					}
 				}
 			}
@@ -553,7 +553,7 @@ public class Controller
 	{	
 		if(currentDashboard.getName().equals(""))
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Bitte geben Sie zuerst einen Namen für das Dashboard an.", icon, true);
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.dashboard.first"), icon, true);
 			return;
 		}
 
@@ -619,7 +619,7 @@ public class Controller
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Löschen des Diagramms ist ein Fehler aufgetreten.", icon, true);
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.chart"), icon, true);
 			}
 		}
 	}
@@ -661,7 +661,7 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Löschen des Dashboards ist ein Fehler aufgetreten.", icon, true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.dashboard"), icon, true);
 		}
 	}
 
@@ -692,5 +692,10 @@ public class Controller
 	public Image getIcon()
 	{
 		return icon;
+	}
+	
+	public ResourceBundle getBundle()
+	{
+		return bundle;
 	}
 }

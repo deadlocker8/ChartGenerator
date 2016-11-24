@@ -77,7 +77,7 @@ public class SelectDashboardController
 		{			
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Abrufen der Daten aus der Datenbank ist ein Fehler aufgetreten.", controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
 		}		
 	}
 
