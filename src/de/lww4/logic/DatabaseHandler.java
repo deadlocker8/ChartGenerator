@@ -404,8 +404,7 @@ public class DatabaseHandler
 
 			while(result.next())
 			{
-				String name = result.getString("TABLE_NAME");
-				//TODO add settings table
+				String name = result.getString("TABLE_NAME");				
 				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
 				{					
 					tables.add(getCSVTable(name));

@@ -37,10 +37,6 @@ public class BarChartHorizontalGenerator
 	
 		xAxis.setLabel(xName);
 		yAxis.setLabel(yName);
-		if(xName.equals("") && yName.equals(""))
-		{
-			chart.setLegendVisible(false);	
-		}
 
 		XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();		
 	
@@ -48,7 +44,8 @@ public class BarChartHorizontalGenerator
 		{
 			series.getData().add(new XYChart.Data<Number, String>(xValues.get(i), String.valueOf(yValues.get(i))));
 		}
-		chart.getData().addAll(series);			
+		chart.getData().addAll(series);	
+		chart.setLegendVisible(false);
 					
 		for(Node n : chart.lookupAll(".default-color0.chart-bar"))
 		{

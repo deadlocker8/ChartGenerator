@@ -37,11 +37,7 @@ public class BarChartVerticalGenerator
 		
 		xAxis.setLabel(xName);
 		yAxis.setLabel(yName);
-		if(xName.equals("") && yName.equals(""))
-		{
-			chart.setLegendVisible(false);	
-		}
-
+	
 		XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
 
 		for(int i = 0; i < xValues.size(); i++)

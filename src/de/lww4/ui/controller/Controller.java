@@ -1,6 +1,7 @@
 package de.lww4.ui.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -9,6 +10,9 @@ import de.lww4.logic.Chart;
 import de.lww4.logic.Dashboard;
 import de.lww4.logic.DashboardHandler;
 import de.lww4.logic.DatabaseHandler;
+import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
+import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
+import de.lww4.logic.chartGenerators.PieChartGenerator;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -44,6 +48,7 @@ import tools.Worker;
 
 /**
  * Main Controller Class
+ * 
  * @author Robert
  */
 public class Controller
@@ -62,7 +67,9 @@ public class Controller
 
 	/**
 	 * init method
-	 * @param stage Stage
+	 * 
+	 * @param stage
+	 *            Stage
 	 */
 	public void init(Stage stage)
 	{
@@ -105,7 +112,7 @@ public class Controller
 		AnchorPane.setRightAnchor(gridPane, 25.0);
 		AnchorPane.setBottomAnchor(gridPane, 25.0);
 		AnchorPane.setLeftAnchor(gridPane, 25.0);
-		
+
 		FontIcon iconEdit = new FontIcon(FontIconType.PENCIL);
 		iconEdit.setSize(18);
 		labelTitle.setGraphic(iconEdit);
@@ -128,20 +135,20 @@ public class Controller
 				}
 			}
 		});
-		
+
 		try
 		{
 			database = new DatabaseHandler();
-			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
-			//TODO select last opened dashboard
-			currentDashboard = new Dashboard("");			
-			
+			dashboardHandler = new DashboardHandler(database.getAllDashboards());
+			// TODO select last opened dashboard
+			currentDashboard = new Dashboard("");
+
 			initDashboard();
 		}
 		catch(Exception e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Fehler");
 			alert.setHeaderText("");
@@ -151,14 +158,14 @@ public class Controller
 			dialogStage.getIcons().add(icon);
 			dialogStage.centerOnScreen();
 			alert.showAndWait();
-		}	
+		}
 	}
-	
+
 	/**
 	 * initalizes label for dashboard title and gridPane
 	 */
 	private void initDashboard()
-	{		
+	{
 		if(currentDashboard.getName() == null || currentDashboard.getName().equals(""))
 		{
 			labelTitle.setText("Unbenanntes Dashboard");
@@ -167,7 +174,7 @@ public class Controller
 		{
 			labelTitle.setText(currentDashboard.getName());
 		}
-		
+
 		initGridPane();
 	}
 
@@ -175,7 +182,7 @@ public class Controller
 	 * handles menuItem "import CSV"
 	 */
 	public void importCSVMenuItem()
-	{	
+	{
 		try
 		{
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ImportCSVDialog.fxml"));
@@ -195,9 +202,9 @@ public class Controller
 		catch(IOException io)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
-		}		
+		}
 	}
-	
+
 	/**
 	 * handles menuItem "new Dashboard"
 	 */
@@ -209,8 +216,8 @@ public class Controller
 		dialog.setContentText("Dashboardname:");
 		Stage dialogStage = (Stage)dialog.getDialogPane().getScene().getWindow();
 		dialogStage.getIcons().add(icon);
-		dialogStage.centerOnScreen();	
-		
+		dialogStage.centerOnScreen();
+
 		Optional<String> result = dialog.showAndWait();
 		if(result.isPresent())
 		{
@@ -228,7 +235,7 @@ public class Controller
 				dialogStage2.centerOnScreen();
 				alert.showAndWait();
 
-				newDashboardMenuItem();			
+				newDashboardMenuItem();
 			}
 			else
 			{
@@ -244,7 +251,7 @@ public class Controller
 					dialogStage2.centerOnScreen();
 					alert.showAndWait();
 
-					newDashboardMenuItem();	
+					newDashboardMenuItem();
 				}
 				else
 				{
@@ -252,12 +259,12 @@ public class Controller
 					{
 						database.saveDashboard(new Dashboard(name));
 						dashboardHandler = new DashboardHandler(database.getAllDashboards());
-						setDashboard(dashboardHandler.getDashboards().get(dashboardHandler.getDashboards().size()-1));
+						setDashboard(dashboardHandler.getDashboards().get(dashboardHandler.getDashboards().size() - 1));
 					}
 					catch(Exception e)
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-						
+
 						Alert alert = new Alert(AlertType.ERROR);
 						alert.setTitle("Fehler");
 						alert.setHeaderText("");
@@ -268,7 +275,7 @@ public class Controller
 						dialogStage2.centerOnScreen();
 						alert.showAndWait();
 					}
-				}		
+				}
 			}
 		}
 	}
@@ -302,7 +309,7 @@ public class Controller
 		catch(IOException io)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
-		}		
+		}
 	}
 
 	/**
@@ -314,13 +321,15 @@ public class Controller
 	}
 
 	/**
-	 * checks if the input is empty 
-	 * @param dialog TextInputDialog
+	 * checks if the input is empty
+	 * 
+	 * @param dialog
+	 *            TextInputDialog
 	 */
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
 		Optional<String> result = dialog.showAndWait();
-		if(result.isPresent()) 
+		if(result.isPresent())
 		{
 			String name = result.get();
 			name.trim();
@@ -336,7 +345,7 @@ public class Controller
 				dialogStage.centerOnScreen();
 				alert.showAndWait();
 
-				checkTextInputTitle(dialog);			
+				checkTextInputTitle(dialog);
 			}
 			else
 			{
@@ -351,17 +360,17 @@ public class Controller
 					dialogStage.getIcons().add(icon);
 					dialogStage.centerOnScreen();
 					alert.showAndWait();
-					
+
 					checkTextInputTitle(dialog);
 				}
 				else
 				{
 					labelTitle.setText(result.get());
 					currentDashboard.setName(name);
-					
+
 					try
-					{						
-						// Dashboard is not existing in DB ("Unbenanntes Dashboard")					
+					{
+						// Dashboard is not existing in DB ("Unbenanntes Dashboard")
 						if(currentDashboard.getID() == -1)
 						{
 							database.saveDashboard(currentDashboard);
@@ -369,14 +378,14 @@ public class Controller
 						else
 						{
 							database.updateDashboard(currentDashboard);
-						}	
-						
-						dashboardHandler = new DashboardHandler(database.getAllDashboards());					
+						}
+
+						dashboardHandler = new DashboardHandler(database.getAllDashboards());
 					}
 					catch(Exception e)
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-						
+
 						Alert alert = new Alert(AlertType.ERROR);
 						alert.setTitle("Fehler");
 						alert.setHeaderText("");
@@ -387,24 +396,26 @@ public class Controller
 						dialogStage.centerOnScreen();
 						alert.showAndWait();
 					}
-				}			
+				}
 			}
 		}
 	}
 
 	/**
 	 * inits the dashboard gridPane
-	 * @param empty boolean
+	 * 
+	 * @param empty
+	 *            boolean
 	 */
 	private void initGridPane()
 	{
 		gridPane.getChildren().clear();
 		boolean empty = true;
-		
+
 		for(int i = 0; i < 6; i++)
 		{
-			final int position = i;		
-			
+			final int position = i;
+
 			if(currentDashboard.getCells().size() > 0)
 			{
 				if(currentDashboard.getCells().get(i) == -1)
@@ -416,7 +427,7 @@ public class Controller
 					empty = false;
 				}
 			}
-			
+
 			Chart chart = null;
 			if(!empty)
 			{
@@ -426,10 +437,10 @@ public class Controller
 				}
 				catch(Exception e)
 				{
-					//ERRORHANDLINGs
+					//ERRORHANDLING
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 				}
-			}		
+			}
 
 			AnchorPane currentAnchorPane = new AnchorPane();
 			currentAnchorPane.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
@@ -444,10 +455,10 @@ public class Controller
 				labelChartTitle.setText("Diagramm " + (i + 1));
 			}
 			else
-			{			
+			{
 				labelChartTitle.setText(chart.getTitle());
-			}		
-			
+			}
+
 			labelChartTitle.setStyle("-fx-font-weight: bold; -fx-font-size: 18;");
 			labelChartTitle.setAlignment(Pos.CENTER);
 			labelChartTitle.setMaxWidth(Double.MAX_VALUE);
@@ -483,7 +494,7 @@ public class Controller
 					deleteChart(position);
 				}
 			});
-			
+
 			Button buttonExport = new Button();
 			buttonExport.setStyle("-fx-background-color: transparent");
 			FontIcon iconExport = new FontIcon(FontIconType.DOWNLOAD);
@@ -528,7 +539,7 @@ public class Controller
 				{
 					@Override
 					public void handle(ActionEvent event)
-					{						
+					{
 						addChart(position, false);
 					}
 				});
@@ -537,7 +548,41 @@ public class Controller
 			}
 			else
 			{
-				//TODO load chart into stackPane
+				currentStackPane.getChildren().clear();
+
+				try
+				{
+					ArrayList<Double> xValues;
+					ArrayList<Double> yValues;
+					switch(chart.getType())
+					{
+						case BAR_HORIZONTAL:
+							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
+							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
+							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							currentStackPane.getChildren().add(generatorHorizontal.generate());
+							break;
+						case BAR_VERTICAL:
+							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
+							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
+							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							currentStackPane.getChildren().add(generatorVertical.generate());
+							break;
+						case PIE:
+							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());							
+							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), xValues);
+							currentStackPane.getChildren().add(generatorPie.generate());
+							break;
+
+						default:
+							break;
+					}
+				}
+				catch(Exception e)
+				{
+					//ERRORHANDLING
+					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				}
 			}
 
 			if(i < 3)
@@ -553,8 +598,11 @@ public class Controller
 
 	/**
 	 * opens a new UI for new chart generation
-	 * @param position int - position in dashboard [0,5]
-	 * @param edit boolean - editing already existing chart at given position
+	 * 
+	 * @param position
+	 *            int - position in dashboard [0,5]
+	 * @param edit
+	 *            boolean - editing already existing chart at given position
 	 */
 	private void addChart(int position, boolean edit)
 	{
@@ -571,7 +619,7 @@ public class Controller
 			alert.showAndWait();
 			return;
 		}
-		
+
 		try
 		{
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/NewChartGUI.fxml"));
@@ -587,11 +635,11 @@ public class Controller
 			NewChartController newController = fxmlLoader.getController();
 			if(edit)
 			{
-				newStage.setTitle("Diagramm bearbeiten");				
+				newStage.setTitle("Diagramm bearbeiten");
 			}
 			else
 			{
-				newStage.setTitle("Neues Diagramm");				
+				newStage.setTitle("Neues Diagramm");
 			}
 			newController.init(newStage, this, edit, currentDashboard, position);
 			newStage.initModality(Modality.APPLICATION_MODAL);
@@ -606,6 +654,7 @@ public class Controller
 
 	/**
 	 * deletes chart at given position after confirmation dialog
+	 * 
 	 * @param position
 	 */
 	private void deleteChart(int position)
@@ -632,7 +681,7 @@ public class Controller
 			catch(Exception e)
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-				
+
 				Alert alert2 = new Alert(AlertType.ERROR);
 				alert2.setTitle("Fehler");
 				alert2.setHeaderText("");
@@ -642,31 +691,35 @@ public class Controller
 				dialogStage2.getIcons().add(icon);
 				dialogStage2.centerOnScreen();
 				alert2.showAndWait();
-			}			
+			}
 		}
 	}
-	
+
 	/**
 	 * exports chart at given position
+	 * 
 	 * @param position
 	 */
 	private void exportChart(int position)
 	{
-		
+
 	}
 
-	/** 
-	 * @param dashboard Dashboard
+	/**
+	 * @param dashboard
+	 *            Dashboard
 	 */
 	public void setDashboard(Dashboard dashboard)
 	{
 		this.currentDashboard = dashboard;
 		initDashboard();
 	}
-	
+
 	/**
 	 * deletes dashboard with given ID in database
-	 * @param ID int
+	 * 
+	 * @param ID
+	 *            int
 	 */
 	public void deleteDashboard(int ID)
 	{
@@ -678,7 +731,7 @@ public class Controller
 		catch(Exception e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Fehler");
 			alert.setHeaderText("");
@@ -706,23 +759,23 @@ public class Controller
 		alert.showAndWait();
 	}
 
-    public DatabaseHandler getDatabase()
-    {
-        return database;
-    }
-    
-    public DashboardHandler getDashboardHandler()
-    {
-        return dashboardHandler;
-    }
-    
-    public void setDashboardHandler(DashboardHandler dashboardHandler)
-    {
-        this.dashboardHandler = dashboardHandler;
-    }
-    
-    public Image getIcon()
-    {
-    	return icon;
-    }
+	public DatabaseHandler getDatabase()
+	{
+		return database;
+	}
+
+	public DashboardHandler getDashboardHandler()
+	{
+		return dashboardHandler;
+	}
+
+	public void setDashboardHandler(DashboardHandler dashboardHandler)
+	{
+		this.dashboardHandler = dashboardHandler;
+	}
+
+	public Image getIcon()
+	{
+		return icon;
+	}
 }
