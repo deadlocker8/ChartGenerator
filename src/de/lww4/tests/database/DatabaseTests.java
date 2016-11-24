@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class DatabaseTests
 {
@@ -20,14 +20,7 @@ public class DatabaseTests
         {
             DatabaseHandler databaseHandler = new DatabaseHandler();
             File file = new File(databaseHandler.getPath());
-            if(file.exists())
-            {
-                assertTrue(true);
-            }
-            else
-            {
-                assertTrue(false);
-            }
+            assertTrue(file.exists());
         }
         catch (Exception e)
         {

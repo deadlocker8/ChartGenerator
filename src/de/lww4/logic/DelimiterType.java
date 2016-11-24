@@ -28,16 +28,20 @@ public enum DelimiterType
 		return name;
 	}
 
-    public static DelimiterType fromChar(char c)
+    public static String getPossibleDelimiterString()
     {
-        for (DelimiterType delimiterType : delimiterTypes)
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < delimiterTypes.length; i++)
         {
-            if (delimiterType.getDelimiter() == c)
+            DelimiterType currentType = delimiterTypes[i];
+            stringBuilder.append(currentType.getName());
+            if (i < delimiterTypes.length - 1)
             {
-                return delimiterType;
+                stringBuilder.append(", ");
             }
+
         }
-        return null;
+        return stringBuilder.toString();
     }
 
 	@Override

@@ -4,6 +4,7 @@ package de.lww4.ui.controller;
 import de.lww4.logic.DelimiterType;
 import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.logic.utils.Utils;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -24,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class ImportCSVController
 {
@@ -61,7 +63,7 @@ public class ImportCSVController
                     String filename = currentFile.getName();
                     filenameLabel.setText(filename);
                     chartNameTextField.setText(filename);
-                    delimiterChoiceBox.setItems(FXCollections.observableArrayList(getPossibleDelimiters(currentFile)));
+                    removeImpossibleDelimiters(currentFile);
                 }
             }
         });
@@ -83,35 +85,39 @@ public class ImportCSVController
         });
     }
 
-    private ArrayList<DelimiterType> getPossibleDelimiters(File file)
+    private void removeImpossibleDelimiters(File file)
     {
-        ArrayList<DelimiterType> possibleDelimitersArrayList = new ArrayList<>();
+        ArrayList<DelimiterType> delimiterTypeArrayList = new ArrayList<>(Arrays.asList(DelimiterType.values()));
         try
         {
-            ArrayList<DelimiterType> delimiterTypeArrayList = new ArrayList<>(Arrays.asList(DelimiterType.values()));
             String fileContent = Utils.getContentsFromInputStream(new FileInputStream(file));
-            for (char c : fileContent.toCharArray())
+            Iterator<DelimiterType> iterator = delimiterTypeArrayList.iterator();
+            while (iterator.hasNext())
             {
-                for (DelimiterType delimiterType : delimiterTypeArrayList)
+                DelimiterType delimiterType = iterator.next();
+                if (!fileContent.contains(String.valueOf(delimiterType.getDelimiter())))
                 {
-                    if (delimiterType.getDelimiter() == c)
-                    {
-                        if (!possibleDelimitersArrayList.contains(delimiterType))
-                        {
-                            possibleDelimitersArrayList.add(delimiterType);
-                        }
-                    }
+                    iterator.remove();
                 }
             }
 
-            return possibleDelimitersArrayList;
+            delimiterChoiceBox.setItems(FXCollections.observableArrayList(delimiterTypeArrayList));
+            if (delimiterTypeArrayList.size() == 0)
+            {
+                String errorInvalidDelimiter = mainController.getBundle().getString("error.invalid.delimiter");
+                errorInvalidDelimiter = errorInvalidDelimiter.replace("{}", DelimiterType.getPossibleDelimiterString());
+                AlertGenerator.showAlert(Alert.AlertType.ERROR, errorInvalidDelimiter, mainController.getIcon());
+            }
+            else
+            {
+                delimiterChoiceBox.getSelectionModel().select(0);
+            }
         }
         catch (Exception e)
         {
             Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
         }
 
-        return new ArrayList<>(Arrays.asList(DelimiterType.values()));
     }
 
     private void openCSVColumnNameDialog()
