@@ -130,11 +130,11 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT * FROM Dashboard WHERE ID = " + ID);
-			connection.close();
+			ResultSet result = statement.executeQuery("SELECT * FROM Dashboard WHERE ID = " + ID);			
 
 			Dashboard dashboard = new Dashboard(result.getInt("ID"), result.getString("name"), result.getInt("cell_1_1"), result.getInt("cell_1_2"), result.getInt("cell_1_3"), result.getInt("cell_2_1"), result.getInt("cell_2_2"), result.getInt("cell_2_3"));
-
+			connection.close();
+			
 			return dashboard;
 		}
 		catch(SQLException e)
@@ -589,10 +589,11 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT value FROM Settings WHERE ID = 'lastDashboard'");
-			connection.close();
+			ResultSet result = statement.executeQuery("SELECT value FROM Settings WHERE ID = 'lastDashboard'");			
 
-			return result.getInt("value");
+			int ID = result.getInt("value");
+			connection.close();
+			return ID;
 		}
 		catch(SQLException e)
 		{
