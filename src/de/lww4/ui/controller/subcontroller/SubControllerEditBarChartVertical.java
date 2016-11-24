@@ -4,25 +4,19 @@ import java.util.ArrayList;
 
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
-import de.lww4.logic.Utils;
+import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import logger.LogLevel;
 import logger.Logger;
 
-@SuppressWarnings("unchecked")
 public class SubControllerEditBarChartVertical extends SubControllerEditChart
 {
 	@FXML private Label labelX;
@@ -90,33 +84,15 @@ public class SubControllerEditBarChartVertical extends SubControllerEditChart
 			this.itemY = itemY;
 			
 			labelX.setText(itemX.getText());
-			labelY.setText(itemY.getText());			
+			labelY.setText(itemY.getText());		
 			
-			final CategoryAxis xAxis = new CategoryAxis();
-			final NumberAxis yAxis = new NumberAxis();
-			final BarChart<String, Number> chart = new BarChart<>(xAxis, yAxis);
-			chart.setTitle(null);
-			xAxis.setLabel("");			
-			yAxis.setLabel("");
-
-			XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
 			try
 			{
 				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
 				ArrayList<Double> yValues = super.newChartController.getController().getDatabase().getCSVColumn(itemY.getTableUUID(), itemY.getText());
 
-				for(int i = 0; i < xValues.size(); i++)
-				{
-					series.getData().add(new XYChart.Data<String, Number>(String.valueOf(xValues.get(i)), yValues.get(i)));
-				}
-				chart.getData().addAll(series);
-				chart.setLegendVisible(false);
-
-				Color color = newChartController.colorPicker.getValue();				
-				for(Node n : chart.lookupAll(".default-color0.chart-bar"))
-				{
-					n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");
-				}
+				BarChartVerticalGenerator generator = new BarChartVerticalGenerator("", "", xValues, yValues, newChartController.colorPicker.getValue());
+				BarChart<String, Number> chart = generator.generate();
 				
 				stackPaneChart.getChildren().clear();
 				stackPaneChart.getChildren().add(chart);

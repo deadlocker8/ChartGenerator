@@ -1,25 +1,17 @@
 package de.lww4.ui.controller.subcontroller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
+import de.lww4.logic.chartGenerators.PieChartGenerator;
 import de.lww4.ui.controller.NewChartController;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
 import logger.LogLevel;
@@ -68,57 +60,11 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 			labelX.setText(itemX.getText());
 
 			try
-			{
-				ArrayList<PieChart.Data> data = new ArrayList<>();
+			{				
 				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
-
-				Map<Double, Integer> preparedData = prepareData(xValues);
-
-				for(Map.Entry<Double, Integer> entry : preparedData.entrySet())
-				{
-					data.add(new PieChart.Data(String.valueOf(entry.getKey()), (double)entry.getValue()));
-				}
-				ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(data);
-
-				final PieChart chart = new PieChart(pieChartData);
-				chart.setTitle(null);
-
-				chart.getData().stream().forEach(tool -> {
-					Tooltip tooltip = new Tooltip();
-
-					double total = 0;
-					for(PieChart.Data d : chart.getData())
-					{
-						total += d.getPieValue();
-					}
-
-					double pieValue = tool.getPieValue();
-					double percentage = (pieValue / total) * 100;
-					String percent = String.valueOf(percentage);
-					percent = percent.substring(0, percent.indexOf(".") + 2);					
-
-					tooltip.setText(percent + " %");
-					Tooltip.install(tool.getNode(), tooltip);
-					Node node = tool.getNode();
-					node.setOnMouseEntered(new EventHandler<MouseEvent>()
-					{
-						@Override
-						public void handle(MouseEvent event)
-						{
-							Point2D p = node.localToScreen(event.getX() + 5, event.getY() + 7);
-							tooltip.show(node, p.getX(), p.getY());
-						}
-					});
-					node.setOnMouseExited(new EventHandler<MouseEvent>()
-					{
-
-						@Override
-						public void handle(MouseEvent event)
-						{
-							tooltip.hide();
-						}
-					});
-				});
+			
+				PieChartGenerator generator = new PieChartGenerator(itemX.getText(), xValues);
+				PieChart chart = generator.generate();
 
 				stackPaneChart.getChildren().clear();
 				stackPaneChart.getChildren().add(chart);
@@ -139,19 +85,7 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 			}
 		}
 	}
-
-	private Map<Double, Integer> prepareData(ArrayList<Double> values)
-	{
-		Map<Double, Integer> map = new HashMap<Double, Integer>();
-
-		for(Double temp : values)
-		{
-			Integer count = map.get(temp);
-			map.put(temp, (count == null) ? 1 : count + 1);
-		}
-
-		return map;
-	}
+	
 
 	@Override
 	public boolean isFilled()
