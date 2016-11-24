@@ -110,7 +110,7 @@ public class ImportCSVColumnNamesController
 
     private ArrayList<String> getDuplicateColumns(ArrayList<String> newColumnNamesArrayList)
     {
-        //index, occurance
+        //string, occurance
         HashMap<String, Integer> hashMap = new HashMap<>();
         for (int i = 0; i < newColumnNamesArrayList.size(); i++)
         {
@@ -118,7 +118,6 @@ public class ImportCSVColumnNamesController
             hashMap.putIfAbsent(columnName, 0);
             hashMap.put(columnName, hashMap.get(columnName) + 1);
         }
-        System.out.println(hashMap);
         ArrayList<String> duplicateIndexArrayList = new ArrayList<>();
 
         for (String columnName : hashMap.keySet())
@@ -133,7 +132,6 @@ public class ImportCSVColumnNamesController
     private ArrayList<Integer> getEmptyColumnNames(ArrayList<String> newColumnNamesArrayList)
     {
         ArrayList<Integer> emptyColumns = new ArrayList<>();
-        System.out.println(newColumnNamesArrayList);
         for(int i=0; i < newColumnNamesArrayList.size(); i++)
         {
             String columnName = newColumnNamesArrayList.get(i);
@@ -152,7 +150,6 @@ public class ImportCSVColumnNamesController
 
         ArrayList<Integer> emptyColumns = getEmptyColumnNames(newColumnNamesArrayList);
         boolean hasEmptyColumns = !emptyColumns.isEmpty();
-        System.out.println(emptyColumns.isEmpty());
 
         String errorMessage = null;
         if(hasDuplicateColumns && hasEmptyColumns)
