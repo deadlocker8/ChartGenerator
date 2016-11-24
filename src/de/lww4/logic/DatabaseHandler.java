@@ -389,9 +389,7 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// TODO: exclude label table
-//			ResultSet result = statement.executeQuery("SELECT name FROM sqlite_master WHERE type = 'table' and name != 'Chart' and name != 'Dashboard' and name != 'sqlite_sequence'");
+			statement.setQueryTimeout(30); // set timeout to 30 sec.		
 			ResultSet result = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
 			
 			ArrayList<CSVTable> tables = new ArrayList<CSVTable>();
@@ -399,6 +397,7 @@ public class DatabaseHandler
 			while(result.next())
 			{
                 String name = result.getString("TABLE_NAME");
+        		//TODO exclude label table
                 if (!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
                 {
                     tables.add(getCSVTable(name));
