@@ -2,8 +2,6 @@ package de.lww4.ui.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 import de.lww4.logic.CSVTable;
 import de.lww4.logic.Chart;
@@ -35,7 +33,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -60,12 +57,10 @@ public class NewChartController
 	@FXML private Button buttonCancel;
 	@FXML private HBox hboxChartTypes;
 
-	public Stage stage;
-	public Controller controller;
-	public Image icon = new Image("de/lww4/resources/icon.png");
-	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
+	private Stage stage;
+	private Controller controller;	
 	private ToggleGroup toggleGroupChartTypes;
-	public boolean edit;
+	private boolean edit;
 	private Dashboard dashboard;
 	private int position;
 	private SubControllerEditChart subController;
@@ -130,7 +125,7 @@ public class NewChartController
 		{
 			try
 			{
-				Chart chart = controller.database.getChart(dashboard.getCells().get(position));
+				Chart chart = controller.getDatabase().getChart(dashboard.getCells().get(position));
 				textFieldTitle.setText(chart.getTitle());
 				colorPicker.setValue(chart.getColor());
 			
@@ -151,7 +146,7 @@ public class NewChartController
 				alert.setContentText("Beim Laden der Datenist ein Fehler aufgetreten.");
 				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage.getIcons().add(icon);
+				dialogStage.getIcons().add(controller.getIcon());
 				dialogStage.centerOnScreen();
 				alert.showAndWait();
 				return;
@@ -164,7 +159,7 @@ public class NewChartController
 		ArrayList<CSVTable> tables;
 		try
 		{
-			tables = controller.database.getAllCSVTables();
+			tables = controller.getDatabase().getAllCSVTables();
 		}
 		catch(Exception e)
 		{
@@ -261,7 +256,7 @@ public class NewChartController
 			alert.setContentText("Bitte geben Sie einen Namen für das Diagramm an.");
 			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(icon);
+			dialogStage.getIcons().add(controller.getIcon());
 			dialogStage.centerOnScreen();
 			alert.showAndWait();
 			return;
@@ -275,7 +270,7 @@ public class NewChartController
 			alert.setContentText("Bitte wählen Sie Werte für das Diagramm aus.");
 			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(icon);
+			dialogStage.getIcons().add(controller.getIcon());
 			dialogStage.centerOnScreen();
 			alert.showAndWait();
 			return;
@@ -286,15 +281,15 @@ public class NewChartController
 		{
 			if(edit)
 			{
-				controller.database.updateChart(chart);
+				controller.getDatabase().updateChart(chart);
 			}
 			else
 			{
-				int chartID = controller.database.saveChart(chart);
+				int chartID = controller.getDatabase().saveChart(chart);
 				if(chartID != -1)
 				{
 					dashboard.getCells().set(position, chartID);
-					controller.database.updateDashboard(dashboard);
+					controller.getDatabase().updateDashboard(dashboard);
 				}
 				else
 				{
@@ -302,7 +297,7 @@ public class NewChartController
 				}				
 			}
 			
-			controller.dashboardHandler = new DashboardHandler(controller.database.getAllDashboards());
+			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			controller.setDashboard(dashboard);
 			stage.close();
 		}
@@ -318,7 +313,7 @@ public class NewChartController
 			alert.setContentText("Beim Speichern des Diagramms ist ein Fehler aufgetreten.");
 			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(icon);
+			dialogStage.getIcons().add(controller.getIcon());
 			dialogStage.centerOnScreen();
 			alert.showAndWait();
 		}
@@ -358,5 +353,10 @@ public class NewChartController
 
 			event.consume();
 		});
+	}
+	
+	public Controller getController()
+	{
+		return controller;
 	}
 }
