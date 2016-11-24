@@ -70,7 +70,7 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 			try
 			{
 				ArrayList<PieChart.Data> data = new ArrayList<>();
-				ArrayList<Double> xValues = super.newChartController.controller.database.getCSVColumn(itemX.getTableUUID(), itemX.getText());
+				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
 
 				Map<Double, Integer> preparedData = prepareData(xValues);
 
@@ -133,7 +133,7 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 				alert.setContentText("Beim Erzeugen des Diagramms ist ein Fehler aufgetreten.");
 				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage.getIcons().add(super.newChartController.icon);
+				dialogStage.getIcons().add(super.newChartController.getController().getIcon());
 				dialogStage.centerOnScreen();
 				alert.showAndWait();
 			}

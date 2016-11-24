@@ -102,8 +102,8 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();
 			try
 			{
-				ArrayList<Double> xValues = super.newChartController.controller.database.getCSVColumn(itemX.getTableUUID(), itemX.getText());
-				ArrayList<Double> yValues = super.newChartController.controller.database.getCSVColumn(itemY.getTableUUID(), itemY.getText());
+				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
+				ArrayList<Double> yValues = super.newChartController.getController().getDatabase().getCSVColumn(itemY.getTableUUID(), itemY.getText());
 
 				for(int i = 0; i < xValues.size(); i++)
 				{
@@ -131,7 +131,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 				alert.setContentText("Beim Erzeugen des Diagramms ist ein Fehler aufgetreten.");
 				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage.getIcons().add(super.newChartController.icon);
+				dialogStage.getIcons().add(super.newChartController.getController().getIcon());
 				dialogStage.centerOnScreen();
 				alert.showAndWait();
 			}

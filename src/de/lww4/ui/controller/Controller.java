@@ -52,13 +52,13 @@ public class Controller
 	@FXML private Label labelTitle;
 	@FXML private MenuItem importCSVMenuItem;
 
-	public Stage stage;
-	public Image icon = new Image("de/lww4/resources/icon.png");
-	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
+	private Stage stage;
+	private Image icon = new Image("de/lww4/resources/icon.png");
+	private final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private GridPane gridPane;
-	public DatabaseHandler database;
-	public DashboardHandler dashboardHandler;
-	public Dashboard currentDashboard;
+	private DatabaseHandler database;
+	private DashboardHandler dashboardHandler;
+	private Dashboard currentDashboard;
 
 	/**
 	 * init method
@@ -708,5 +708,20 @@ public class Controller
     public DatabaseHandler getDatabase()
     {
         return database;
+    }
+    
+    public DashboardHandler getDashboardHandler()
+    {
+        return dashboardHandler;
+    }
+    
+    public void setDashboardHandler(DashboardHandler dashboardHandler)
+    {
+        this.dashboardHandler = dashboardHandler;
+    }
+    
+    public Image getIcon()
+    {
+    	return icon;
     }
 }

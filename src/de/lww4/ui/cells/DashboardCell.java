@@ -68,7 +68,7 @@ public class DashboardCell extends ListCell<Dashboard>
 					alert.setContentText("Möchten Sie dieses Dashboard wirklich unwiderruflich löschen?");
 					Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
 					dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-					dialogStage.getIcons().add(controller.icon);
+					dialogStage.getIcons().add(controller.getIcon());
 					dialogStage.centerOnScreen();
 
 					Optional<ButtonType> result = alert.showAndWait();
