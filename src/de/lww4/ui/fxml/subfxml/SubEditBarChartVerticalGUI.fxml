@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Group?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.controller.subcontroller.SubControllerEditBarChartVertical">
+<AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.controller.subcontroller.SubControllerEditBarChartVertical">
    <children>
       <Label fx:id="labelX" alignment="CENTER" prefHeight="20.0" prefWidth="607.0" text="&lt;Daten für X-Achse hier hin ziehen&gt;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <Label fx:id="labelY" alignment="CENTER" layoutX="-190.0" layoutY="190.0" minHeight="20.0" minWidth="400.0" prefHeight="20.0" prefWidth="400.0" rotate="-90.0" text="&lt;Daten für Y-Achse hier hin ziehen&gt;" textOverrun="CLIP" AnchorPane.bottomAnchor="190.0" AnchorPane.leftAnchor="-190.0" AnchorPane.topAnchor="190.0">
-         <font>
-            <Font name="System Bold" size="14.0" />
-         </font>
-      </Label>
+      <Group AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label fx:id="labelY" alignment="CENTER" layoutY="400.0" minHeight="20.0" minWidth="400.0" prefHeight="20.0" prefWidth="400.0" rotate="-90.0" text="&lt;Daten für Y-Achse hier hin ziehen&gt;" textOverrun="CLIP">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+         </children>
+      </Group>
       <StackPane fx:id="stackPaneChart" prefHeight="373.0" prefWidth="200.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="28.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>
