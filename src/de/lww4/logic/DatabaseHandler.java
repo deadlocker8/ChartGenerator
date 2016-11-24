@@ -598,7 +598,7 @@ public class DatabaseHandler
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			return 0;
+			return -1;
 		}
 	}
 
