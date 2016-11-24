@@ -1,6 +1,7 @@
 package de.lww4.ui.controller;
 
 import de.lww4.logic.Importer;
+import de.lww4.logic.utils.AlertGenerator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -8,6 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -19,7 +21,7 @@ import logger.LogLevel;
 import logger.Logger;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -106,21 +108,38 @@ public class ImportCSVColumnNamesController
 		}
 	}
 
-	private boolean hasDuplicatedColumns(ArrayList<String> newColumnNamesArrayList)
+    private ArrayList<String> getDuplicateColumns(ArrayList<String> newColumnNamesArrayList)
     {
-        HashSet<String> hashSet = new HashSet<>(newColumnNamesArrayList);
-        return newColumnNamesArrayList.size() > hashSet.size();
+        //index, occurance
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        for (int i = 0; i < newColumnNamesArrayList.size(); i++)
+        {
+            String columnName = newColumnNamesArrayList.get(i);
+            hashMap.putIfAbsent(columnName, 0);
+            hashMap.put(columnName, hashMap.get(columnName) + 1);
+        }
+        System.out.println(hashMap);
+        ArrayList<String> duplicateIndexArrayList = new ArrayList<>();
+
+        for (String columnName : hashMap.keySet())
+        {
+            if (hashMap.get(columnName) > 1)
+                duplicateIndexArrayList.add(columnName);
+        }
+
+        return duplicateIndexArrayList;
     }
 
     private ArrayList<Integer> getEmptyColumnNames(ArrayList<String> newColumnNamesArrayList)
     {
         ArrayList<Integer> emptyColumns = new ArrayList<>();
+        System.out.println(newColumnNamesArrayList);
         for(int i=0; i < newColumnNamesArrayList.size(); i++)
         {
             String columnName = newColumnNamesArrayList.get(i);
-            if(columnName.equals(""))
+            if (columnName.length() == 0)
             {
-                emptyColumns.add(i);
+                emptyColumns.add(i + 1);
             }
         }
         return emptyColumns;
@@ -128,9 +147,12 @@ public class ImportCSVColumnNamesController
 
     private boolean isUserError(ArrayList<String> newColumnNamesArrayList)
     {
-        boolean hasDuplicateColumns = hasDuplicatedColumns(newColumnNamesArrayList);
+        ArrayList<String> duplicateColumns = getDuplicateColumns(newColumnNamesArrayList);
+        boolean hasDuplicateColumns = !duplicateColumns.isEmpty();
+
         ArrayList<Integer> emptyColumns = getEmptyColumnNames(newColumnNamesArrayList);
-        boolean hasEmptyColumns = emptyColumns.size() > 0;
+        boolean hasEmptyColumns = !emptyColumns.isEmpty();
+        System.out.println(emptyColumns.isEmpty());
 
         String errorMessage = null;
         if(hasDuplicateColumns && hasEmptyColumns)
@@ -141,18 +163,27 @@ public class ImportCSVColumnNamesController
         {
             if(hasDuplicateColumns)
             {
-                errorMessage = "Einige Spalten sind doppelt!";
+                errorMessage = "Folgende Spaltennamen kommen doppelt vor: " + getStringFromArrayList(duplicateColumns.toString());
             }
 
             if(hasEmptyColumns)
             {
-                errorMessage = "Folgende Spalten sind leer: " + emptyColumns;
+                errorMessage = "Folgende Spalten sind leer: " + getStringFromArrayList(emptyColumns.toString());
             }
 
         }
 
-        return errorMessage != null;
+        if (errorMessage != null)
+        {
+            AlertGenerator.showAlert(Alert.AlertType.ERROR, errorMessage, mainController.getIcon());
+            return true;
+        }
+        return false;
+    }
 
+    private String getStringFromArrayList(String arrayString)
+    {
+        return arrayString.replace("[", "").replace("]", "");
     }
 
     private ArrayList<String> getColumnNamesArrayList()
@@ -160,7 +191,7 @@ public class ImportCSVColumnNamesController
         ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
         for (TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
         {
-            newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
+            newColumnNamesArrayList.add(((TextField) tableColumn.getGraphic()).getText().trim());
         }
         return newColumnNamesArrayList;
     }
