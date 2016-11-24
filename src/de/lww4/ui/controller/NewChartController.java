@@ -1,15 +1,6 @@
 package de.lww4.ui.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import de.lww4.logic.CSVTable;
-import de.lww4.logic.Chart;
-import de.lww4.logic.ChartType;
-import de.lww4.logic.ColumnTreeItem;
-import de.lww4.logic.Dashboard;
-import de.lww4.logic.DashboardHandler;
-import de.lww4.logic.DataFormats;
+import de.lww4.logic.*;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.ColumnTreeCell;
 import de.lww4.ui.controller.subcontroller.SubControllerEditChart;
@@ -22,17 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -46,22 +27,28 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private TextField textFieldTitle;
-	@FXML private ColorPicker colorPicker;
-	@FXML private TreeView<ColumnTreeItem> treeView;
-	@FXML private StackPane stackPaneChart;
-	@FXML private Button buttonSave;
+    @FXML
+    private ColorPicker colorPicker;
+    @FXML
+    private TreeView<ColumnTreeItem> treeView;
+    @FXML
+    private StackPane stackPaneChart;
+    @FXML private Button buttonSave;
 	@FXML private Button buttonCancel;
 	@FXML private HBox hboxChartTypes;
 
 	private Stage stage;
-	private Controller controller;
-	private ToggleGroup toggleGroupChartTypes;
-	private boolean edit;
-	private Dashboard dashboard;
+    private Controller controller;
+    private ToggleGroup toggleGroupChartTypes;
+    private boolean edit;
+    private Dashboard dashboard;
 	private int position;
 	private SubControllerEditChart subController;
 
@@ -98,10 +85,10 @@ public class NewChartController
 				if(selectedType.equals(ChartType.PIE))
 				{
 					colorPicker.setDisable(true);
-				}
-				else
-				{
-					colorPicker.setDisable(false);
+                }
+                else
+                {
+                    colorPicker.setDisable(false);
 				}
 			}
 		});
@@ -137,13 +124,13 @@ public class NewChartController
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
-			{
-				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+            {
+                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
-				return;
-			}
-		}
+                AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+                return;
+            }
+        }
 	}
 
 	private void initTreeView()
@@ -220,10 +207,10 @@ public class NewChartController
 					break;
 			}
 
-			Parent root = (Parent)fxmlLoader.load();
-			stackPaneChart.getChildren().add(root);
-			subController = fxmlLoader.getController();
-			subController.init(this);
+            Parent root = fxmlLoader.load();
+            stackPaneChart.getChildren().add(root);
+            subController = fxmlLoader.getController();
+            subController.init(this);
 
 		}
 		catch(IOException e)
@@ -242,15 +229,15 @@ public class NewChartController
 		String title = textFieldTitle.getText();
 		if(title == null || title.equals(""))
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
-			return;
-		}
+            AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
+            return;
+        }
 
 		if(!subController.isFilled())
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
-			return;
-		}
+            AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
+            return;
+        }
 
 		Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
 		try
@@ -270,20 +257,20 @@ public class NewChartController
 				else
 				{
 					throw new Exception("Can't save Chart in DB");
-				}
-			}
+                }
+            }
 
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			controller.setDashboard(dashboard);
 			stage.close();
 		}
-		catch(Exception e)
-		{
-			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+        catch (Exception e)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), true);
-		}
-	}
+            AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), true);
+        }
+    }
 
 	public void cancel()
 	{
@@ -321,13 +308,13 @@ public class NewChartController
 		});
 	}
 
-	public Controller getController()
-	{
-		return controller;
+    public Controller getController()
+    {
+        return controller;
 	}
 
-	public ColorPicker getColorPicker()
-	{
-		return colorPicker;
-	}
+    public ColorPicker getColorPicker()
+    {
+        return colorPicker;
+    }
 }

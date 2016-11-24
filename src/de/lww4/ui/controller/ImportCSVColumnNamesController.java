@@ -33,12 +33,12 @@ public class ImportCSVColumnNamesController
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private Importer importer;
 	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
-	
-	public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
-	{	   
-		this.stage = stage;
-		this.mainController = mainController;
-		this.importer = importer;
+
+    public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
+    {
+        this.stage = stage;
+        this.mainController = mainController;
+        this.importer = importer;
 		populateTableViewHead();
 		populateTableViewBody();
 	}
@@ -109,11 +109,7 @@ public class ImportCSVColumnNamesController
 	private boolean hasDuplicatedColumns(ArrayList<String> newColumnNamesArrayList)
     {
         HashSet<String> hashSet = new HashSet<>(newColumnNamesArrayList);
-        if(newColumnNamesArrayList.size() > hashSet.size())
-        {
-            return true;
-        }
-        return false;
+        return newColumnNamesArrayList.size() > hashSet.size();
     }
 
     private ArrayList<Integer> getEmptyColumnNames(ArrayList<String> newColumnNamesArrayList)
@@ -155,18 +151,14 @@ public class ImportCSVColumnNamesController
 
         }
 
-        if(errorMessage != null)
-        {
-            return true;
-        }
+        return errorMessage != null;
 
-        return false;
     }
 
     private ArrayList<String> getColumnNamesArrayList()
     {
         ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
-        for(TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
+        for (TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
         {
             newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
         }

@@ -1,7 +1,5 @@
 package de.lww4.ui.controller.subcontroller;
 
-import java.util.ArrayList;
-
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
@@ -15,6 +13,8 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import logger.LogLevel;
 import logger.Logger;
+
+import java.util.ArrayList;
 
 public class SubControllerEditPieChart extends SubControllerEditChart
 {
@@ -59,11 +59,11 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 			labelX.setText(itemX.getText());
 
 			try
-			{				
-				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
-			
-				PieChartGenerator generator = new PieChartGenerator(itemX.getText(), xValues);
-				PieChart chart = generator.generate();
+            {
+                ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
+
+                PieChartGenerator generator = new PieChartGenerator(itemX.getText(), xValues);
+                PieChart chart = generator.generate();
 
 				stackPaneChart.getChildren().clear();
 				stackPaneChart.getChildren().add(chart);
@@ -72,15 +72,15 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), true);
-			}
-		}
-	}
-	
+                AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), true);
+            }
+        }
+    }
 
-	@Override
-	public boolean isFilled()
-	{
+
+    @Override
+    public boolean isFilled()
+    {
 		itemY = new ColumnTreeItem("emtpy", "empty", false);
 		return itemX != null;
 	}
