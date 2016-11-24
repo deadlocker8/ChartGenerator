@@ -140,7 +140,7 @@ public class Controller
 			{
 				setDashboard(database.getDashboard(lastID));	
 			}
-
+			
 			initDashboard();
 		}
 		catch(Exception e)
@@ -323,7 +323,15 @@ public class Controller
 						// Dashboard is not existing in DB ("Unbenanntes Dashboard")
 						if(currentDashboard.getID() == -1)
 						{
-							database.saveDashboard(currentDashboard);
+							int dashboardID = database.saveDashboard(currentDashboard);
+							if(dashboardID != -1)
+							{
+								setDashboard(database.getDashboard(dashboardID));
+							}
+							else
+							{
+								throw new Exception("Could not save to DB");
+							}
 						}
 						else
 						{
