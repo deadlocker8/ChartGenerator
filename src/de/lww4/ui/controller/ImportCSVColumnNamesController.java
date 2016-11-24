@@ -1,10 +1,7 @@
 package de.lww4.ui.controller;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import de.lww4.logic.Importer;
+import de.lww4.logic.utils.AlertGenerator;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -12,7 +9,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -23,11 +20,14 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 public class ImportCSVColumnNamesController
 {
 	@FXML private TableView<ObservableList<StringProperty>> tableView;
-	@FXML private Button buttonCancel;
-	@FXML private Button buttonSave;
 
 	public Stage stage;
 	private Controller mainController;
@@ -35,12 +35,12 @@ public class ImportCSVColumnNamesController
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private Importer importer;
 	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
-	
-	public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
-	{	   
-		this.stage = stage;
-		this.mainController = mainController;
-		this.importer = importer;
+
+    public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
+    {
+        this.stage = stage;
+        this.mainController = mainController;
+        this.importer = importer;
 		populateTableViewHead();
 		populateTableViewBody();
 	}
@@ -108,26 +108,109 @@ public class ImportCSVColumnNamesController
 		}
 	}
 
+    private ArrayList<String> getDuplicateColumns(ArrayList<String> newColumnNamesArrayList)
+    {
+        //string, occurance
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        for (int i = 0; i < newColumnNamesArrayList.size(); i++)
+        {
+            String columnName = newColumnNamesArrayList.get(i);
+            hashMap.putIfAbsent(columnName, 0);
+            hashMap.put(columnName, hashMap.get(columnName) + 1);
+        }
+        ArrayList<String> duplicateIndexArrayList = new ArrayList<>();
+
+        for (String columnName : hashMap.keySet())
+        {
+            if (hashMap.get(columnName) > 1)
+                duplicateIndexArrayList.add(columnName);
+        }
+
+        return duplicateIndexArrayList;
+    }
+
+    private ArrayList<Integer> getEmptyColumnNames(ArrayList<String> newColumnNamesArrayList)
+    {
+        ArrayList<Integer> emptyColumns = new ArrayList<>();
+        for(int i=0; i < newColumnNamesArrayList.size(); i++)
+        {
+            String columnName = newColumnNamesArrayList.get(i);
+            if (columnName.length() == 0)
+            {
+                emptyColumns.add(i + 1);
+            }
+        }
+        return emptyColumns;
+    }
+
+    private boolean isUserError(ArrayList<String> newColumnNamesArrayList)
+    {
+        ArrayList<String> duplicateColumns = getDuplicateColumns(newColumnNamesArrayList);
+        boolean hasDuplicateColumns = !duplicateColumns.isEmpty();
+
+        ArrayList<Integer> emptyColumns = getEmptyColumnNames(newColumnNamesArrayList);
+        boolean hasEmptyColumns = !emptyColumns.isEmpty();
+
+        String errorMessage = null;
+        if(hasDuplicateColumns && hasEmptyColumns)
+        {
+            errorMessage = "Einige Spalten sind leer und/oder doppelt!";
+        }
+        else
+        {
+            if(hasDuplicateColumns)
+            {
+                errorMessage = "Folgende Spaltennamen kommen doppelt vor: " + getStringFromArrayList(duplicateColumns.toString());
+            }
+
+            if(hasEmptyColumns)
+            {
+                errorMessage = "Folgende Spalten sind leer: " + getStringFromArrayList(emptyColumns.toString());
+            }
+
+        }
+
+        if (errorMessage != null)
+        {
+            AlertGenerator.showAlert(Alert.AlertType.ERROR, errorMessage, mainController.getIcon());
+            return true;
+        }
+        return false;
+    }
+
+    private String getStringFromArrayList(String arrayString)
+    {
+        return arrayString.replace("[", "").replace("]", "");
+    }
+
+    private ArrayList<String> getColumnNamesArrayList()
+    {
+        ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
+        for (TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
+        {
+            newColumnNamesArrayList.add(((TextField) tableColumn.getGraphic()).getText().trim());
+        }
+        return newColumnNamesArrayList;
+    }
+
     @FXML
     private void save()
     {
-        ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
-        for(TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
+        ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
+        if(!isUserError(newColumnNamesArrayList))
         {
-            newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
-        }
+            importer.setColumnNamesArrayList(newColumnNamesArrayList);
+            try
+            {
+                mainController.getDatabase().saveCSVTable(importer);
+            }
+            catch (Exception e)
+            {
+                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+            }
 
-        importer.setColumnNamesArrayList(newColumnNamesArrayList);
-        try
-        {
-            mainController.getDatabase().saveCSVTable(importer);
+            stage.close();
         }
-        catch (Exception e)
-        {
-            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-        }
-
-        stage.close();
     }
 
 	@FXML
