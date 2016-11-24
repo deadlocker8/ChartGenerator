@@ -35,9 +35,11 @@ public class ImportCSVColumnNamesController
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private Importer importer;
 	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
+    private ImportCSVController importCSVController;
 
     public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
     {
+        this.importCSVController = importCSVController;
         this.stage = stage;
         this.mainController = mainController;
         this.importer = importer;
@@ -217,5 +219,6 @@ public class ImportCSVColumnNamesController
 	private void cancel()
 	{
 		stage.close();
-	}
+        importCSVController.getStage().show();
+    }
 }
