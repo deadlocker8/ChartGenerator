@@ -129,9 +129,17 @@ public class Controller
 		try
 		{
 			database = new DatabaseHandler();
-			dashboardHandler = new DashboardHandler(database.getAllDashboards());
-			// TODO select last opened dashboard
-			currentDashboard = new Dashboard("");
+			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
+			
+			int lastID = database.getLastDashboard();
+			if(lastID == 0)
+			{
+				setDashboard(new Dashboard(""));	
+			}
+			else
+			{
+				setDashboard(database.getDashboard(lastID));	
+			}
 
 			initDashboard();
 		}
@@ -630,6 +638,14 @@ public class Controller
 	public void setDashboard(Dashboard dashboard)
 	{
 		this.currentDashboard = dashboard;
+		try
+		{
+			database.updateLastDashboard(currentDashboard.getID());
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
 		initDashboard();
 	}
 
