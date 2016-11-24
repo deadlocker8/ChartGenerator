@@ -1,11 +1,5 @@
 package de.lww4.ui.controller;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
-
 import de.lww4.logic.Chart;
 import de.lww4.logic.Dashboard;
 import de.lww4.logic.DashboardHandler;
@@ -23,23 +17,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -47,9 +30,15 @@ import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
 /**
  * Main Controller Class
- * 
+ *
  * @author Robert
  */
 public class Controller

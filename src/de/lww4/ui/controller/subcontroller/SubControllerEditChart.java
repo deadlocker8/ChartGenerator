@@ -8,11 +8,11 @@ import javafx.scene.layout.StackPane;
 public abstract class SubControllerEditChart
 {
 	@FXML protected StackPane stackPaneChart;
-	
-	protected NewChartController newChartController;	
-	
-	protected ColumnTreeItem itemX;
-	protected ColumnTreeItem itemY;	
+
+    protected NewChartController newChartController;
+
+    protected ColumnTreeItem itemX;
+    protected ColumnTreeItem itemY;
 
 	public void init(NewChartController newChartController)
 	{

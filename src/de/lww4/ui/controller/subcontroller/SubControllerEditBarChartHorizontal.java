@@ -1,7 +1,5 @@
 package de.lww4.ui.controller.subcontroller;
 
-import java.util.ArrayList;
-
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
@@ -16,6 +14,8 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import logger.LogLevel;
 import logger.Logger;
+
+import java.util.ArrayList;
 
 public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 {
@@ -87,26 +87,26 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			this.itemY = itemY;
 
 			labelX.setText(itemX.getText());
-			labelY.setText(itemY.getText());			
-			try
-			{
-				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
+            labelY.setText(itemY.getText());
+            try
+            {
+                ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
 				ArrayList<Double> yValues = super.newChartController.getController().getDatabase().getCSVColumn(itemY.getTableUUID(), itemY.getText());
 
-				BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", xValues, yValues, newChartController.getColorPicker().getValue());
-				BarChart<Number, String> chart = generator.generate();
-				
-				stackPaneChart.getChildren().clear();
-				stackPaneChart.getChildren().add(chart);
-			}
+                BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", xValues, yValues, newChartController.getColorPicker().getValue());
+                BarChart<Number, String> chart = generator.generate();
+
+                stackPaneChart.getChildren().clear();
+                stackPaneChart.getChildren().add(chart);
+            }
 			catch(Exception e)
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), true);
-			}
-		}
-	}
+                AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), true);
+            }
+        }
+    }
 
 	@Override
 	public boolean isFilled()

@@ -1,22 +1,17 @@
 package de.lww4.logic;
 
+import javafx.scene.paint.Color;
+import logger.LogLevel;
+import logger.Logger;
+import tools.PathUtils;
+
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
-
-import javafx.scene.paint.Color;
-import logger.LogLevel;
-import logger.Logger;
-import tools.PathUtils;
 
 public class DatabaseHandler
 {
@@ -280,16 +275,16 @@ public class DatabaseHandler
 	{
 		Connection connection = null;
 		try
-		{		
-			ArrayList<Integer> cells = dashboard.getCells();
-			// create a database connection
-			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+        {
+            ArrayList<Integer> cells = dashboard.getCells();
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.			
-			statement.executeUpdate("UPDATE Dashboard SET name = '" + dashboard.getName() + "', cell_1_1 = " + cells.get(0) + ", cell_1_2 = " + cells.get(1) + ", cell_1_3 = " + cells.get(2) + ", cell_2_1 = " + cells.get(3) + ", cell_2_2 = " + cells.get(4) + ", cell_2_3 = " + cells.get(5) + " WHERE ID = " + dashboard.getID());
-			connection.close();
-		}
-		catch(SQLException e)
+            statement.setQueryTimeout(30); // set timeout to 30 sec.
+            statement.executeUpdate("UPDATE Dashboard SET name = '" + dashboard.getName() + "', cell_1_1 = " + cells.get(0) + ", cell_1_2 = " + cells.get(1) + ", cell_1_3 = " + cells.get(2) + ", cell_2_1 = " + cells.get(3) + ", cell_2_2 = " + cells.get(4) + ", cell_2_3 = " + cells.get(5) + " WHERE ID = " + dashboard.getID());
+            connection.close();
+        }
+        catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
@@ -403,10 +398,10 @@ public class DatabaseHandler
 
 			while(result.next())
 			{
-				String name = result.getString("TABLE_NAME");				
-				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
-				{					
-					tables.add(getCSVTable(name));
+                String name = result.getString("TABLE_NAME");
+                if (!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
+                {
+                    tables.add(getCSVTable(name));
 				}
 			}
 			
