@@ -1,4 +1,4 @@
-package de.lww4.logic;
+package de.lww4.logic.utils;
 
 import javafx.scene.paint.Color;
 
