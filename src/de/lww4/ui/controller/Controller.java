@@ -627,6 +627,7 @@ public class Controller
 			{
 				database.updateDashboard(currentDashboard);
 				dashboardHandler = new DashboardHandler(database.getAllDashboards());
+				initDashboard();
 			}
 			catch(Exception e)
 			{
