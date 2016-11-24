@@ -496,7 +496,7 @@ public class Controller
 				currentStackPane.getChildren().clear();
 
 				try
-				{
+				{					
 					ArrayList<Double> xValues;
 					ArrayList<Double> yValues;
 					switch(chart.getType())
