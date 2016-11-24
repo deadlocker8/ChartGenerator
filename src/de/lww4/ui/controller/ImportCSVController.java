@@ -4,6 +4,8 @@ package de.lww4.ui.controller;
 import de.lww4.logic.DelimiterType;
 import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.utils.Utils;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,7 +21,9 @@ import logger.LogLevel;
 import logger.Logger;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ImportCSVController
 {
@@ -57,6 +61,7 @@ public class ImportCSVController
                     String filename = currentFile.getName();
                     filenameLabel.setText(filename);
                     chartNameTextField.setText(filename);
+                    delimiterChoiceBox.setItems(FXCollections.observableArrayList(getPossibleDelimiters(currentFile)));
                 }
             }
         });
@@ -76,6 +81,37 @@ public class ImportCSVController
 
             }
         });
+    }
+
+    private ArrayList<DelimiterType> getPossibleDelimiters(File file)
+    {
+        ArrayList<DelimiterType> possibleDelimitersArrayList = new ArrayList<>();
+        try
+        {
+            ArrayList<DelimiterType> delimiterTypeArrayList = new ArrayList<>(Arrays.asList(DelimiterType.values()));
+            String fileContent = Utils.getContentsFromInputStream(new FileInputStream(file));
+            for (char c : fileContent.toCharArray())
+            {
+                for (DelimiterType delimiterType : delimiterTypeArrayList)
+                {
+                    if (delimiterType.getDelimiter() == c)
+                    {
+                        if (!possibleDelimitersArrayList.contains(delimiterType))
+                        {
+                            possibleDelimitersArrayList.add(delimiterType);
+                        }
+                    }
+                }
+            }
+
+            return possibleDelimitersArrayList;
+        }
+        catch (Exception e)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+        }
+
+        return new ArrayList<>(Arrays.asList(DelimiterType.values()));
     }
 
     private void openCSVColumnNameDialog()

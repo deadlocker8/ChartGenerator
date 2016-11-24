@@ -10,8 +10,9 @@ public enum DelimiterType
 	
 	private char delimiter;
 	private String name;
-	
-	private DelimiterType(char delimiter, String name)
+    private static DelimiterType[] delimiterTypes = values();
+
+    private DelimiterType(char delimiter, String name)
 	{
 		this.delimiter = delimiter;
 		this.name = name;
@@ -26,7 +27,19 @@ public enum DelimiterType
 	{
 		return name;
 	}
-	
+
+    public static DelimiterType fromChar(char c)
+    {
+        for (DelimiterType delimiterType : delimiterTypes)
+        {
+            if (delimiterType.getDelimiter() == c)
+            {
+                return delimiterType;
+            }
+        }
+        return null;
+    }
+
 	@Override
 	public String toString()
 	{
