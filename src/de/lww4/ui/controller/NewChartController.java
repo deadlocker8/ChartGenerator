@@ -10,6 +10,7 @@ import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.Dashboard;
 import de.lww4.logic.DashboardHandler;
 import de.lww4.logic.DataFormats;
+import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.ColumnTreeCell;
 import de.lww4.ui.controller.subcontroller.SubControllerEditChart;
 import javafx.beans.value.ChangeListener;
@@ -20,7 +21,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -50,7 +50,7 @@ public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private TextField textFieldTitle;
-	@FXML public ColorPicker colorPicker;
+	@FXML private ColorPicker colorPicker;
 	@FXML private TreeView<ColumnTreeItem> treeView;
 	@FXML private StackPane stackPaneChart;
 	@FXML private Button buttonSave;
@@ -58,7 +58,7 @@ public class NewChartController
 	@FXML private HBox hboxChartTypes;
 
 	private Stage stage;
-	private Controller controller;	
+	private Controller controller;
 	private ToggleGroup toggleGroupChartTypes;
 	private boolean edit;
 	private Dashboard dashboard;
@@ -98,7 +98,7 @@ public class NewChartController
 				if(selectedType.equals(ChartType.PIE))
 				{
 					colorPicker.setDisable(true);
-				}		
+				}
 				else
 				{
 					colorPicker.setDisable(false);
@@ -128,7 +128,7 @@ public class NewChartController
 				Chart chart = controller.getDatabase().getChart(dashboard.getCells().get(position));
 				textFieldTitle.setText(chart.getTitle());
 				colorPicker.setValue(chart.getColor());
-			
+
 				toggleGroupChartTypes.getToggles().get(chart.getType().getID()).setSelected(true);
 
 				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
@@ -137,18 +137,10 @@ public class NewChartController
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
-			{				
+			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-				
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Fehler");
-				alert.setHeaderText("");
-				alert.setContentText("Beim Laden der Datenist ein Fehler aufgetreten.");
-				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage.getIcons().add(controller.getIcon());
-				dialogStage.centerOnScreen();
-				alert.showAndWait();
+
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Laden der Daten ist ein Fehler aufgetreten.", controller.getIcon(), true);
 				return;
 			}
 		}
@@ -250,29 +242,13 @@ public class NewChartController
 		String title = textFieldTitle.getText();
 		if(title == null || title.equals(""))
 		{
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Warnung");
-			alert.setHeaderText("");
-			alert.setContentText("Bitte geben Sie einen Namen für das Diagramm an.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(controller.getIcon());
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Bitte geben Sie einen Namen für das Diagramm an.", controller.getIcon(), true);
 			return;
 		}
 
 		if(!subController.isFilled())
 		{
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Warnung");
-			alert.setHeaderText("");
-			alert.setContentText("Bitte wählen Sie Werte für das Diagramm aus.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(controller.getIcon());
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Bitte wählen Sie die Werte für das Diagramm aus.", controller.getIcon(), true);
 			return;
 		}
 
@@ -294,28 +270,18 @@ public class NewChartController
 				else
 				{
 					throw new Exception("Can't save Chart in DB");
-				}				
+				}
 			}
-			
+
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			controller.setDashboard(dashboard);
 			stage.close();
 		}
-		catch(
-
-		Exception e)
+		catch(Exception e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Fehler");
-			alert.setHeaderText("");
-			alert.setContentText("Beim Speichern des Diagramms ist ein Fehler aufgetreten.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(controller.getIcon());
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Speichern des Diagramms ist ein Fehler aufgetreten.", controller.getIcon(), true);
 		}
 	}
 
@@ -354,9 +320,14 @@ public class NewChartController
 			event.consume();
 		});
 	}
-	
+
 	public Controller getController()
 	{
 		return controller;
+	}
+
+	public ColorPicker getColorPicker()
+	{
+		return colorPicker;
 	}
 }

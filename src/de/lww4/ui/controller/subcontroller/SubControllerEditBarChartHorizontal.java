@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
+import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.stage.Stage;
 import logger.LogLevel;
 import logger.Logger;
 
@@ -90,7 +89,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 				ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
 				ArrayList<Double> yValues = super.newChartController.getController().getDatabase().getCSVColumn(itemY.getTableUUID(), itemY.getText());
 
-				BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", xValues, yValues, newChartController.colorPicker.getValue());
+				BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", xValues, yValues, newChartController.getColorPicker().getValue());
 				BarChart<Number, String> chart = generator.generate();
 				
 				stackPaneChart.getChildren().clear();
@@ -100,15 +99,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				Alert alert = new Alert(AlertType.ERROR);
-				alert.setTitle("Fehler");
-				alert.setHeaderText("");
-				alert.setContentText("Beim Erzeugen des Diagramms ist ein Fehler aufgetreten.");
-				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage.getIcons().add(super.newChartController.getController().getIcon());
-				dialogStage.centerOnScreen();
-				alert.showAndWait();
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Erzeugen des Diagramms ist ein Fehler aufgetreten.", newChartController.getController().getIcon(), true);
 			}
 		}
 	}

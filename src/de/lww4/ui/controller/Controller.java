@@ -13,6 +13,7 @@ import de.lww4.logic.DatabaseHandler;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
+import de.lww4.logic.utils.AlertGenerator;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -149,15 +150,7 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Fehler");
-			alert.setHeaderText("");
-			alert.setContentText("Beim Laden der Datenbank ist ein Fehler aufgetreten.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(icon);
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Laden der Datenbank ist ein Fehler aufgetreten.", icon, true);
 		}
 	}
 
@@ -225,15 +218,7 @@ public class Controller
 			name.trim();
 			if(name.equals(""))
 			{
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Warnung");
-				alert.setHeaderText("");
-				alert.setContentText("Das Feld für den Dashboardnamen darf nicht leer sein.");
-				Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage2.getIcons().add(icon);
-				dialogStage2.centerOnScreen();
-				alert.showAndWait();
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Das Feld für den Dashboardnamen darf nicht leer sein.", icon, true);
 
 				newDashboardMenuItem();
 			}
@@ -241,15 +226,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Warnung");
-					alert.setHeaderText("");
-					alert.setContentText("Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.");
-					Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-					dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-					dialogStage2.getIcons().add(icon);
-					dialogStage2.centerOnScreen();
-					alert.showAndWait();
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.", icon, true);
 
 					newDashboardMenuItem();
 				}
@@ -265,15 +242,7 @@ public class Controller
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-						Alert alert = new Alert(AlertType.ERROR);
-						alert.setTitle("Fehler");
-						alert.setHeaderText("");
-						alert.setContentText("Beim Speichern ist ein Fehler aufgetreten.");
-						Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-						dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-						dialogStage2.getIcons().add(icon);
-						dialogStage2.centerOnScreen();
-						alert.showAndWait();
+						AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Speichern ist ein Fehler aufgetreten", icon, true);
 					}
 				}
 			}
@@ -335,15 +304,7 @@ public class Controller
 			name.trim();
 			if(name.equals(""))
 			{
-				Alert alert = new Alert(AlertType.WARNING);
-				alert.setTitle("Warnung");
-				alert.setHeaderText("");
-				alert.setContentText("Das Feld für den Dashboardnamen darf nicht leer sein.");
-				Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage.getIcons().add(icon);
-				dialogStage.centerOnScreen();
-				alert.showAndWait();
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Das Feld für den Dashboardnamen darf nicht leer sein.", icon, true);
 
 				checkTextInputTitle(dialog);
 			}
@@ -351,15 +312,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-					Alert alert = new Alert(AlertType.WARNING);
-					alert.setTitle("Warnung");
-					alert.setHeaderText("");
-					alert.setContentText("Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.");
-					Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-					dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-					dialogStage.getIcons().add(icon);
-					dialogStage.centerOnScreen();
-					alert.showAndWait();
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Dieser Name wird bereits verwendet.\nBitte verwenden Sie einen anderen Namen.", icon, true);
 
 					checkTextInputTitle(dialog);
 				}
@@ -386,15 +339,7 @@ public class Controller
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-						Alert alert = new Alert(AlertType.ERROR);
-						alert.setTitle("Fehler");
-						alert.setHeaderText("");
-						alert.setContentText("Beim Speichern ist ein Fehler aufgetreten.");
-						Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-						dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-						dialogStage.getIcons().add(icon);
-						dialogStage.centerOnScreen();
-						alert.showAndWait();
+						AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", "Beim Speichern ist ein Fehler aufgetreten.", icon, true);
 					}
 				}
 			}
@@ -437,7 +382,7 @@ public class Controller
 				}
 				catch(Exception e)
 				{
-					//ERRORHANDLING
+					// ERRORHANDLING
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 				}
 			}
@@ -569,7 +514,7 @@ public class Controller
 							currentStackPane.getChildren().add(generatorVertical.generate());
 							break;
 						case PIE:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());							
+							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
 							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), xValues);
 							currentStackPane.getChildren().add(generatorPie.generate());
 							break;
@@ -580,7 +525,7 @@ public class Controller
 				}
 				catch(Exception e)
 				{
-					//ERRORHANDLING
+					// ERRORHANDLING
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 				}
 			}
@@ -605,18 +550,10 @@ public class Controller
 	 *            boolean - editing already existing chart at given position
 	 */
 	private void addChart(int position, boolean edit)
-	{
+	{	
 		if(currentDashboard.getName().equals(""))
 		{
-			Alert alert = new Alert(AlertType.WARNING);
-			alert.setTitle("Warnung");
-			alert.setHeaderText("");
-			alert.setContentText("Bitte geben Sie zuerst einen Namen für das Dashboard an.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(icon);
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", "Bitte geben Sie zuerst einen Namen für das Dashboard an.", icon, true);
 			return;
 		}
 
@@ -682,15 +619,7 @@ public class Controller
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				Alert alert2 = new Alert(AlertType.ERROR);
-				alert2.setTitle("Fehler");
-				alert2.setHeaderText("");
-				alert2.setContentText("Beim Löschen ist ein Fehler aufgetreten.");
-				Stage dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage2 = (Stage)alert.getDialogPane().getScene().getWindow();
-				dialogStage2.getIcons().add(icon);
-				dialogStage2.centerOnScreen();
-				alert2.showAndWait();
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Löschen des Diagramms ist ein Fehler aufgetreten.", icon, true);
 			}
 		}
 	}
@@ -732,15 +661,7 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Fehler");
-			alert.setHeaderText("");
-			alert.setContentText("Beim Löschen ist ein Fehler aufgetreten.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(icon);
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Löschen des Dashboards ist ein Fehler aufgetreten.", icon, true);
 		}
 	}
 
@@ -749,14 +670,8 @@ public class Controller
 	 */
 	public void about()
 	{
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("über " + bundle.getString("app.name"));
-		alert.setHeaderText(bundle.getString("app.name"));
-		alert.setContentText("Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n");
-		Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-		dialogStage.getIcons().add(icon);
-		dialogStage.centerOnScreen();
-		alert.showAndWait();
+		AlertGenerator.showAlert(AlertType.INFORMATION, "über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
+				true);
 	}
 
 	public DatabaseHandler getDatabase()

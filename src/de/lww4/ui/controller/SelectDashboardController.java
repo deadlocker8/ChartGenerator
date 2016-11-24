@@ -2,10 +2,10 @@ package de.lww4.ui.controller;
 
 import de.lww4.logic.Dashboard;
 import de.lww4.logic.DashboardHandler;
+import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.DashboardCell;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -77,15 +77,7 @@ public class SelectDashboardController
 		{			
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setTitle("Fehler");
-			alert.setHeaderText("");
-			alert.setContentText("Beim Abrufen der Daten aus der Datenbank ist ein Fehler aufgetreten.");
-			Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
-			dialogStage.getIcons().add(controller.getIcon());
-			dialogStage.centerOnScreen();
-			alert.showAndWait();
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", "Beim Abrufen der Daten aus der Datenbank ist ein Fehler aufgetreten.", controller.getIcon(), true);
 		}		
 	}
 
