@@ -139,7 +139,7 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.databse"), icon, true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.database"), icon, true);
 		}
 	}
 
