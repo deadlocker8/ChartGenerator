@@ -1,6 +1,5 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -8,12 +7,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import logger.LogLevel;
@@ -34,11 +33,9 @@ public class ImportCSVColumnNamesController
 	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
 	private Importer importer;
 	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
-	private ImportCSVController importCSVController;
-
+	
 	public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
-	{
-	    this.importCSVController = importCSVController;
+	{	   
 		this.stage = stage;
 		this.mainController = mainController;
 		this.importer = importer;
@@ -169,7 +166,7 @@ public class ImportCSVColumnNamesController
     private ArrayList<String> getColumnNamesArrayList()
     {
         ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
-        for(TableColumn tableColumn : tableView.getColumns())
+        for(TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
         {
             newColumnNamesArrayList.add(((TextField)tableColumn.getGraphic()).getText());
         }

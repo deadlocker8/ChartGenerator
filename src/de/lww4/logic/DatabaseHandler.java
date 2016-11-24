@@ -280,14 +280,13 @@ public class DatabaseHandler
 	{
 		Connection connection = null;
 		try
-		{
+		{		
 			ArrayList<Integer> cells = dashboard.getCells();
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,
-			statement.executeUpdate("UPDATE Dashboard SET name = " + dashboard.getName() + ", cell_1_1 = " + cells.get(0) + ", cell_1_2 = " + cells.get(1) + ", cell_1_3 = " + cells.get(2) + ", cell_2_1 = " + cells.get(3) + ", cell_2_2 = " + cells.get(4) + ", cell_2_3 = " + cells.get(5) + " WHERE ID = " + dashboard.getID());
+			statement.setQueryTimeout(30); // set timeout to 30 sec.			
+			statement.executeUpdate("UPDATE Dashboard SET name = '" + dashboard.getName() + "', cell_1_1 = " + cells.get(0) + ", cell_1_2 = " + cells.get(1) + ", cell_1_3 = " + cells.get(2) + ", cell_2_1 = " + cells.get(3) + ", cell_2_2 = " + cells.get(4) + ", cell_2_3 = " + cells.get(5) + " WHERE ID = " + dashboard.getID());
 			connection.close();
 		}
 		catch(SQLException e)
@@ -404,8 +403,7 @@ public class DatabaseHandler
 
 			while(result.next())
 			{
-				String name = result.getString("TABLE_NAME");
-				//TODO add settings table
+				String name = result.getString("TABLE_NAME");				
 				if(!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
 				{					
 					tables.add(getCSVTable(name));
