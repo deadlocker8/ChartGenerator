@@ -379,8 +379,9 @@ public class Controller
 				}
 				catch(Exception e)
 				{
-					// ERRORHANDLING
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+
+					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
 				}
 			}
 
@@ -522,8 +523,9 @@ public class Controller
 				}
 				catch(Exception e)
 				{
-					// ERRORHANDLING
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+
+					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
 				}
 			}
 
