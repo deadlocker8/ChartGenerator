@@ -1,9 +1,6 @@
 package de.lww4.ui.controller;
 
 
-import java.io.File;
-import java.util.ArrayList;
-
 import de.lww4.logic.DelimiterType;
 import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
@@ -13,17 +10,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import logger.LogLevel;
 import logger.Logger;
+
+import java.io.File;
+import java.util.ArrayList;
 
 public class ImportCSVController
 {
@@ -157,5 +153,10 @@ public class ImportCSVController
 		dialogStage.getIcons().add(icon);
 		dialogStage.centerOnScreen();
 		alert.showAndWait();
+    }
+
+    public Stage getStage()
+    {
+        return stage;
     }
 }
