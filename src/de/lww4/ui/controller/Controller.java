@@ -223,7 +223,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.dashboard.alreadyinuse"), icon, true);
+                    AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.alreadyinuse"), icon, true);
 
 					newDashboardMenuItem();
 				}
