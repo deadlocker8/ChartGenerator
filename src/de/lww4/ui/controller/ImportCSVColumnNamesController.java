@@ -70,8 +70,8 @@ public class ImportCSVColumnNamesController
 	{
 		for(int i = 0; i < importer.getLongestRowSize(); i++)
 		{
-			if(i < importer.getColumnNames().size() - 1)
-			{
+            if (i < importer.getColumnNames().size())
+            {
 				tableView.getColumns().add(generateColumn(importer.getColumnNames().get(i), i));
 			}
 			else
