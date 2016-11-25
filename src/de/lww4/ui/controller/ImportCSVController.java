@@ -159,8 +159,8 @@ public class ImportCSVController
 	{
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/ImportCSVColumnNamesGUI.fxml"));
-			Parent root = (Parent)fxmlLoader.load();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ImportCSVColumnNamesGUI.fxml"));
+            Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.setScene(new Scene(root, 500, 400));
 			newStage.setMinHeight(400);
