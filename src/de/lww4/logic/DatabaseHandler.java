@@ -497,7 +497,7 @@ public class DatabaseHandler
 			sqlCreateTable = "CREATE TABLE '" + uuid + "'(ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, date VARCHAR";
 			for(int i = 0; i < columnNamesSize; i++)
 			{
-				sqlCreateTable += ", " + columnNames.get(i) + " VARCHAR";
+				sqlCreateTable += ", '" + columnNames.get(i) + "' VARCHAR";
 			}
 			sqlCreateTable += ");";
 
