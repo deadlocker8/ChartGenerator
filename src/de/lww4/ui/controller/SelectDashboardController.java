@@ -84,7 +84,6 @@ public class SelectDashboardController
 		catch(Exception e)
 		{			
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-
             AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
         }
     }
