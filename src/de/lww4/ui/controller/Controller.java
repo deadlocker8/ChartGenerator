@@ -198,8 +198,9 @@ public class Controller
 	/**
 	 * handles menuItem "new Dashboard"
 	 */
-	public void newDashboardMenuItem()
-	{
+    @FXML
+    private void newDashboardMenuItem()
+    {
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Neues Dashboard");
 		dialog.setHeaderText("");
@@ -249,8 +250,9 @@ public class Controller
 	/**
 	 * handles menuItem "select Dashboard"
 	 */
-	public void selectDashboardMenuItem()
-	{
+    @FXML
+    private void selectDashboardMenuItem()
+    {
 		try
 		{
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/SelectDashboardGUI.fxml"));
@@ -281,8 +283,9 @@ public class Controller
 	/**
 	 * handles menuItem "export Dashboard"
 	 */
-	public void exportDashboardMenuItem()
-	{
+    @FXML
+    private void exportDashboardMenuItem()
+    {
 		// TODO
 	}
 
@@ -713,4 +716,9 @@ public class Controller
 	{
 		return bundle;
 	}
+
+    public Dashboard getCurrentDashboard()
+    {
+        return currentDashboard;
+    }
 }
