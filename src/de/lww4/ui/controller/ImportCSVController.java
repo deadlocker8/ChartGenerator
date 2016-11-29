@@ -76,12 +76,13 @@ public class ImportCSVController
 				if(!isUserError())
 				{
 					importer = new Importer(currentFile, delimiter, fillValueTextField.getText(), chartNameTextField.getText());
-					stage.hide();
-                    checkPossibleStrings();
-                    openCSVColumnNameDialog();
-				}
-
-			}
+                    if (!containsStrings())
+                    {
+                        stage.hide();
+                        openCSVColumnNameDialog();
+                    }
+                }
+            }
 		});		
 		
 		fillValueTextField.setTextFormatter(new TextFormatter<>(c -> {
@@ -101,7 +102,7 @@ public class ImportCSVController
 		}));		
 	}
 
-    private void checkPossibleStrings()
+    private boolean containsStrings()
     {
         for (ArrayList<String> row : importer.getData())
         {
@@ -114,10 +115,11 @@ public class ImportCSVController
                 catch (NumberFormatException e)
                 {
                     AlertGenerator.showAlert(Alert.AlertType.WARNING, mainController.getBundle().getString("warning.possible.string.values"), mainController.getIcon());
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     private void removeImpossibleDelimiters(File file)
