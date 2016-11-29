@@ -71,8 +71,16 @@ public class SelectDashboardController
 		{
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			listView.getItems().clear();
-			listView.getItems().addAll(controller.getDashboardHandler().getDashboards());
-		}
+
+            //adds all dashboard to list, except current open dashboard
+            for (Dashboard dashboard : controller.getDashboardHandler().getDashboards())
+            {
+                if (dashboard.getID() != controller.getCurrentDashboard().getID())
+                {
+                    listView.getItems().add(dashboard);
+                }
+            }
+        }
 		catch(Exception e)
 		{			
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
