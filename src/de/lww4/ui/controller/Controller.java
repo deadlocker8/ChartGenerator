@@ -53,7 +53,8 @@ public class Controller
 	private GridPane gridPane;
 	private DatabaseHandler database;
 	private DashboardHandler dashboardHandler;
-	private Dashboard currentDashboard;
+	private Dashboard currentDashboard;	
+	private ArrayList<StackPane> chartStackPanes;
 
 	/**
 	 * init method
@@ -286,7 +287,26 @@ public class Controller
     @FXML
     private void exportDashboardMenuItem()
     {
-		// TODO
+    	try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ExportGUI.fxml"));
+
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root));			
+			newStage.initOwner(stage);
+			newStage.setTitle("Diagramm exportieren");			
+			newStage.getIcons().add(icon);
+			ExportController newController = fxmlLoader.getController();			
+			newController.init(newStage, this, gridPane);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(false);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}
 	}
 
 	/**
@@ -363,6 +383,7 @@ public class Controller
 	private void initGridPane()
 	{
 		gridPane.getChildren().clear();
+		chartStackPanes = new ArrayList<>();
 		boolean empty = true;
 
 		for(int i = 0; i < 6; i++)
@@ -470,6 +491,7 @@ public class Controller
 			AnchorPane.setLeftAnchor(hbox, 5.0);
 
 			StackPane currentStackPane = new StackPane();
+			chartStackPanes.add(currentStackPane);
 			currentAnchorPane.getChildren().add(currentStackPane);
 			AnchorPane.setTopAnchor(currentStackPane, 40.0);
 			AnchorPane.setRightAnchor(currentStackPane, 10.0);
@@ -641,7 +663,37 @@ public class Controller
 	 */
 	private void exportChart(int position)
 	{
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ExportGUI.fxml"));
 
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root));			
+			newStage.initOwner(stage);
+			newStage.setTitle("Diagramm exportieren");			
+			newStage.getIcons().add(icon);
+			ExportController newController = fxmlLoader.getController();
+			
+			Chart chart = null;			
+			try
+			{
+				chart = database.getChart(currentDashboard.getCells().get(position));
+			}
+			catch(Exception e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));				
+			}			
+			
+			newController.init(newStage, this, chartStackPanes.get(position), chart);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(false);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}
 	}
 
 	/**
