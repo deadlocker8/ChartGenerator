@@ -43,22 +43,26 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// create chart and dashboard table
 			statement.executeUpdate("PRAGMA foreign_keys = ON");
-			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR, color VARCHAR);");
-			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INT REFERENCES Chart (ID), cell_1_2 INT REFERENCES Chart (ID), cell_1_3 INT REFERENCES Chart (ID), cell_2_1 INT REFERENCES Chart (ID), cell_2_2 INT REFERENCES Chart (ID), cell_2_3 INT REFERENCES Chart (ID));");
-			statement.executeUpdate("CREATE TABLE Settings (ID VARCHAR, value INT REFERENCES Dashboard(ID));");
+			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR, color VARCHAR, scale INTEGER REFERENCES Scale (ID));");
+			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INTEGER REFERENCES Chart (ID), cell_1_2 INTEGER REFERENCES Chart (ID), cell_1_3 INTEGER REFERENCES Chart (ID), cell_2_1 INTEGER REFERENCES Chart (ID), cell_2_2 INTEGER REFERENCES Chart (ID), cell_2_3 INTEGER REFERENCES Chart (ID));");
+			statement.executeUpdate("CREATE TABLE Scale (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, data TEXT);");
+			statement.executeUpdate("CREATE TABLE Settings (ID VARCHAR, value INTEGER REFERENCES Dashboard(ID));");
 			statement.executeUpdate("INSERT INTO Settings(ID) VALUES('lastDashboard');");
-			connection.close();
+			statement.close();
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 		}
+		finally {
+			connection.close();
+		}
 	}
 
+	//region Dashboard
     /**
      * returns all the dashboards in the table
      * @return
@@ -72,12 +76,10 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			// statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM Dashboard ORDER BY ID");
 
 			ArrayList<Dashboard> dashboards = extractDashboards(result);
-
-			connection.close();
+			statement.close();
 
 			return dashboards;
 		}
@@ -86,6 +88,9 @@ public class DatabaseHandler
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return null;
+		}
+		finally {
+			connection.close();
 		}
 	}
 
@@ -129,11 +134,10 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM Dashboard WHERE ID = " + ID);			
 
 			Dashboard dashboard = new Dashboard(result.getInt("ID"), result.getString("name"), result.getInt("cell_1_1"), result.getInt("cell_1_2"), result.getInt("cell_1_3"), result.getInt("cell_2_1"), result.getInt("cell_2_2"), result.getInt("cell_2_3"));
-			connection.close();
+			statement.close();
 			
 			return dashboard;
 		}
@@ -143,76 +147,16 @@ public class DatabaseHandler
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return null;
 		}
-	}
-
-    /**
-     * get data for one chart
-     * @param ID
-     * @return
-     * @throws Exception
-     */
-	public Chart getChart(int ID) throws Exception
-	{
-		Connection connection = null;
-		try
-		{
-			// create a database connection
-			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT * FROM Chart WHERE ID = " + ID);			
-
-			Color color = Color.web(result.getString("color"));
-			ChartType type = ChartType.valueOf(result.getInt("type"));
-
-			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color);
-
+		finally {
 			connection.close();
-			return chart;
-		}
-		catch(SQLException e)
-		{
-			// if the error message is "out of memory", it probably means no database file is found
-			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			return null;
 		}
 	}
 
-    /**
-     * save new chart in the table
-     * @param chart
-     * @throws Exception
-     */
-	public int saveChart(Chart chart) throws Exception
-	{
-		Connection connection = null;
-		try
-		{
-			// create a database connection
-			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			// id, type, title, x, y, uuid, color
-			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "')");
-			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Chart");
-						
-			int id = result.getInt(1);
-			connection.close();
-			return id;		
-		}
-		catch(SQLException e)
-		{
-			// if the error message is "out of memory", it probably means no database file is found
-			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			return -1;
-		}
-	}
-
-    /**
-     * save new Dashboard in the table
-     * @param dashboard
-     * @throws Exception
-     */
+	/**
+	 * save new Dashboard in the table
+	 * @param dashboard
+	 * @throws Exception
+	 */
 	public int saveDashboard(Dashboard dashboard) throws Exception
 	{
 		Connection connection = null;
@@ -229,14 +173,136 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, cell_1_1, cell_1_2, cell_1_3, cell_2_1, cell_2_2, cell_2_3,
-			statement.executeUpdate("INSERT INTO Dashboard VALUES(NULL,\"" + dashboard.getName() + "\"," + cells.get(0) + "," + cells.get(1) + "," + cells.get(2) + "," + cells.get(3) + "," + cells.get(4) + "," + cells.get(5) + ")");
-			
+			statement.executeUpdate("INSERT INTO Dashboard VALUES(NULL,'" + dashboard.getName() + "'," + cells.get(0) + "," + cells.get(1) + "," + cells.get(2) + "," + cells.get(3) + "," + cells.get(4) + "," + cells.get(5) + ")");
+
 			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Dashboard");
-			
+
 			int id = result.getInt(1);
+			statement.close();
+
+			return id;
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return -1;
+		}
+		finally {
 			connection.close();
+		}
+	}
+
+	/**
+	 * update the cells of a dashboard
+	 * @param dashboard
+	 * @throws Exception
+	 */
+	public void updateDashboard(Dashboard dashboard) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			ArrayList<Integer> cells = dashboard.getCells();
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.executeUpdate("UPDATE Dashboard SET name = '" + dashboard.getName() + "', cell_1_1 = " + cells.get(0) + ", cell_1_2 = " + cells.get(1) + ", cell_1_3 = " + cells.get(2) + ", cell_2_1 = " + cells.get(3) + ", cell_2_2 = " + cells.get(4) + ", cell_2_3 = " + cells.get(5) + " WHERE ID = " + dashboard.getID());
+			statement.close();
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	/**
+	 * delete a dashboard from the table
+	 * @param ID
+	 * @throws Exception
+	 */
+	public void deleteDashboard(int ID) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.executeUpdate("DELETE FROM Dashboard WHERE ID=" + ID);
+			statement.close();
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+		finally {
+			connection.close();
+		}
+	}
+	//endregion
+	//region Chart
+    /**
+     * get data for one chart
+     * @param ID
+     * @return
+     * @throws Exception
+     */
+	public Chart getChart(int ID) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery("SELECT * FROM Chart WHERE ID = " + ID);			
+
+			Color color = Color.web(result.getString("color"));
+			ChartType type = ChartType.valueOf(result.getInt("type"));
+
+			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color);
+			statement.close();
+
+			return chart;
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return null;
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+    /**
+     * save new chart in the table
+     * @param chart
+     * @throws Exception
+     */
+	public int saveChart(Chart chart) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			// id, type, title, x, y, uuid, color
+			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "')");
+			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Chart");
+						
+			int id = result.getInt(1);
+			statement.close();
+
 			return id;		
 		}
 		catch(SQLException e)
@@ -244,6 +310,9 @@ public class DatabaseHandler
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return -1;
+		}
+		finally {
+			connection.close();
 		}
 	}
 
@@ -260,40 +329,17 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, type, title, x, y, uuid, color
 			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType().getID() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "' WHERE ID = " + chart.getID());
-			connection.close();
+			statement.close();
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 		}
-	}
-
-    /**
-     * update the cells of a dashboard
-     * @param dashboard
-     * @throws Exception
-     */
-	public void updateDashboard(Dashboard dashboard) throws Exception
-	{
-		Connection connection = null;
-		try
-        {
-            ArrayList<Integer> cells = dashboard.getCells();
-            // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-			Statement statement = connection.createStatement();
-            statement.setQueryTimeout(30); // set timeout to 30 sec.
-            statement.executeUpdate("UPDATE Dashboard SET name = '" + dashboard.getName() + "', cell_1_1 = " + cells.get(0) + ", cell_1_2 = " + cells.get(1) + ", cell_1_3 = " + cells.get(2) + ", cell_2_1 = " + cells.get(3) + ", cell_2_2 = " + cells.get(4) + ", cell_2_3 = " + cells.get(5) + " WHERE ID = " + dashboard.getID());
-            connection.close();
-        }
-        catch(SQLException e)
-		{
-			// if the error message is "out of memory", it probably means no database file is found
-			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		finally {
+			connection.close();
 		}
 	}
 
@@ -310,41 +356,21 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			statement.executeUpdate("DELETE FROM Chart WHERE ID = " + ID + ")");
-			connection.close();
+			statement.close();
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 		}
-	}
-
-    /**
-     * delete a dashboard from the table
-     * @param ID
-     * @throws Exception
-     */
-	public void deleteDashboard(int ID) throws Exception
-	{
-		Connection connection = null;
-		try
-		{
-			// create a database connection
-			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			statement.executeUpdate("DELETE FROM Dashboard WHERE ID=" + ID);
+		finally {
 			connection.close();
 		}
-		catch(SQLException e)
-		{
-			// if the error message is "out of memory", it probably means no database file is found
-			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-		}
 	}
 
+	//endregion
+	//region CSV
     /**
      * get the data from one column in a csv table
      * @param uuid
@@ -360,7 +386,6 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
             ResultSet result = statement.executeQuery("SELECT " + columnName + " FROM '" + uuid + "'");
 			
 			ArrayList<Double> column = new ArrayList<Double>();
@@ -369,8 +394,8 @@ public class DatabaseHandler
 			{
 				column.add(result.getDouble(1));
 			}
-			
-			connection.close();
+
+			statement.close();
 
 			return column;
 		}
@@ -379,6 +404,9 @@ public class DatabaseHandler
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return null;
+		}
+		finally {
+			connection.close();
 		}
 	}
 
@@ -397,20 +425,18 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.setQueryTimeout(30); // set timeout to 30 sec.		
 			ResultSet result = connection.getMetaData().getTables(null, null, "%", new String[]{"TABLE"});
-			
 			ArrayList<CSVTable> tables = new ArrayList<CSVTable>();
 
 			while(result.next())
 			{
                 String name = result.getString("TABLE_NAME");
-        		//TODO exclude label table
                 if (!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
                 {
                     tables.add(getCSVTable(name));
 				}
 			}
-			
-			connection.close();
+
+			statement.close();
 
 			return tables;
 		}
@@ -420,6 +446,9 @@ public class DatabaseHandler
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return null;
 		}
+		finally {
+			connection.close();
+		}
 	}
 
     /**
@@ -427,7 +456,7 @@ public class DatabaseHandler
      * @param uuid
      * @return
      */
-	private CSVTable getCSVTable(String uuid)
+	private CSVTable getCSVTable(String uuid) throws Exception
 	{
 		Connection connection = null;
 		try
@@ -442,8 +471,7 @@ public class DatabaseHandler
 			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			ResultSet result = statement.executeQuery("SELECT * FROM '" + uuid + "'");
 			ResultSetMetaData metadata = result.getMetaData();			
-			int columnCount = metadata.getColumnCount();			
-			
+			int columnCount = metadata.getColumnCount();
 			for(int i = 1; i <= columnCount; i++)
 			{
 				String columnName = metadata.getColumnName(i);
@@ -456,7 +484,7 @@ public class DatabaseHandler
 			result = statement.executeQuery("SELECT name, date FROM '" + uuid + "'");
 			name = result.getString("name");
 			date = result.getString("date");
-			connection.close();
+			statement.close();
 
 			return new CSVTable(uuid, name, date, columnNames);
 		}
@@ -465,6 +493,9 @@ public class DatabaseHandler
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return null;
+		}
+		finally {
+			connection.close();
 		}
 	}
 
@@ -493,7 +524,6 @@ public class DatabaseHandler
 			ArrayList<String> columnNames = importer.getColumnNames();
 			int columnNamesSize = columnNames.size();
 			ArrayList<ArrayList<String>> data = importer.getData();
-
 			sqlCreateTable = "CREATE TABLE '" + uuid + "'(ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, date VARCHAR";
 			for(int i = 0; i < columnNamesSize; i++)
 			{
@@ -543,17 +573,51 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(60); // set timeout to 60 sec.
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
 			statement.executeUpdate(sqlData);
 
-			connection.close();
+			statement.close();
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	//endregion
+	//region Settings
+	/**
+	 * get the id of the last open dashboard
+	 * @return
+	 * @throws Exception
+	 */
+	public int getLastDashboard() throws Exception{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery("SELECT value FROM Settings WHERE ID = 'lastDashboard'");
+
+			int ID = result.getInt("value");
+			statement.close();
+
+			return ID;
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return -1;
+		}
+		finally {
+			connection.close();
 		}
 	}
 
@@ -569,36 +633,38 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
 			// id, type, title, x, y, uuid, color
 			statement.executeUpdate("UPDATE Settings SET value = " + lastID + " WHERE ID = 'lastDashboard'");
-			connection.close();
+			statement.close();
 		}
 		catch(SQLException e)
 		{
 			// if the error message is "out of memory", it probably means no database file is found
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 		}
+		finally {
+			connection.close();
+		}
 	}
 
-    /**
-     * get the id of the last open dashboard
-     * @return
-     * @throws Exception
-     */
-	public int getLastDashboard() throws Exception{
+	//endregion
+	//region scale
+
+	public int saveScale(Scale scale) throws Exception{
 		Connection connection = null;
 		try
 		{
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.setQueryTimeout(30); // set timeout to 30 sec.
-			ResultSet result = statement.executeQuery("SELECT value FROM Settings WHERE ID = 'lastDashboard'");			
+			// id, name, data
+			statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getTitle() + "','" + scale.getData() + "')");
+			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Scale");
 
-			int ID = result.getInt("value");
-			connection.close();
-			return ID;
+			int id = result.getInt(1);
+			statement.close();
+
+			return id;
 		}
 		catch(SQLException e)
 		{
@@ -606,8 +672,121 @@ public class DatabaseHandler
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 			return -1;
 		}
+		finally {
+			connection.close();
+		}
 	}
 
+	public ArrayList<Scale> getAllScales() throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery("SELECT * FROM Scale ORDER BY ID");
+
+			ArrayList<Scale> scales = extractScales(result);
+			statement.close();
+
+			return scales;
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return null;
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	private ArrayList<Scale> extractScales(ResultSet result) throws Exception
+	{
+		ArrayList<Scale> scales = new ArrayList<Scale>();
+		while(result.next())
+		{
+			int ID = result.getInt("ID");
+			String name = result.getString("name");
+			String data = result.getString("data");
+
+			Scale current = new Scale(ID, name, data);
+			scales.add(current);
+		}
+		return scales;
+	}
+
+	public Scale getScale(int ID) throws Exception{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			ResultSet result = statement.executeQuery("SELECT * FROM Scale WHERE ID = " + ID);
+
+			Scale scale = new Scale(result.getInt("ID"), result.getString("name"), result.getInt("data"));
+			statement.close();
+
+			return scale;
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			return null;
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	public void updateScale(Scale scale) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			// id, name, data
+			statement.executeUpdate("UPDATE Scale SET name = '" + scale.getTitle() + "', data ='" + chart.getData() + "' WHERE ID = " + scale.getID());
+			statement.close();
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	public void deleteScaleFromDB(int ID) throws Exception
+	{
+		Connection connection = null;
+		try
+		{
+			// create a database connection
+			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+			Statement statement = connection.createStatement();
+			statement.executeUpdate("DELETE FROM Scale WHERE ID = " + ID + ")");
+			statement.close();
+		}
+		catch(SQLException e)
+		{
+			// if the error message is "out of memory", it probably means no database file is found
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		}
+		finally {
+			connection.close();
+		}
+	}
+
+	//endregion
     public String getPath()
     {
         return path;
