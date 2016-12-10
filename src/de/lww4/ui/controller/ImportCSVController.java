@@ -76,12 +76,13 @@ public class ImportCSVController
 				if(!isUserError())
 				{
 					importer = new Importer(currentFile, delimiter, fillValueTextField.getText(), chartNameTextField.getText());
-					stage.hide();
-                    checkPossibleStrings();
-                    openCSVColumnNameDialog();
-				}
-
-			}
+                    if (!containsStrings())
+                    {
+                        stage.hide();
+                        openCSVColumnNameDialog();
+                    }
+                }
+            }
 		});		
 		
 		fillValueTextField.setTextFormatter(new TextFormatter<>(c -> {
@@ -101,7 +102,7 @@ public class ImportCSVController
 		}));		
 	}
 
-    private void checkPossibleStrings()
+    private boolean containsStrings()
     {
         for (ArrayList<String> row : importer.getData())
         {
@@ -114,10 +115,11 @@ public class ImportCSVController
                 catch (NumberFormatException e)
                 {
                     AlertGenerator.showAlert(Alert.AlertType.WARNING, mainController.getBundle().getString("warning.possible.string.values"), mainController.getIcon());
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     private void removeImpossibleDelimiters(File file)
@@ -159,8 +161,8 @@ public class ImportCSVController
 	{
 		try
 		{
-			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("../fxml/ImportCSVColumnNamesGUI.fxml"));
-			Parent root = (Parent)fxmlLoader.load();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ImportCSVColumnNamesGUI.fxml"));
+            Parent root = (Parent)fxmlLoader.load();
 			Stage newStage = new Stage();
 			newStage.setScene(new Scene(root, 500, 400));
 			newStage.setMinHeight(400);
