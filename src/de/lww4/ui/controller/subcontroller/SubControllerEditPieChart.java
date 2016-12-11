@@ -84,4 +84,12 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 		itemY = new ColumnTreeItem("emtpy", "empty", false);
 		return itemX != null;
 	}
+    
+    @Override
+    public void buttonReset()
+	{
+		itemX = null;
+		labelX.setText("<Daten hier hin ziehen>");	
+		stackPaneChart.getChildren().clear();	
+	}
 }

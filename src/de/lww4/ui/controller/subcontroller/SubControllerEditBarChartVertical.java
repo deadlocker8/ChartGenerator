@@ -47,6 +47,7 @@ public class SubControllerEditBarChartVertical extends SubControllerEditChart
 			super.itemX = item;
 
 			updateChart(itemX, itemY);
+			newChartController.initTreeView(itemX.getTableUUID());
 
 			event.consume();
 		});
@@ -71,6 +72,7 @@ public class SubControllerEditBarChartVertical extends SubControllerEditChart
 			super.itemY = item;
 
 			updateChart(itemX, itemY);
+			newChartController.initTreeView(itemY.getTableUUID());
 
 			event.consume();
 		});
@@ -113,5 +115,17 @@ public class SubControllerEditBarChartVertical extends SubControllerEditChart
 	public boolean isFilled()
 	{
 		return itemX != null && itemY != null;
+	}
+	
+	@Override
+	public void buttonReset()
+	{
+		itemX = null;
+		itemY = null;
+		labelX.setText("<Daten für X-Achse hier hin ziehen>");
+		labelY.setText("<Daten für Y-Achse hier hin ziehen>");
+		stackPaneChart.getChildren().clear();	
+		
+		newChartController.initTreeView(null);
 	}
 }

@@ -34,21 +34,18 @@ public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private TextField textFieldTitle;
-    @FXML
-    private ColorPicker colorPicker;
-    @FXML
-    private TreeView<ColumnTreeItem> treeView;
-    @FXML
-    private StackPane stackPaneChart;
-    @FXML private Button buttonSave;
+	@FXML private ColorPicker colorPicker;
+	@FXML private TreeView<ColumnTreeItem> treeView;
+	@FXML private StackPane stackPaneChart;
+	@FXML private Button buttonSave;
 	@FXML private Button buttonCancel;
 	@FXML private HBox hboxChartTypes;
 
 	private Stage stage;
-    private Controller controller;
-    private ToggleGroup toggleGroupChartTypes;
-    private boolean edit;
-    private Dashboard dashboard;
+	private Controller controller;
+	private ToggleGroup toggleGroupChartTypes;
+	private boolean edit;
+	private Dashboard dashboard;
 	private int position;
 	private SubControllerEditChart subController;
 
@@ -85,10 +82,10 @@ public class NewChartController
 				if(selectedType.equals(ChartType.PIE))
 				{
 					colorPicker.setDisable(true);
-                }
-                else
-                {
-                    colorPicker.setDisable(false);
+				}
+				else
+				{
+					colorPicker.setDisable(false);
 				}
 			}
 		});
@@ -106,7 +103,7 @@ public class NewChartController
 			}
 		});
 
-		initTreeView();
+		initTreeView(null);
 
 		if(edit)
 		{
@@ -124,16 +121,16 @@ public class NewChartController
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
-            {
-                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-                AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
-                return;
-            }
-        }
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+				return;
+			}
+		}
 	}
 
-	private void initTreeView()
+	public void initTreeView(String tableUUID)
 	{
 		ArrayList<CSVTable> tables;
 		try
@@ -162,7 +159,24 @@ public class NewChartController
 
 				for(String currentColumn : currentTable.getColumnNames())
 				{
-					TreeItem<ColumnTreeItem> currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, true));
+					TreeItem<ColumnTreeItem> currentSubItem;
+					if(tableUUID != null)
+					{
+						if(currentTable.getUuid().equals(tableUUID))
+						{
+							currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, true));
+							currentMainItem.setExpanded(true);													
+						}
+						else
+						{
+							currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, false));							
+						}
+					}
+					else
+					{
+						currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, true));
+					}
+					
 					currentMainItem.getChildren().add(currentSubItem);
 				}
 
@@ -207,10 +221,10 @@ public class NewChartController
 					break;
 			}
 
-            Parent root = fxmlLoader.load();
-            stackPaneChart.getChildren().add(root);
-            subController = fxmlLoader.getController();
-            subController.init(this);
+			Parent root = fxmlLoader.load();
+			stackPaneChart.getChildren().add(root);
+			subController = fxmlLoader.getController();
+			subController.init(this);
 
 		}
 		catch(IOException e)
@@ -229,16 +243,16 @@ public class NewChartController
 		String title = textFieldTitle.getText();
 		if(title == null || title.equals(""))
 		{
-            AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
-            return;
-        }
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
+			return;
+		}
 
 		if(!subController.isFilled())
 		{
-            AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
-            return;
-        }
-		
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
+			return;
+		}
+
 		try
 		{
 			if(edit)
@@ -261,20 +275,20 @@ public class NewChartController
 				else
 				{
 					throw new Exception("Can't save Chart in DB");
-                }
-            }
+				}
+			}
 
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			controller.setDashboard(dashboard);
 			stage.close();
 		}
-        catch (Exception e)
-        {
-            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-            AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), true);
-        }
-    }
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), true);
+		}
+	}
 
 	public void cancel()
 	{
@@ -312,13 +326,13 @@ public class NewChartController
 		});
 	}
 
-    public Controller getController()
-    {
-        return controller;
+	public Controller getController()
+	{
+		return controller;
 	}
 
-    public ColorPicker getColorPicker()
-    {
-        return colorPicker;
-    }
+	public ColorPicker getColorPicker()
+	{
+		return colorPicker;
+	}
 }
