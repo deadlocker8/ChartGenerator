@@ -32,4 +32,6 @@ public abstract class SubControllerEditChart
 	public abstract boolean isFilled();
 	
 	public abstract void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY);
+	
+	public abstract void buttonReset();
 }

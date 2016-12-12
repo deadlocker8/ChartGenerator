@@ -1,33 +1,43 @@
 package de.lww4.ui.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
 import de.lww4.logic.Importer;
 import de.lww4.logic.utils.AlertGenerator;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import tools.Worker;
 
 public class ImportCSVColumnNamesController
 {
 	@FXML private TableView<ObservableList<StringProperty>> tableView;
+	@FXML private Button buttonCancel;
+	@FXML private Button buttonSave;
+	@FXML private ProgressIndicator progressIndicator;
 
 	public Stage stage;
 	private Controller mainController;
@@ -44,7 +54,8 @@ public class ImportCSVColumnNamesController
         this.mainController = mainController;
         this.importer = importer;
 		populateTableViewHead();
-		populateTableViewBody();
+		populateTableViewBody();	
+		progressIndicator.setVisible(false);
 	}
 
 	private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
@@ -198,21 +209,45 @@ public class ImportCSVColumnNamesController
     @FXML
     private void save()
     {
-        ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
-        if(!isUserError(newColumnNamesArrayList))
-        {
-            importer.setColumnNamesArrayList(newColumnNamesArrayList);
-            try
-            {
-                mainController.getDatabase().saveCSVTable(importer);
-            }
-            catch (Exception e)
-            {
-                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-            }
-
-            stage.close();
-        }
+    	tableView.setDisable(true);
+    	buttonSave.setDisable(true);
+    	buttonCancel.setDisable(true);
+    	progressIndicator.setVisible(true);
+    	
+    	//don't allow stage to close
+    	stage.setOnCloseRequest(new EventHandler<WindowEvent>()
+		{			
+			@Override
+			public void handle(WindowEvent event)
+			{
+				event.consume();				
+			}
+		}); 	
+    	
+    	Worker.runLater(()->{
+	        ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
+	        if(!isUserError(newColumnNamesArrayList))
+	        {
+	            importer.setColumnNamesArrayList(newColumnNamesArrayList);
+	            try
+	            {
+	                mainController.getDatabase().saveCSVTable(importer);
+	            }
+	            catch (Exception e)
+	            {
+	                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+	                Platform.runLater(()->{
+		            	stage.close();
+		            	AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, true);	            	
+		            });
+	            }
+	
+	            Platform.runLater(()->{
+	            	stage.close();
+	            	AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, true);	            	
+	            });
+	        }
+    	});
     }
 
 	@FXML
