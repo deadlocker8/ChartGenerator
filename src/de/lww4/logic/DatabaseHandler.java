@@ -266,8 +266,9 @@ public class DatabaseHandler
 
 			Color color = Color.web(result.getString("color"));
 			ChartType type = ChartType.valueOf(result.getInt("type"));
+			Scale scale = getScale(result.getInt("scale"));
 
-			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color);
+			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale);
 			statement.close();
 
 			return chart;
@@ -297,7 +298,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, type, title, x, y, uuid, color
-			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "')");
+			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "'," + chart.getScale().getID() + ")");
 			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Chart");
 						
 			int id = result.getInt(1);
@@ -330,7 +331,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, type, title, x, y, uuid, color
-			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType().getID() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "' WHERE ID = " + chart.getID());
+			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType().getID() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "', scale = " + chart.getScale().getID() + " WHERE ID = " + chart.getID());
 			statement.close();
 		}
 		catch(SQLException e)
@@ -648,7 +649,7 @@ public class DatabaseHandler
 	}
 
 	//endregion
-	//region scale
+	//region Scale
 
 	public int saveScale(Scale scale) throws Exception{
 		Connection connection = null;
