@@ -1,9 +1,6 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.Chart;
-import de.lww4.logic.Dashboard;
-import de.lww4.logic.DashboardHandler;
-import de.lww4.logic.DatabaseHandler;
+import de.lww4.logic.*;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
@@ -45,7 +42,6 @@ public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private Label labelTitle;
-	@FXML private MenuItem importCSVMenuItem;
 
 	private Stage stage;
 	private Image icon = new Image("de/lww4/resources/icon.png");
@@ -53,8 +49,9 @@ public class Controller
 	private GridPane gridPane;
 	private DatabaseHandler database;
 	private DashboardHandler dashboardHandler;
-	private Dashboard currentDashboard;	
-	private ArrayList<StackPane> chartStackPanes;
+    private Dashboard currentDashboard;
+    private ScaleHandler scaleHandler;
+    private ArrayList<StackPane> chartStackPanes;
 
 	/**
 	 * init method
@@ -150,7 +147,19 @@ public class Controller
 
 			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.database"), icon, true);
 		}
-	}
+
+        try
+        {
+            //TODO get scales from database --> add to method signature
+            scaleHandler = new ScaleHandler();
+
+        }
+        catch (Exception e)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+
+        }
+    }
 
 	/**
 	 * initalizes label for dashboard title and gridPane
@@ -376,9 +385,6 @@ public class Controller
 
 	/**
 	 * inits the dashboard gridPane
-	 * 
-	 * @param empty
-	 *            boolean
 	 */
 	private void initGridPane()
 	{
@@ -737,11 +743,50 @@ public class Controller
 		}
 	}
 
-	/**
-	 * opens about dialog
+    public void deleteScale(int ID)
+    {
+        scaleHandler.deleteScale(ID);
+        //TODO delete scale in database
+    }
+
+    @FXML
+    private void onScaleManagementClicked()
+    {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/SelectScaleGUI.fxml"));
+
+            Parent root = (Parent) fxmlLoader.load();
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(root));
+            newStage.initOwner(stage);
+            newStage.setTitle("Skalen bearbeiten");
+            newStage.getIcons().add(icon);
+            SelectScaleController newController = fxmlLoader.getController();
+
+
+            newController.init(this, newStage);
+            newStage.initModality(Modality.APPLICATION_MODAL);
+            newStage.setResizable(false);
+            newStage.show();
+        }
+        catch (IOException io)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+        }
+    }
+
+    public ScaleHandler getScaleHandler()
+    {
+        return scaleHandler;
+    }
+
+    /**
+     * opens about dialog
 	 */
-	public void about()
-	{
+    @FXML
+    private void about()
+    {
 		AlertGenerator.showAlert(AlertType.INFORMATION, "über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
 				true);
 	}
