@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.DoubleSummaryStatistics;
 import java.util.UUID;
 
 public class DatabaseHandler
@@ -788,6 +789,86 @@ public class DatabaseHandler
 	}
 
 	//endregion
+    //region Data
+    public ArrayList<ArrayList<Double>> getData(String uuid, String columnNameX) throws Exception{
+        Connection connection = null;
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("SELECT COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameX + " HAVING COUNT(*) > 1");
+
+            ArrayList<Double> count = new ArrayList<Double>();
+            ArrayList<Double> label = new ArrayList<Double>();
+
+            while(result.next())
+            {
+                count.add(result.getDouble(1));
+                label.add(result.getDouble(2));
+
+            }
+
+            statement.close();
+
+            ArrayList<ArrayList<Double>> data = new ArrayList<>();
+            data.add(count);
+            data.add(label);
+
+            return data;
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory", it probably means no database file is found
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+            return null;
+        }
+        finally {
+            connection.close();
+        }
+    }
+
+    public ArrayList<ArrayList<Double>> getData(String uuid, String columnNameX, String columnNameY) throws Exception{
+        Connection connection = null;
+        try
+        {
+            // create a database connection
+            connection = DriverManager.getConnection("jdbc:sqlite:" + path);
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("SELECT " + columnNameY + ", COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameY + ", " + columnNameX + " HAVING COUNT(*) > 1");
+
+            ArrayList<Double> count = new ArrayList<Double>();
+            ArrayList<Double> label = new ArrayList<Double>();
+            ArrayList<Double> set = new ArrayList<Double>();
+
+            while(result.next())
+            {
+                set.add(result.getDouble(1));
+                count.add(result.getDouble(2));
+                label.add(result.getDouble(3));
+            }
+
+            statement.close();
+
+            ArrayList<ArrayList<Double>> data = new ArrayList<>();
+            data.add(set);
+            data.add(count);
+            data.add(label);
+
+            return data;
+        }
+        catch(SQLException e)
+        {
+            // if the error message is "out of memory", it probably means no database file is found
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+            return null;
+        }
+        finally {
+            connection.close();
+        }
+    }
+    //endregion
+
     public String getPath()
     {
         return path;
