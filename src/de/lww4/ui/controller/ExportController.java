@@ -14,16 +14,19 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
@@ -37,6 +40,8 @@ public class ExportController
 	private Stage stage;
     private Controller controller;  
     private FileChooser fileChooser;
+    private GridPane gridPane,grid;
+    private StackPane stackPane;
     
     @FXML private AnchorPane anchorPaneMain;
     @FXML private TextField widthTextfield;
@@ -48,17 +53,62 @@ public class ExportController
     private File file;
     private double widthScale, heightScale;
     private boolean isInputValid;
+    
+	
+	//Notes TODO
+	// -Snapshotfunction with preferred size works not correctly -> scale is incorrect 
+	// -cleared gridPane dont work-> removes edit/new button in stage and snapshot
+	// -check if stackpane is pie/barchart isn't implemented 
 
     //this method is called when user wants to export one chart
 	public void init(Stage stage, Controller controller, StackPane stackPaneChart, Chart chart)
 	{
 		this.stage = stage;
 		this.controller = controller;
+		this.stackPane=stackPaneChart;
 		
-		//stackPaneChart is the node to snapshot
+		//Set the title of the diagram at the top of the image
+		String name= chart.getTitle();
+		Label label = new Label(name);
+		StackPane.setAlignment(label, Pos.TOP_CENTER);
 		
-		//Chart is to extract name of chart (we have to find a way to display the name above the stackPane in the exported image	
-		//null chek chart! if error --> AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
+		stackPane.getChildren().add(label);
+		openSaveDialogButton.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent arg0) 
+			{
+				openFilechooser();								
+			}	
+		});
+		
+		saveButton.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent arg0) 
+			{	
+				checkInputValues();
+				
+				if(file != null && isInputValid && chart != null)
+					createChartSnapshot();
+				else
+					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", 
+							controller.getBundle().getString("error.load.data"), 
+							controller.getIcon(), true);
+			}	
+		});
+
+		cancelButton.setOnAction(new EventHandler<ActionEvent>()
+		{
+			@Override
+			public void handle(ActionEvent arg0) 
+			{
+				stage.close();				
+			}		
+			
+		});
+
+
 	}
 	
 	//this method is called when user wants to export the dashboard
@@ -67,28 +117,13 @@ public class ExportController
 		this.stage = stage;
 		this.controller = controller;
 		
-		//Notes
-		// -Snapshotfunction with preferred size works
-		// -Alerts must be configured
-		// -exception for input must be defined in detail
-		// -cleared gridPane is not done
-		// -same for exportchart
-		// -stage don't close after saving image
 		openSaveDialogButton.setOnAction(new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle(ActionEvent arg0) 
 					{
-						fileChooser = new FileChooser();
-						fileChooser.setTitle("Speichere Diagramm als PNG Bild");
-						
-						ExtensionFilter filter = new ExtensionFilter("PNG Dateien (*.png)","*.png");
-						fileChooser.getExtensionFilters().add(filter);
-						
-						file = fileChooser.showSaveDialog(stage);
-						
-					
-						
+						//grid = clearGridPane(gridPane);
+						openFilechooser();								
 					}	
 				});
 		
@@ -99,26 +134,11 @@ public class ExportController
 			{	
 				checkInputValues();
 				
-				SnapshotParameters sp= new SnapshotParameters();
-				sp.setTransform(Transform.scale(getWidthScale(),getHeightScale()));
-				
-				WritableImage img= gridPane.snapshot(sp, null);
-
-				
 				if(file != null && isInputValid)
-				{
-					
-					    try {
-					      ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", file);
-					    } catch (IOException e) 
-					    {
-					    	Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-					    	AlertGenerator.showAlert(Alert.AlertType.ERROR,"Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(),true);
-					    }
-					
-				}
+					createSnapshot();
 			}	
 		});
+		
 		cancelButton.setOnAction(new EventHandler<ActionEvent>()
 		{
 			@Override
@@ -149,31 +169,111 @@ public class ExportController
 	private void checkInputValues()
 	{
 		double width, height;
-		try
+		if(!heightTextfield.getText().isEmpty() && !widthTextfield.getText().isEmpty() )
 		{
-			height= Double.parseDouble(heightTextfield.getText());
-			setHeightScale(height);
-			
-			width= Double.parseDouble(widthTextfield.getText());
-			setWidthScale(width);
-			
-			isInputValid=true;
+			try
+			{
+				height= Double.parseDouble(heightTextfield.getText());
+				setHeightScale(height);
+				
+				width= Double.parseDouble(widthTextfield.getText());
+				setWidthScale(width);
+				
+				isInputValid=true;
+			}
+			catch(NumberFormatException e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung","", 
+										controller.getBundle().getString("warning.values.exportfile"), 
+										controller.getIcon(),true);
+				isInputValid=false;
+			}
 		}
-		catch(Exception e)
+		else
+			AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung","", 
+					controller.getBundle().getString("warning.values.empty.exportfile"), 
+					controller.getIcon(),true);
+	
+	}
+	
+	private void createSnapshot()
+	{
+		SnapshotParameters sp= new SnapshotParameters();
+		sp.setTransform(Transform.scale(getWidthScale(),getHeightScale()));
+		WritableImage img= gridPane.snapshot(sp, null);
+		    try 
+		    {
+		      ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", file);
+		    } catch (IOException e) 
+		    {
+		    	Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		    	AlertGenerator.showAlert(Alert.AlertType.ERROR,"Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(),true);
+		    }
+		stage.close();
+	}
+	
+	private void createChartSnapshot()
+	{
+		SnapshotParameters sp= new SnapshotParameters();
+		sp.setTransform(Transform.scale(getWidthScale(),getHeightScale()));
+		WritableImage img= stackPane.snapshot(sp, null);
+		    try 
+		    {
+		      ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", file);
+		    } catch (IOException e) 
+		    {
+		    	Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+		    	AlertGenerator.showAlert(Alert.AlertType.ERROR,"Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(),true);
+		    }
+		stage.close();
+	}
+	
+	//TODO removing buttons in snapshot also removes the buttons in the stage
+	private GridPane clearGridPane(GridPane  grid)
+	{
+		/*for(int i=0; i < grid.getChildren().size(); i++)
 		{
-			//TODO ALERT
-			System.out.println("no convertion possible");
-			isInputValid=false;
+			if(grid.getChildren().get(i) instanceof AnchorPane)
+			{
+				AnchorPane anchor= (AnchorPane) grid.getChildren().get(i);
+				for(int j=0; j < anchor.getChildren().size(); j++)
+				{
+					if(anchor.getChildren().get(j) instanceof HBox)
+					{
+						HBox box = (HBox) anchor.getChildren().get(j);
+						for(int x=0; x < box.getChildren().size(); x++)
+						{
+							if(box.getChildren().get(x) instanceof Button)
+								box.getChildren().remove(x);
+						}
+					}
+				}
+			}	
 		}
+		return grid;*/
+		return null;
 	}
 	public double getWidthScale()
 	{
 		return widthScale;
 	}
+	private void openFilechooser()
+	{
+		fileChooser = new FileChooser();
+		fileChooser.setTitle("Speichere Diagramm als PNG Bild");
+		
+		ExtensionFilter filter = new ExtensionFilter("PNG Dateien (*.png)","*.png");
+		fileChooser.getExtensionFilters().add(filter);
+		
+		file = fileChooser.showSaveDialog(stage);
+	}
 	public double getHeightScale()
 	{
 		return heightScale;
 	}
+	
+	//TODO scalefunction algorithm need a rework
 	public void setHeightScale(double height)
 	{
 		heightScale= height/stage.getHeight();
