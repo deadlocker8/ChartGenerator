@@ -534,18 +534,18 @@ public class DatabaseHandler
 
 			sqlMetaData = "INSERT INTO '" + uuid + "' (name, date) VALUES('" + name + "', '" + dateString + "');";
 
-			sqlData = "INSERT INTO '" + uuid + "'(";
+			sqlData = "INSERT INTO '" + uuid + "'('";
 
 			for(int i = 0; i < columnNamesSize; i++)
 			{
 				if(i > 0)
 				{
-					sqlData += ",";
+					sqlData += "','";
 				}
 				sqlData += columnNames.get(i);
 			}
 
-			sqlData += ")";
+			sqlData += "')";
 
 			sqlData += " VALUES";
 
