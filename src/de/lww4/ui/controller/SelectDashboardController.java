@@ -57,9 +57,9 @@ public class SelectDashboardController
 				}				
 			}
 		});
-		
-		Label labelPlaceholder = new Label("Keine Dashboards verfügbar.");
-		labelPlaceholder.setStyle("-fx-font-size: 14");
+
+        Label labelPlaceholder = new Label("Keine weiteren Dashboards verfügbar.");
+        labelPlaceholder.setStyle("-fx-font-size: 14");
 		listView.setPlaceholder(labelPlaceholder);
 		
 		refreshListView();			
