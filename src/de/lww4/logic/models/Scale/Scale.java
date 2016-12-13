@@ -1,11 +1,11 @@
-package de.lww4.logic.models;
+package de.lww4.logic.models.Scale;
 
 
 import java.util.HashMap;
 
 public class Scale
 {
-    private HashMap<String, Double> scaleHashMap;
+    private HashMap<Double, String> scaleHashMap;
     private int id;
     private String name;
 
@@ -16,7 +16,7 @@ public class Scale
         this.name = name;
     }
 
-    public HashMap<String, Double> getScaleHashMap()
+    public HashMap<Double, String> getScaleHashMap()
     {
         return scaleHashMap;
     }

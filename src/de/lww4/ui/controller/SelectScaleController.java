@@ -1,6 +1,6 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.models.Scale;
+import de.lww4.logic.models.Scale.Scale;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.ScaleCell;
 import javafx.fxml.FXML;
@@ -40,6 +40,7 @@ public class SelectScaleController
                 return new ScaleCell(controller, context);
             }
         });
+        refreshListView();
     }
 
     public void refreshListView()
@@ -47,7 +48,6 @@ public class SelectScaleController
         try
         {
             listView.getItems().clear();
-
             for (Scale scale : controller.getScaleHandler().getScales())
             {
                 listView.getItems().add(scale);

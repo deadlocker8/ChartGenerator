@@ -1,7 +1,7 @@
 package de.lww4.ui.cells;
 
 
-import de.lww4.logic.models.Scale;
+import de.lww4.logic.models.Scale.Scale;
 import de.lww4.ui.controller.Controller;
 import de.lww4.ui.controller.SelectScaleController;
 import fontAwesome.FontIcon;
@@ -31,13 +31,25 @@ public class ScaleCell extends ListCell<Scale>
     protected void updateItem(Scale item, boolean empty)
     {
         super.updateItem(item, empty);
-
         if (!empty)
         {
             HBox hbox = new HBox();
-            TextField labelNameTextField = new TextField();
-            TextField labelValueTextField = new TextField();
-            hbox.getChildren().addAll(labelNameTextField, labelValueTextField);
+            Label nameLabel = new Label(item.getName());
+            hbox.getChildren().addAll(nameLabel);
+
+            FontIcon iconEdit = new FontIcon(FontIconType.PENCIL);
+            iconEdit.setSize(14);
+            Button buttonEdit = new Button("");
+            buttonEdit.setGraphic(iconEdit);
+            iconEdit.setStyle("-fx-background-color: transparent;");
+            buttonEdit.setOnAction(new EventHandler<ActionEvent>()
+            {
+                @Override
+                public void handle(ActionEvent event)
+                {
+                    //open new controller
+                }
+            });
 
             FontIcon iconDelete = new FontIcon(FontIconType.TRASH);
             iconDelete.setSize(14);
@@ -66,8 +78,8 @@ public class ScaleCell extends ListCell<Scale>
                 }
             });
 
-            hbox.getChildren().add(buttonDelete);
-            HBox.setMargin(labelNameTextField, new Insets(0, 0, 0, 5));
+            hbox.getChildren().addAll(buttonEdit, buttonDelete);
+            HBox.setMargin(nameLabel, new Insets(0, 0, 0, 5));
 
             hbox.setAlignment(Pos.CENTER);
             hbox.setStyle("-fx-border-color: #212121; -fx-border-width: 1px; -fx-background-color: #eeeeee;");

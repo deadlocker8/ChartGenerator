@@ -138,8 +138,10 @@ public class Controller
 			{
 				setDashboard(database.getDashboard(lastID));	
 			}
-			
-			initDashboard();
+
+            //TODO get scales from database --> add to method signature
+            scaleHandler = new ScaleHandler();
+            initDashboard();
 		}
 		catch(Exception e)
 		{
@@ -148,17 +150,6 @@ public class Controller
 			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.database"), icon, true);
 		}
 
-        try
-        {
-            //TODO get scales from database --> add to method signature
-            scaleHandler = new ScaleHandler();
-
-        }
-        catch (Exception e)
-        {
-            Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-
-        }
     }
 
 	/**
