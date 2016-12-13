@@ -19,7 +19,7 @@ public class ScaleHandler
     private void initDumpScales()
     {
         //Init dump scale
-        Scale scale = new Scale(0, "Geschlechter");
+        Scale scale = new Scale(0, "Geschlechter", null);
         scale.getScaleHashMap().put(0.0, "Männlich");
         scale.getScaleHashMap().put(1.0, "Weiblich");
         scales.add(scale);
@@ -34,12 +34,10 @@ public class ScaleHandler
     {
         for (int i = 0; i < scales.size(); i++)
         {
-            if (scales.get(i).getId() == id)
+            if (scales.get(i).getID() == id)
             {
                 scales.remove(i);
             }
         }
     }
-
-
 }

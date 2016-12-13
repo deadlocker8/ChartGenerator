@@ -72,7 +72,7 @@ public class ScaleCell extends ListCell<Scale>
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == ButtonType.OK)
                     {
-                        controller.deleteScale(item.getId());
+                        controller.deleteScale(item.getID());
                         selectScaleController.refreshListView();
                     }
                 }

@@ -9,11 +9,12 @@ public class Scale
     private int id;
     private String name;
 
-    public Scale(int id, String name)
+    public Scale(int id, String name, String data)
     {
         scaleHashMap = new HashMap<>();
         this.id = id;
         this.name = name;
+        //TODO use data
     }
 
     public HashMap<Double, String> getScaleHashMap()
@@ -21,7 +22,7 @@ public class Scale
         return scaleHashMap;
     }
 
-    public int getId()
+    public int getID()
     {
         return id;
     }
@@ -34,5 +35,11 @@ public class Scale
     public void setName(String name)
     {
         this.name = name;
+    }
+    
+    //TODO return data
+    public String getData()
+    {
+    	return "";
     }
 }

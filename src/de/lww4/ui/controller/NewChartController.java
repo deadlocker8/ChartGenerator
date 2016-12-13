@@ -1,8 +1,19 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.*;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import de.lww4.logic.CSVTable;
+import de.lww4.logic.Chart;
+import de.lww4.logic.ChartType;
+import de.lww4.logic.ColumnTreeItem;
+import de.lww4.logic.Dashboard;
+import de.lww4.logic.DashboardHandler;
+import de.lww4.logic.DataFormats;
+import de.lww4.logic.models.Scale.Scale;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.ColumnTreeCell;
+import de.lww4.ui.cells.ComboBoxScaleCell;
 import de.lww4.ui.controller.subcontroller.SubControllerEditChart;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -13,7 +24,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.TreeCell;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -27,9 +51,6 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
@@ -40,22 +61,19 @@ public class NewChartController
 	@FXML private Button buttonSave;
 	@FXML private Button buttonCancel;
 	@FXML private HBox hboxChartTypes;
+	@FXML private ComboBox<Scale> comboBoxScale;
 
 	private Stage stage;
 	private Controller controller;
-	private ToggleGroup toggleGroupChartTypes;
-	private boolean edit;
-	private Dashboard dashboard;
-	private int position;
+	private ToggleGroup toggleGroupChartTypes;	
+	private Dashboard dashboard;	
 	private SubControllerEditChart subController;
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
 		this.stage = stage;
 		this.controller = controller;
-		this.edit = edit;
-		this.dashboard = dashboard;
-		this.position = position;
+		this.dashboard = dashboard;		
 
 		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");
 
@@ -128,6 +146,8 @@ public class NewChartController
 				return;
 			}
 		}
+		
+		initComboBoxScales(controller.getScaleHandler().getScales());
 	}
 
 	public void initTreeView(String tableUUID)
@@ -255,28 +275,28 @@ public class NewChartController
 
 		try
 		{
-			if(edit)
-			{
-				int chartID = dashboard.getCells().get(position);
-				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
-				controller.getDatabase().updateChart(chart);
-				dashboard.getCells().set(position, chartID);
-				controller.getDatabase().updateDashboard(dashboard);
-			}
-			else
-			{
-				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
-				int chartID = controller.getDatabase().saveChart(chart);
-				if(chartID != -1)
-				{
-					dashboard.getCells().set(position, chartID);
-					controller.getDatabase().updateDashboard(dashboard);
-				}
-				else
-				{
-					throw new Exception("Can't save Chart in DB");
-				}
-			}
+//			if(edit)
+//			{
+//				int chartID = dashboard.getCells().get(position);
+//				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
+//				controller.getDatabase().updateChart(chart);
+//				dashboard.getCells().set(position, chartID);
+//				controller.getDatabase().updateDashboard(dashboard);
+//			}
+//			else
+//			{
+//				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
+//				int chartID = controller.getDatabase().saveChart(chart);
+//				if(chartID != -1)
+//				{
+//					dashboard.getCells().set(position, chartID);
+//					controller.getDatabase().updateDashboard(dashboard);
+//				}
+//				else
+//				{
+//					throw new Exception("Can't save Chart in DB");
+//				}
+//			}
 
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			controller.setDashboard(dashboard);
@@ -324,6 +344,38 @@ public class NewChartController
 
 			event.consume();
 		});
+	}
+	
+	private void initComboBoxScales(ArrayList<Scale> scales)
+	{
+		if(scales != null && scales.size() > 0)
+		{
+			comboBoxScale.getItems().addAll(scales);
+			comboBoxScale.setCellFactory(new Callback<ListView<Scale>, ListCell<Scale>>()
+			{
+				@Override
+				public ListCell<Scale> call(ListView<Scale> param)
+				{
+					return new ComboBoxScaleCell();
+				}
+			});
+			comboBoxScale.setButtonCell(new ComboBoxScaleCell());
+			
+			comboBoxScale.valueProperty().addListener(new ChangeListener<Scale>()
+			{
+				@Override
+				public void changed(ObservableValue<? extends Scale> observable, Scale oldValue, Scale newValue)
+				{
+					//TODO update chart
+					//TODO add param scale to updateChart method
+					
+				}
+			});
+		}
+		else
+		{
+			comboBoxScale.setDisable(true);
+		}
 	}
 
 	public Controller getController()

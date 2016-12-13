@@ -432,7 +432,7 @@ public class DatabaseHandler
 			while(result.next())
 			{
                 String name = result.getString("TABLE_NAME");
-                if (!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings"))
+                if (!name.equals("Chart") && !name.equals("Dashboard") && !name.equals("sqlite_sequence") && !name.equals("Settings") && !name.equals("Scale"))
                 {
                     tables.add(getCSVTable(name));
 				}
@@ -660,7 +660,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, name, data
-			statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getTitle() + "','" + scale.getData() + "')");
+			statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getName() + "','" + scale.getData() + "')");
 			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Scale");
 
 			int id = result.getInt(1);
@@ -729,7 +729,7 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM Scale WHERE ID = " + ID);
 
-			Scale scale = new Scale(result.getInt("ID"), result.getString("name"), result.getInt("data"));
+			Scale scale = new Scale(result.getInt("ID"), result.getString("name"), result.getString("data"));
 			statement.close();
 
 			return scale;
@@ -754,7 +754,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, name, data
-			statement.executeUpdate("UPDATE Scale SET name = '" + scale.getTitle() + "', data ='" + chart.getData() + "' WHERE ID = " + scale.getID());
+			statement.executeUpdate("UPDATE Scale SET name = '" + scale.getName() + "', data ='" + scale.getData() + "' WHERE ID = " + scale.getID());
 			statement.close();
 		}
 		catch(SQLException e)
