@@ -1,5 +1,7 @@
 package de.lww4.ui.controller.subcontroller;
 
+import java.util.ArrayList;
+
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
@@ -14,8 +16,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import logger.LogLevel;
 import logger.Logger;
-
-import java.util.ArrayList;
 
 public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 {
@@ -47,6 +47,8 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			super.itemX = item;
 
 			updateChart(itemX, itemY);
+			
+			newChartController.initTreeView(itemX.getTableUUID());
 
 			event.consume();
 		});
@@ -71,6 +73,8 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			super.itemY = item;
 
 			updateChart(itemX, itemY);
+			
+			newChartController.initTreeView(itemY.getTableUUID());
 
 			event.consume();
 		});
@@ -112,5 +116,17 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 	public boolean isFilled()
 	{
 		return itemX != null && itemY != null;
+	}
+	
+	@Override
+	public void buttonReset()
+	{
+		itemX = null;
+		itemY = null;
+		labelX.setText("<Daten für X-Achse hier hin ziehen>");
+		labelY.setText("<Daten für Y-Achse hier hin ziehen>");
+		stackPaneChart.getChildren().clear();	
+		
+		newChartController.initTreeView(null);
 	}
 }

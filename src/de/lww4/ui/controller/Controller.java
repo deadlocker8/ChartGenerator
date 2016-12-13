@@ -640,11 +640,13 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
-			currentDashboard.getCells().set(position, -1);
+			int ID = currentDashboard.getCells().get(position);
+			currentDashboard.getCells().set(position, -1);			
 			try
 			{
 				database.updateDashboard(currentDashboard);
 				dashboardHandler = new DashboardHandler(database.getAllDashboards());
+				database.deleteChartFromDB(ID);
 				initDashboard();
 			}
 			catch(Exception e)
