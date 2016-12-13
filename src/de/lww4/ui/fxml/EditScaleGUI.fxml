@@ -3,23 +3,41 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<AnchorPane fx:id="anchorPaneMain" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.controller.EditScaleController">
+
+<AnchorPane fx:id="anchorPaneMain" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.controller.EditScaleController">
     <children>
-        <VBox alignment="CENTER" layoutX="14.0" layoutY="14.0" AnchorPane.bottomAnchor="14.0"
-              AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+        <VBox alignment="CENTER" layoutX="14.0" layoutY="14.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
             <children>
-                <ListView fx:id="listView" prefHeight="530.0" prefWidth="572.0" VBox.vgrow="ALWAYS"/>
-                <Button fx:id="buttonCancel" mnemonicParsing="false" onAction="#cancel" text="Abbrechen">
-                    <font>
-                        <Font name="System Bold" size="14.0"/>
-                    </font>
-                    <VBox.margin>
-                        <Insets top="14.0"/>
-                    </VBox.margin>
-                </Button>
+                <ListView fx:id="listView" prefHeight="530.0" prefWidth="572.0" VBox.vgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#addRow" text="Zeile hinzufügen">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Button>
+            <HBox alignment="CENTER" prefHeight="29.0" prefWidth="572.0" spacing="50.0">
+               <children>
+                      <Button fx:id="buttonCancel" mnemonicParsing="false" onAction="#cancel" text="Abbrechen">
+                          <font>
+                              <Font name="System Bold" size="14.0" />
+                          </font>
+                      </Button>
+                  <Button mnemonicParsing="false" onAction="#save" text="Speichern">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="25.0" />
+               </VBox.margin>
+            </HBox>
             </children>
         </VBox>
     </children>

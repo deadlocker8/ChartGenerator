@@ -1,6 +1,8 @@
 package de.lww4.ui.cells;
 
 
+import java.util.Optional;
+
 import de.lww4.logic.models.Scale.Scale;
 import de.lww4.ui.controller.Controller;
 import de.lww4.ui.controller.SelectScaleController;
@@ -10,11 +12,13 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import java.util.Optional;
 
 public class ScaleCell extends ListCell<Scale>
 {
@@ -47,7 +51,7 @@ public class ScaleCell extends ListCell<Scale>
                 @Override
                 public void handle(ActionEvent event)
                 {
-                    //open new controller
+                	selectScaleController.openEditStage(item);
                 }
             });
 

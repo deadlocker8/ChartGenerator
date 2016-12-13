@@ -1,6 +1,7 @@
 package de.lww4.logic.models.Scale;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Scale
@@ -35,6 +36,15 @@ public class Scale
     public void setName(String name)
     {
         this.name = name;
+    }
+    
+    public void setScaleItems(ArrayList<ScaleItem> scaleItems)
+    {
+    	scaleHashMap = new HashMap<>();
+    	for(ScaleItem currentItem : scaleItems)
+    	{
+    		scaleHashMap.put(currentItem.getKey(), currentItem.getValue());
+    	}
     }
     
     //TODO return data

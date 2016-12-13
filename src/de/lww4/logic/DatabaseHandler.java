@@ -267,7 +267,13 @@ public class DatabaseHandler
 
 			Color color = Color.web(result.getString("color"));
 			ChartType type = ChartType.valueOf(result.getInt("type"));
-			Scale scale = getScale(result.getInt("scale"));
+			
+			int scaleID = result.getInt("scale");
+			Scale scale = null;
+			if(scaleID != -1)
+			{
+				scale = getScale(scaleID);
+			}			
 
 			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale);
 			statement.close();
@@ -729,7 +735,7 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM Scale WHERE ID = " + ID);
 
-			Scale scale = new Scale(result.getInt("ID"), result.getString("name"), result.getString("data"));
+			Scale scale = new Scale(ID, result.getString("name"), result.getString("data"));
 			statement.close();
 
 			return scale;

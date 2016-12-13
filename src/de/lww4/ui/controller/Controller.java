@@ -751,7 +751,7 @@ public class Controller
             Stage newStage = new Stage();
             newStage.setScene(new Scene(root));
             newStage.initOwner(stage);
-            newStage.setTitle("Skalen bearbeiten");
+            newStage.setTitle("Skalen verwalten");
             newStage.getIcons().add(icon);
             SelectScaleController newController = fxmlLoader.getController();
 
@@ -781,7 +781,7 @@ public class Controller
 		AlertGenerator.showAlert(AlertType.INFORMATION, "über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
 				true);
 	}
-
+    
 	public DatabaseHandler getDatabase()
 	{
 		return database;

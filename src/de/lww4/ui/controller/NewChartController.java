@@ -65,15 +65,19 @@ public class NewChartController
 
 	private Stage stage;
 	private Controller controller;
-	private ToggleGroup toggleGroupChartTypes;	
-	private Dashboard dashboard;	
+	private ToggleGroup toggleGroupChartTypes;
+	private Dashboard dashboard;
 	private SubControllerEditChart subController;
+	private boolean edit;
+	private int position;
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
 		this.stage = stage;
 		this.controller = controller;
-		this.dashboard = dashboard;		
+		this.dashboard = dashboard;
+		this.edit = edit;
+		this.position = position;
 
 		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");
 
@@ -122,6 +126,7 @@ public class NewChartController
 		});
 
 		initTreeView(null);
+		initComboBoxScales(controller.getScaleHandler().getScales());
 
 		if(edit)
 		{
@@ -132,10 +137,16 @@ public class NewChartController
 				colorPicker.setValue(chart.getColor());
 
 				toggleGroupChartTypes.getToggles().get(chart.getType().getID()).setSelected(true);
+				
+				if(chart.getScale() != null)
+				{
+					comboBoxScale.setValue(chart.getScale());
+				}
 
 				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
 				ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
 				generatePreview(chart.getType());
+				//TODO use scale here
 				updatePreview(itemX, itemY);
 			}
 			catch(Exception e)
@@ -146,8 +157,6 @@ public class NewChartController
 				return;
 			}
 		}
-		
-		initComboBoxScales(controller.getScaleHandler().getScales());
 	}
 
 	public void initTreeView(String tableUUID)
@@ -185,18 +194,18 @@ public class NewChartController
 						if(currentTable.getUuid().equals(tableUUID))
 						{
 							currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, true));
-							currentMainItem.setExpanded(true);													
+							currentMainItem.setExpanded(true);
 						}
 						else
 						{
-							currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, false));							
+							currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, false));
 						}
 					}
 					else
 					{
 						currentSubItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(currentTable.getUuid(), currentColumn, true));
 					}
-					
+
 					currentMainItem.getChildren().add(currentSubItem);
 				}
 
@@ -275,28 +284,34 @@ public class NewChartController
 
 		try
 		{
-//			if(edit)
-//			{
-//				int chartID = dashboard.getCells().get(position);
-//				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
-//				controller.getDatabase().updateChart(chart);
-//				dashboard.getCells().set(position, chartID);
-//				controller.getDatabase().updateDashboard(dashboard);
-//			}
-//			else
-//			{
-//				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue());
-//				int chartID = controller.getDatabase().saveChart(chart);
-//				if(chartID != -1)
-//				{
-//					dashboard.getCells().set(position, chartID);
-//					controller.getDatabase().updateDashboard(dashboard);
-//				}
-//				else
-//				{
-//					throw new Exception("Can't save Chart in DB");
-//				}
-//			}
+			Scale scale = comboBoxScale.getValue();
+			if(scale == null)
+			{
+				scale = new Scale(-1, null, null);
+			}
+
+			if(edit)
+			{
+				int chartID = dashboard.getCells().get(position);
+				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale);
+				controller.getDatabase().updateChart(chart);
+				dashboard.getCells().set(position, chartID);
+				controller.getDatabase().updateDashboard(dashboard);
+			}
+			else
+			{
+				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale);
+				int chartID = controller.getDatabase().saveChart(chart);
+				if(chartID != -1)
+				{
+					dashboard.getCells().set(position, chartID);
+					controller.getDatabase().updateDashboard(dashboard);
+				}
+				else
+				{
+					throw new Exception("Can't save Chart in DB");
+				}
+			}
 
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			controller.setDashboard(dashboard);
@@ -345,7 +360,7 @@ public class NewChartController
 			event.consume();
 		});
 	}
-	
+
 	private void initComboBoxScales(ArrayList<Scale> scales)
 	{
 		if(scales != null && scales.size() > 0)
@@ -360,15 +375,15 @@ public class NewChartController
 				}
 			});
 			comboBoxScale.setButtonCell(new ComboBoxScaleCell());
-			
+
 			comboBoxScale.valueProperty().addListener(new ChangeListener<Scale>()
 			{
 				@Override
 				public void changed(ObservableValue<? extends Scale> observable, Scale oldValue, Scale newValue)
 				{
-					//TODO update chart
-					//TODO add param scale to updateChart method
-					
+					// TODO update chart
+					// TODO add param scale to updateChart method
+
 				}
 			});
 		}

@@ -13,6 +13,7 @@ public class ScaleHandler
     {
         scales = new ArrayList<>();
         initDumpScales();
+        //TODO add empty object that user can choose if he doesn't want to use a scale anymore
     }
 
     //TODO REMOVE THIS TEST METHOD!
