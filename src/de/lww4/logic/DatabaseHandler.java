@@ -1,5 +1,6 @@
 package de.lww4.logic;
 
+import de.lww4.logic.models.Scale.Scale;
 import javafx.scene.paint.Color;
 import logger.LogLevel;
 import logger.Logger;
@@ -11,7 +12,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.DoubleSummaryStatistics;
 import java.util.UUID;
 
 public class DatabaseHandler
