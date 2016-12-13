@@ -1,15 +1,9 @@
 package de.lww4.ui.controller;
 
-import java.util.ArrayList;
-
 import de.lww4.logic.Chart;
-import de.lww4.logic.utils.AlertGenerator;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import logger.LogLevel;
-import logger.Logger;
 
 public class ExportController
 {

@@ -185,7 +185,7 @@ public class ImportCSVColumnNamesController
 
         if (errorMessage != null)
         {
-            AlertGenerator.showAlert(Alert.AlertType.ERROR, errorMessage, mainController.getIcon());
+            AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", errorMessage, mainController.getIcon(), true);
             return true;
         }
         return false;

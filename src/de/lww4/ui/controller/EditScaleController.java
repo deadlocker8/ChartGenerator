@@ -34,7 +34,7 @@ public class EditScaleController
 		Label labelPlaceholder = new Label("Keine Werte verfügbar.");
 		labelPlaceholder.setStyle("-fx-font-size: 14");
 		listView.setPlaceholder(labelPlaceholder);
-
+		
 		listView.setCellFactory(new Callback<ListView<ScaleItem>, ListCell<ScaleItem>>()
 		{
 			@Override

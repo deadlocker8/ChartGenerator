@@ -555,7 +555,7 @@ public class Controller
 				{
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
+					AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.data"), icon, true);
 				}
 			}
 

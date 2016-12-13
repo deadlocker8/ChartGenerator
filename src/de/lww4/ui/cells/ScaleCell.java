@@ -18,6 +18,8 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 public class ScaleCell extends ListCell<Scale>
@@ -39,13 +41,19 @@ public class ScaleCell extends ListCell<Scale>
         {
             HBox hbox = new HBox();
             Label nameLabel = new Label(item.getName());
+            nameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");		
+            nameLabel.getStyleClass().add("greylabel");
             hbox.getChildren().addAll(nameLabel);
+            
+        	Region r = new Region();
+			hbox.getChildren().add(r);
+			HBox.setHgrow(r, Priority.ALWAYS);
 
             FontIcon iconEdit = new FontIcon(FontIconType.PENCIL);
             iconEdit.setSize(14);
             Button buttonEdit = new Button("");
             buttonEdit.setGraphic(iconEdit);
-            iconEdit.setStyle("-fx-background-color: transparent;");
+            buttonEdit.setStyle("-fx-background-color: transparent;");
             buttonEdit.setOnAction(new EventHandler<ActionEvent>()
             {
                 @Override
@@ -84,6 +92,7 @@ public class ScaleCell extends ListCell<Scale>
 
             hbox.getChildren().addAll(buttonEdit, buttonDelete);
             HBox.setMargin(nameLabel, new Insets(0, 0, 0, 5));
+            HBox.setMargin(buttonEdit, new Insets(0, 0, 0, 15));
 
             hbox.setAlignment(Pos.CENTER);
             hbox.setStyle("-fx-border-color: #212121; -fx-border-width: 1px; -fx-background-color: #eeeeee;");

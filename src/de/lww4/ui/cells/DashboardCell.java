@@ -39,10 +39,10 @@ public class DashboardCell extends ListCell<Dashboard>
 		{
 			HBox hbox = new HBox();
 			
-			Label labelLevelName = new Label(item.getName());
-			labelLevelName.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");		
-			labelLevelName.getStyleClass().add("greylabel");
-			hbox.getChildren().add(labelLevelName);						
+			Label labelname = new Label(item.getName());
+			labelname.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");		
+			labelname.getStyleClass().add("greylabel");
+			hbox.getChildren().add(labelname);						
 
 			Region r = new Region();
 			hbox.getChildren().add(r);
@@ -76,7 +76,7 @@ public class DashboardCell extends ListCell<Dashboard>
 			});
 			
 			hbox.getChildren().add(buttonDelete);
-			HBox.setMargin(labelLevelName, new Insets(0, 0, 0, 5));	
+			HBox.setMargin(labelname, new Insets(0, 0, 0, 5));	
 
 			hbox.setAlignment(Pos.CENTER);
 			hbox.setStyle("-fx-border-color: #212121; -fx-border-width: 1px; -fx-background-color: #eeeeee;");

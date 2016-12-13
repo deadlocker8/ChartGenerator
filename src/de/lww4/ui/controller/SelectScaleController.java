@@ -99,7 +99,7 @@ public class SelectScaleController
 			}
 			else
 			{
-				Scale scale = new Scale(-1, name, null);
+//				Scale scale = new Scale(-1, name, null);
 				//TODO save to db
 				//TODO reload scaleHandler from DB
 				//TODO refresh ListView			

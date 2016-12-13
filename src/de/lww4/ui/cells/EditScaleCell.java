@@ -6,6 +6,8 @@ import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
@@ -27,6 +29,7 @@ public class EditScaleCell extends ListCell<ScaleItem>
 		if(!empty)
 		{
 			HBox hBox = new HBox();
+			hBox.setAlignment(Pos.CENTER);
 			
 			String key;
 			if(item.getKey() == null)
@@ -35,13 +38,16 @@ public class EditScaleCell extends ListCell<ScaleItem>
 			}
 			else
 			{
-				key = String.valueOf(item.getKey());
+				key = String.valueOf(item.getKey().intValue());
 			}		
 			
+			//TODO only allow integer values
 			TextField keyTextField = new TextField(key);
-			hBox.getChildren().add(keyTextField);
+			hBox.getChildren().add(keyTextField);			
+			
 			TextField valueTextField = new TextField(item.getValue());
 			hBox.getChildren().add(valueTextField);
+			HBox.setMargin(valueTextField, new Insets(0, 0, 0, 5));
 
 			FontIcon iconDelete = new FontIcon(FontIconType.TRASH);
 			iconDelete.setSize(14);
