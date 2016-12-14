@@ -2,6 +2,7 @@ package de.lww4.logic.chartGenerators;
 
 import java.util.ArrayList;
 
+import de.lww4.logic.Chart;
 import de.lww4.logic.ChartSetItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,11 +17,13 @@ public class PieChartGenerator
 {
     String xName;
     ArrayList<ChartSetItem> chartSetItems;
+    Chart chart;
 
-    public PieChartGenerator(String xName, ArrayList<ChartSetItem> chartSetItems)
+    public PieChartGenerator(String xName, ArrayList<ChartSetItem> chartSetItems, Chart chart)
     {
         this.xName = xName;
         this.chartSetItems = chartSetItems;
+        this.chart = chart;
     }
 
     public PieChart generate()
@@ -29,7 +32,17 @@ public class PieChartGenerator
 
         for(ChartSetItem currentItem : chartSetItems)
         {
-        	data.add(new PieChart.Data(String.valueOf(currentItem.getLabel()), currentItem.getCount()));
+        	String label = String.valueOf(currentItem.getLabel());        	
+        	if(chart != null && chart.getLegendScale() != null)
+        	{
+        		String scaleLabel = chart.getLegendScale().getScaleHashMap().get(currentItem.getLabel());
+        		if(scaleLabel != null)
+        		{
+        			label = scaleLabel;
+        		}
+        	}           	
+        	
+        	data.add(new PieChart.Data(label, currentItem.getCount()));
         }
         
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(data);

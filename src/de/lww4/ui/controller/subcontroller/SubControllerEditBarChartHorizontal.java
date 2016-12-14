@@ -2,6 +2,7 @@ package de.lww4.ui.controller.subcontroller;
 
 import java.util.ArrayList;
 
+import de.lww4.logic.Chart;
 import de.lww4.logic.ChartSet;
 import de.lww4.logic.ChartSetItem;
 import de.lww4.logic.ColumnTreeItem;
@@ -26,9 +27,9 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 	@FXML private Label labelY;
 	@FXML private AnchorPane anchorPane;
 
-	public void init(NewChartController newChartController)
+	public void init(NewChartController newChartController, Chart chart)
 	{
-		super.init(newChartController);
+		super.init(newChartController, chart);
 
 		labelX.setOnDragOver(event -> {
 			event.acceptTransferModes(TransferMode.ANY);
@@ -49,7 +50,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			labelX.setStyle("");
 			super.itemX = item;
 
-			updateChart(itemX, itemY);
+			updateChart(itemX, itemY, chart);
 
 			newChartController.initTreeView(itemX.getTableUUID());
 
@@ -75,7 +76,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			labelY.setStyle("");
 			super.itemY = item;
 
-			updateChart(itemX, itemY);
+			updateChart(itemX, itemY, chart);
 
 			newChartController.initTreeView(itemY.getTableUUID());
 
@@ -86,7 +87,7 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 	}
 
 	@Override
-	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY)
+	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY, Chart chart)
 	{
 		if(itemX != null && itemY != null)
 		{
@@ -100,11 +101,11 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 				ArrayList<ChartSetItem> chartSetItems = super.newChartController.getController().getDatabase().getData(itemX.getTableUUID(), itemX.getText(), itemY.getText());			
 				ArrayList<ChartSet> sets = Utils.splitIntoChartSets(chartSetItems);			
 									
-				BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", sets, newChartController.getColorPicker().getValue());
-				BarChart<Number, String> chart = generator.generate();
+				BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", sets, newChartController.getColorPicker().getValue(), chart);
+				BarChart<Number, String> generatedChart = generator.generate();
 
 				stackPaneChart.getChildren().clear();
-				stackPaneChart.getChildren().add(chart);
+				stackPaneChart.getChildren().add(generatedChart);
 			}
 			catch(Exception e)
 			{

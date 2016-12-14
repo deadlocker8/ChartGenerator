@@ -538,8 +538,8 @@ public class Controller
 			}
 			else
 			{
-				currentStackPane.getChildren().clear();
-
+				currentStackPane.getChildren().clear();					
+			
 				try
 				{						
 					ArrayList<ChartSetItem> chartSetItems;
@@ -550,18 +550,18 @@ public class Controller
 						case BAR_HORIZONTAL:
 							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());			
 							sets = Utils.splitIntoChartSets(chartSetItems);			
-							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), sets, chart.getColor());
+							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), sets, chart.getColor(), chart);
 							currentStackPane.getChildren().add(generatorHorizontal.generate());
 							break;
 						case BAR_VERTICAL:
 							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());			
 							sets = Utils.splitIntoChartSets(chartSetItems);			
-							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), sets, chart.getColor());
+							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), sets, chart.getColor(), chart);
 							currentStackPane.getChildren().add(generatorVertical.generate());
 							break;
 						case PIE:
 							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());
-							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), chartSetItems);
+							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), chartSetItems, chart);
 							currentStackPane.getChildren().add(generatorPie.generate());
 							break;
 
@@ -755,7 +755,16 @@ public class Controller
     public void deleteScale(int ID)
     {
         scaleHandler.deleteScale(ID);
-        //TODO delete scale in database
+        try
+		{
+			database.deleteScaleFromDB(ID);
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.scale"), icon, true);
+		}
     }
 
     @FXML

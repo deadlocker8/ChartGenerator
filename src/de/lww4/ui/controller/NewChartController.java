@@ -71,6 +71,7 @@ public class NewChartController
 	private SubControllerEditChart subController;
 	private boolean edit;
 	private int position;
+	private Chart chart;
 
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
@@ -78,11 +79,30 @@ public class NewChartController
 		this.controller = controller;
 		this.dashboard = dashboard;
 		this.edit = edit;
-		this.position = position;
+		this.position = position;	
+				
+		if(dashboard.getCells().get(position) != -1)
+		{
+			try
+			{
+				this.chart = controller.getDatabase().getChart(dashboard.getCells().get(position));
+			}
+			catch(Exception e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+	
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+				return;
+			}
+		}
+		else
+		{			
+			chart = new Chart(-1, null, "", "", "", "", null, null, null);
+		}
 
 		stackPaneChart.setStyle("-fx-border-color: #212121; -fx-border-width: 2;");
 
-		generatePreview(ChartType.BAR_HORIZONTAL);
+		generatePreview(ChartType.BAR_HORIZONTAL, chart);
 
 		toggleGroupChartTypes = new ToggleGroup();
 
@@ -101,7 +121,7 @@ public class NewChartController
 			public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue)
 			{
 				ChartType selectedType = (ChartType)newValue.getUserData();
-				generatePreview(selectedType);
+				generatePreview(selectedType, chart);
 				if(selectedType.equals(ChartType.PIE))
 				{
 					colorPicker.setDisable(true);
@@ -121,43 +141,34 @@ public class NewChartController
 			{
 				if(subController != null)
 				{
-					updatePreview(subController.getItemX(), subController.getItemY());
+					subController.updateChart(subController.getItemX(), subController.getItemY(), subController.getChart());
 				}
 			}
 		});
 
 		initTreeView(null);
+		
+		comboBoxScale.setId("comboBoxScale");
+		comboBoxLegendScale.setId("comboBoxLegendScale");
 		initComboBoxScales(comboBoxScale, controller.getScaleHandler().getScales());
 		initComboBoxScales(comboBoxLegendScale, controller.getScaleHandler().getScales());
 
 		if(edit)
-		{
-			try
+		{					
+			textFieldTitle.setText(chart.getTitle());
+			colorPicker.setValue(chart.getColor());
+
+			toggleGroupChartTypes.getToggles().get(chart.getType().getID()).setSelected(true);
+			
+			if(chart.getScale() != null)
 			{
-				Chart chart = controller.getDatabase().getChart(dashboard.getCells().get(position));
-				textFieldTitle.setText(chart.getTitle());
-				colorPicker.setValue(chart.getColor());
-
-				toggleGroupChartTypes.getToggles().get(chart.getType().getID()).setSelected(true);
-				
-				if(chart.getScale() != null)
-				{
-					comboBoxScale.setValue(chart.getScale());
-				}
-
-				ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
-				ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
-				generatePreview(chart.getType());
-				//TODO use scale here
-				updatePreview(itemX, itemY);
+				comboBoxScale.setValue(chart.getScale());
 			}
-			catch(Exception e)
-			{
-				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
-				return;
-			}
+			ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
+			ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
+			generatePreview(chart.getType(), chart);				
+			subController.updateChart(itemX, itemY, chart);	
 		}
 	}
 
@@ -229,9 +240,9 @@ public class NewChartController
 		});
 	}
 
-	private void generatePreview(ChartType type)
+	private void generatePreview(ChartType type, Chart chart)
 	{
-		stackPaneChart.getChildren().clear();
+		stackPaneChart.getChildren().clear();	
 
 		try
 		{
@@ -255,18 +266,12 @@ public class NewChartController
 			Parent root = fxmlLoader.load();
 			stackPaneChart.getChildren().add(root);
 			subController = fxmlLoader.getController();
-			subController.init(this);
-
+			subController.init(this, chart);
 		}
 		catch(IOException e)
 		{
 			Logger.log(LogLevel.DEBUG, Logger.exceptionToString(e));
 		}
-	}
-
-	private void updatePreview(ColumnTreeItem itemX, ColumnTreeItem itemY)
-	{
-		subController.updateChart(itemX, itemY);
 	}
 
 	public void save()
@@ -389,9 +394,21 @@ public class NewChartController
 				@Override
 				public void changed(ObservableValue<? extends Scale> observable, Scale oldValue, Scale newValue)
 				{
-					// TODO update chart
-					// TODO add param scale to updateChart method
-
+					if(subController != null)
+					{
+						if(comboBox.getId().equals(comboBoxScale.getId()))
+						{
+							chart.setScale(comboBox.getValue());
+						}	
+						
+						if(comboBox.getId().equals(comboBoxLegendScale.getId()))
+						{
+							chart.setLegendScale(comboBox.getValue());
+						}	
+						
+						System.out.println(chart);
+						subController.updateChart(subController.getItemX(), subController.getItemY(), subController.getChart());
+					}
 				}
 			});
 		}

@@ -57,9 +57,4 @@ public class Scale
             scaleHashMap.put(currentItem.getKey(), currentItem.getValue());
         }
     }
-
-    public int getId()
-    {
-        return id;
-    }
 }

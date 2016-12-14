@@ -276,7 +276,7 @@ public class DatabaseHandler
 				scale = getScale(scaleID);
 			}			
 
-			//TODO load legenScale from DB
+			//TODO load legendScale from DB
 			
 			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale, null);
 			statement.close();

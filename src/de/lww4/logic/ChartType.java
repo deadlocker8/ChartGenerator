@@ -1,7 +1,7 @@
 package de.lww4.logic;
 
 public enum ChartType
-{
+{	
 	BAR_HORIZONTAL(0, "Balkendiagramm"),
 	BAR_VERTICAL(1, "Säulendiagramm"),
 	PIE(2, "Tortendiagramm");
