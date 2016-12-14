@@ -5,6 +5,11 @@ import de.lww4.logic.models.Scale.Scale;
 
 import java.util.ArrayList;
 
+/**
+ * ScaleHandler
+ *
+ * @author max
+ */
 public class ScaleHandler
 {
     public ArrayList<Scale> scales;
