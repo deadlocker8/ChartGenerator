@@ -18,6 +18,8 @@ import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -57,8 +59,8 @@ public class ExportController
 	
 	//Notes TODO
 	// -Snapshotfunction with preferred size works not correctly -> scale is incorrect 
-	// -cleared gridPane dont work-> removes edit/new button in stage and snapshot
-	// -check if stackpane is pie/barchart isn't implemented 
+    // (f.e: User typed 1000. Output is 1400)
+    // -Removing Buttons -> Delete Button wasn't removed
 
     //this method is called when user wants to export one chart
 	public void init(Stage stage, Controller controller, StackPane stackPaneChart, Chart chart)
@@ -107,8 +109,6 @@ public class ExportController
 			}		
 			
 		});
-
-
 	}
 	
 	//this method is called when user wants to export the dashboard
@@ -116,13 +116,13 @@ public class ExportController
 	{
 		this.stage = stage;
 		this.controller = controller;
+		this.gridPane=gridPane;
 		
 		openSaveDialogButton.setOnAction(new EventHandler<ActionEvent>()
 				{
 					@Override
 					public void handle(ActionEvent arg0) 
 					{
-						//grid = clearGridPane(gridPane);
 						openFilechooser();								
 					}	
 				});
@@ -133,9 +133,9 @@ public class ExportController
 			public void handle(ActionEvent arg0) 
 			{	
 				checkInputValues();
-				
+				grid = clearGridPane(gridPane);
 				if(file != null && isInputValid)
-					createSnapshot();
+					createDashboardSnapshot(grid);
 			}	
 		});
 		
@@ -197,11 +197,13 @@ public class ExportController
 	
 	}
 	
-	private void createSnapshot()
+	private void createDashboardSnapshot(GridPane grid)
 	{
 		SnapshotParameters sp= new SnapshotParameters();
 		sp.setTransform(Transform.scale(getWidthScale(),getHeightScale()));
-		WritableImage img= gridPane.snapshot(sp, null);
+
+		WritableImage img= grid.snapshot(sp, null);
+
 		    try 
 		    {
 		      ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", file);
@@ -211,12 +213,14 @@ public class ExportController
 		    	AlertGenerator.showAlert(Alert.AlertType.ERROR,"Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(),true);
 		    }
 		stage.close();
+		controller.setDashboard(controller.getCurrentDashboard());
 	}
 	
 	private void createChartSnapshot()
 	{
 		SnapshotParameters sp= new SnapshotParameters();
 		sp.setTransform(Transform.scale(getWidthScale(),getHeightScale()));
+
 		WritableImage img= stackPane.snapshot(sp, null);
 		    try 
 		    {
@@ -227,12 +231,12 @@ public class ExportController
 		    	AlertGenerator.showAlert(Alert.AlertType.ERROR,"Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(),true);
 		    }
 		stage.close();
+		controller.setDashboard(controller.getCurrentDashboard());
 	}
-	
-	//TODO removing buttons in snapshot also removes the buttons in the stage
+
 	private GridPane clearGridPane(GridPane  grid)
 	{
-		/*for(int i=0; i < grid.getChildren().size(); i++)
+		for(int i=0; i < grid.getChildren().size(); i++)
 		{
 			if(grid.getChildren().get(i) instanceof AnchorPane)
 			{
@@ -245,19 +249,25 @@ public class ExportController
 						for(int x=0; x < box.getChildren().size(); x++)
 						{
 							if(box.getChildren().get(x) instanceof Button)
-								box.getChildren().remove(x);
+								box.getChildren().remove(x);					
+						}
+					}
+					if(anchor.getChildren().get(j) instanceof StackPane)
+					{
+						StackPane stack = (StackPane) anchor.getChildren().get(j);
+						for(int w= 0; w < stack.getChildren().size();w++)
+						{
+							if(!(stack.getChildren().get(w) instanceof BarChart) &&
+									!(stack.getChildren().get(w) instanceof PieChart))
+								stack.getChildren().clear();							
 						}
 					}
 				}
 			}	
 		}
-		return grid;*/
-		return null;
+		return grid;
 	}
-	public double getWidthScale()
-	{
-		return widthScale;
-	}
+	
 	private void openFilechooser()
 	{
 		fileChooser = new FileChooser();
@@ -268,12 +278,17 @@ public class ExportController
 		
 		file = fileChooser.showSaveDialog(stage);
 	}
+	
+	public double getWidthScale()
+	{
+		return widthScale;
+	}
+	
 	public double getHeightScale()
 	{
 		return heightScale;
 	}
 	
-	//TODO scalefunction algorithm need a rework
 	public void setHeightScale(double height)
 	{
 		heightScale= height/stage.getHeight();
