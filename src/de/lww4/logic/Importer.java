@@ -107,7 +107,7 @@ public class Importer
 
             for(int j=0; j < row.size(); j++)
             {
-                if(row.get(j).equals("") || row.get(j).equals(" "))
+                if(row.get(j).trim().equals(""))
                 {
                     row.set(j, fillValue);
                 }

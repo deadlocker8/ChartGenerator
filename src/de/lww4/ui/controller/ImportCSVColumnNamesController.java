@@ -1,5 +1,7 @@
 package de.lww4.ui.controller;
 
+
+import de.lww4.logic.ForbiddenColumnNames;
 import de.lww4.logic.Importer;
 import de.lww4.logic.utils.AlertGenerator;
 import javafx.application.Platform;
@@ -15,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Callback;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.ResourceBundle;
+
 
 /**
  * ImportCSVColumnNamesController
@@ -46,6 +50,8 @@ public class ImportCSVColumnNamesController
     private Importer importer;
     private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
     private ImportCSVController importCSVController;
+    private boolean isUserError = false;
+
 
     public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
     {
@@ -58,20 +64,23 @@ public class ImportCSVColumnNamesController
         progressIndicator.setVisible(false);
     }
 
-    private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
-    {
-        TextField textField = new TextField(name);
-        TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
-        column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<StringProperty>, String>, ObservableValue<String>>()
-        {
-            @Override
-            public ObservableValue<String> call(CellDataFeatures<ObservableList<StringProperty>, String> cellDataFeatures)
-            {
-                return cellDataFeatures.getValue().get(position);
-            }
-        });
 
-        column.setGraphic(textField);
+	private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
+	{
+        CheckBox checkBox = new CheckBox();
+        TextField textField = new TextField(name);
+        VBox vBox = new VBox(checkBox, textField);
+        TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
+		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<StringProperty>, String>, ObservableValue<String>>()
+		{
+			@Override
+			public ObservableValue<String> call(CellDataFeatures<ObservableList<StringProperty>, String> cellDataFeatures)
+			{
+				return cellDataFeatures.getValue().get(position);
+			}
+		});
+
+        column.setGraphic(vBox);
         column.setSortable(false);
 
         return column;
@@ -156,8 +165,24 @@ public class ImportCSVColumnNamesController
         return emptyColumns;
     }
 
+    private ArrayList<String> getForbiddenKeyWordsColumnNames(ArrayList<String> newColumnNamesArrayList)
+    {
+        ArrayList<String> forbiddenColumns = new ArrayList<>();
+        for (String nameToCheck : newColumnNamesArrayList)
+        {
+            if (ForbiddenColumnNames.isForbidden(nameToCheck))
+            {
+                forbiddenColumns.add(nameToCheck);
+            }
+        }
+        return forbiddenColumns;
+    }
+
     private boolean isUserError(ArrayList<String> newColumnNamesArrayList)
     {
+        ArrayList<String> forbiddenColumnNames = getForbiddenKeyWordsColumnNames(newColumnNamesArrayList);
+        boolean hasForbiddenColumns = !forbiddenColumnNames.isEmpty();
+
         ArrayList<String> duplicateColumns = getDuplicateColumns(newColumnNamesArrayList);
         boolean hasDuplicateColumns = !duplicateColumns.isEmpty();
 
@@ -181,6 +206,11 @@ public class ImportCSVColumnNamesController
                 errorMessage = "Folgende Spalten sind leer: " + getStringFromArrayList(emptyColumns.toString());
             }
 
+            if (hasForbiddenColumns)
+            {
+                errorMessage = "Folgende verwendete Spaltennamen sind nicht erlaubt: " + getStringFromArrayList(forbiddenColumnNames.toString());
+            }
+
         }
 
         if (errorMessage != null)
@@ -201,7 +231,12 @@ public class ImportCSVColumnNamesController
         ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
         for (TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
         {
-            newColumnNamesArrayList.add(((TextField) tableColumn.getGraphic()).getText().trim());
+            VBox vBox = (VBox) tableColumn.getGraphic();
+            CheckBox checkBox = (CheckBox) vBox.getChildren().get(0);
+            TextField textField = (TextField) vBox.getChildren().get(1);
+            String newColumnName = textField.getText().trim();
+            newColumnNamesArrayList.add(newColumnName);
+
         }
         return newColumnNamesArrayList;
     }
@@ -209,44 +244,46 @@ public class ImportCSVColumnNamesController
     @FXML
     private void save()
     {
-        tableView.setDisable(true);
-        buttonSave.setDisable(true);
-        buttonCancel.setDisable(true);
-        progressIndicator.setVisible(true);
-
-        //don't allow stage to close
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>()
-        {
-            @Override
-            public void handle(WindowEvent event)
-            {
-                event.consume();
-            }
-        });
-
+        ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
+        isUserError = isUserError(newColumnNamesArrayList);
         Worker.runLater(()->{
-            ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
-            if(!isUserError(newColumnNamesArrayList))
-            {
-                importer.setColumnNamesArrayList(newColumnNamesArrayList);
-                try
-                {
-                    mainController.getDatabase().saveCSVTable(importer);
-                }
-                catch (Exception e)
-                {
-                    Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-                    Platform.runLater(()->{
-                        stage.close();
-                        AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, true);
-                    });
-                }
 
-                Platform.runLater(()->{
-                    stage.close();
-                    AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, true);
+            if (!isUserError)
+            {
+                //don't allow stage to close
+                stage.setOnCloseRequest(new EventHandler<WindowEvent>()
+                {
+                    @Override
+                    public void handle(WindowEvent event)
+                    {
+                        event.consume();
+                    }
                 });
-            }
+                tableView.setDisable(true);
+                buttonSave.setDisable(true);
+                buttonCancel.setDisable(true);
+                progressIndicator.setVisible(true);
+                importer.setColumnNamesArrayList(newColumnNamesArrayList);
+	            try
+	            {
+	                mainController.getDatabase().saveCSVTable(importer);
+	            }
+	            catch (Exception e)
+	            {
+	                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+	                Platform.runLater(()->{
+		            	stage.close();
+		            	AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, true);	            	
+		            });
+	            }
+	
+	            Platform.runLater(()->{
+	            	stage.close();
+	            	AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, true);	            	
+	            });
+	        }
+
+            isUserError = false;
         });
     }
 
