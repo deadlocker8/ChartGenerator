@@ -1,6 +1,7 @@
 package de.lww4.logic;
 
 import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.utils.JsonHelper;
 import javafx.scene.paint.Color;
 import logger.LogLevel;
 import logger.Logger;
@@ -275,7 +276,9 @@ public class DatabaseHandler
 				scale = getScale(scaleID);
 			}			
 
-			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale);
+			//TODO load legendScale from DB
+			
+			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale, null);
 			statement.close();
 
 			return chart;
@@ -666,8 +669,8 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, name, data
-			statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getName() + "','" + scale.getData() + "')");
-			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Scale");
+            statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getName() + "','" + JsonHelper.convertScaleHashMapToJson(scale.getScaleHashMap()) + "')");
+            ResultSet result = statement.executeQuery("SELECT max(ID) FROM Scale");
 
 			int id = result.getInt(1);
 			statement.close();
@@ -720,8 +723,8 @@ public class DatabaseHandler
 			String name = result.getString("name");
 			String data = result.getString("data");
 
-			Scale current = new Scale(ID, name, data);
-			scales.add(current);
+            Scale current = new Scale(ID, name, JsonHelper.getScaleHashMapFromJson(data));
+            scales.add(current);
 		}
 		return scales;
 	}
@@ -735,8 +738,8 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM Scale WHERE ID = " + ID);
 
-			Scale scale = new Scale(ID, result.getString("name"), result.getString("data"));
-			statement.close();
+            Scale scale = new Scale(ID, result.getString("name"), JsonHelper.getScaleHashMapFromJson(result.getString("data")));
+            statement.close();
 
 			return scale;
 		}
@@ -760,8 +763,8 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, name, data
-			statement.executeUpdate("UPDATE Scale SET name = '" + scale.getName() + "', data ='" + scale.getData() + "' WHERE ID = " + scale.getID());
-			statement.close();
+            statement.executeUpdate("UPDATE Scale SET name = '" + scale.getName() + "', data ='" + JsonHelper.convertScaleHashMapToJson(scale.getScaleHashMap()) + "' WHERE ID = " + scale.getID());
+            statement.close();
 		}
 		catch(SQLException e)
 		{
@@ -796,7 +799,7 @@ public class DatabaseHandler
 
 	//endregion
     //region Data
-    public ArrayList<ArrayList<Double>> getData(String uuid, String columnNameX) throws Exception{
+    public ArrayList<ChartSetItem> getData(String uuid, String columnNameX) throws Exception{
         Connection connection = null;
         try
         {
@@ -805,23 +808,17 @@ public class DatabaseHandler
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameX + " HAVING COUNT(*) > 1");
 
-            ArrayList<Double> count = new ArrayList<Double>();
-            ArrayList<Double> label = new ArrayList<Double>();
+            ArrayList<ChartSetItem> items = new ArrayList<>();
 
             while(result.next())
             {
-                count.add(result.getDouble(1));
-                label.add(result.getDouble(2));
-
+            	ChartSetItem newSetItem = new ChartSetItem(0, result.getDouble(1), result.getDouble(2));
+            	items.add(newSetItem);        
             }
 
             statement.close();
-
-            ArrayList<ArrayList<Double>> data = new ArrayList<>();
-            data.add(count);
-            data.add(label);
-
-            return data;
+         
+            return items;
         }
         catch(SQLException e)
         {
@@ -834,7 +831,7 @@ public class DatabaseHandler
         }
     }
 
-    public ArrayList<ArrayList<Double>> getData(String uuid, String columnNameX, String columnNameY) throws Exception{
+    public ArrayList<ChartSetItem> getData(String uuid, String columnNameX, String columnNameY) throws Exception{
         Connection connection = null;
         try
         {
@@ -843,25 +840,17 @@ public class DatabaseHandler
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT " + columnNameY + ", COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameY + ", " + columnNameX + " HAVING COUNT(*) > 1");
 
-            ArrayList<Double> count = new ArrayList<Double>();
-            ArrayList<Double> label = new ArrayList<Double>();
-            ArrayList<Double> set = new ArrayList<Double>();
+            ArrayList<ChartSetItem> setItems = new ArrayList<>();
 
             while(result.next())
-            {
-                set.add(result.getDouble(1));
-                count.add(result.getDouble(2));
-                label.add(result.getDouble(3));
-            }
+            {            	
+            	ChartSetItem newSetItem = new ChartSetItem(result.getDouble(1), result.getDouble(2), result.getDouble(3));
+            	setItems.add(newSetItem);               
+            }            
+          
+            statement.close();            
 
-            statement.close();
-
-            ArrayList<ArrayList<Double>> data = new ArrayList<>();
-            data.add(set);
-            data.add(count);
-            data.add(label);
-
-            return data;
+            return setItems;
         }
         catch(SQLException e)
         {

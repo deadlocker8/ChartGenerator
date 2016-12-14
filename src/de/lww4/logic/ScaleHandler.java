@@ -5,6 +5,11 @@ import de.lww4.logic.models.Scale.Scale;
 
 import java.util.ArrayList;
 
+/**
+ * ScaleHandler
+ *
+ * @author max
+ */
 public class ScaleHandler
 {
     public ArrayList<Scale> scales;
@@ -20,9 +25,9 @@ public class ScaleHandler
     private void initDumpScales()
     {
         //Init dump scale
-        Scale scale = new Scale(0, "Geschlechter", null);
-        scale.getScaleHashMap().put(0.0, "Männlich");
-        scale.getScaleHashMap().put(1.0, "Weiblich");
+        Scale scale = new Scale(0, "Geschlechter");
+        scale.getScaleHashMap().put(1.0, "Männlich");
+        scale.getScaleHashMap().put(2.0, "Weiblich");
         scales.add(scale);
     }
 

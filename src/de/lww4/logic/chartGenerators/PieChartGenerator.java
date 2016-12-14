@@ -1,5 +1,9 @@
 package de.lww4.logic.chartGenerators;
 
+import java.util.ArrayList;
+
+import de.lww4.logic.Chart;
+import de.lww4.logic.ChartSetItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -9,31 +13,38 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 public class PieChartGenerator
 {
     String xName;
-    ArrayList<Double> xValues;
+    ArrayList<ChartSetItem> chartSetItems;
+    Chart chart;
 
-    public PieChartGenerator(String xName, ArrayList<Double> xValues)
+    public PieChartGenerator(String xName, ArrayList<ChartSetItem> chartSetItems, Chart chart)
     {
         this.xName = xName;
-        this.xValues = xValues;
+        this.chartSetItems = chartSetItems;
+        this.chart = chart;
     }
 
     public PieChart generate()
     {
-        ArrayList<PieChart.Data> data = new ArrayList<>();
+        ArrayList<PieChart.Data> data = new ArrayList<>();      
 
-        Map<Double, Integer> preparedData = prepareData(xValues);
-
-        for (Map.Entry<Double, Integer> entry : preparedData.entrySet())
+        for(ChartSetItem currentItem : chartSetItems)
         {
-            data.add(new PieChart.Data(String.valueOf(entry.getKey()), (double) entry.getValue()));
+        	String label = String.valueOf(currentItem.getLabel());        	
+        	if(chart != null && chart.getLegendScale() != null)
+        	{
+        		String scaleLabel = chart.getLegendScale().getScaleHashMap().get(currentItem.getLabel());
+        		if(scaleLabel != null)
+        		{
+        			label = scaleLabel;
+        		}
+        	}           	
+        	
+        	data.add(new PieChart.Data(label, currentItem.getCount()));
         }
+        
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(data);
 
         final PieChart chart = new PieChart(pieChartData);
@@ -78,18 +89,5 @@ public class PieChartGenerator
         });
 
         return chart;
-    }
-
-    private Map<Double, Integer> prepareData(ArrayList<Double> values)
-    {
-        Map<Double, Integer> map = new HashMap<Double, Integer>();
-
-        for (Double temp : values)
-        {
-            Integer count = map.get(temp);
-            map.put(temp, (count == null) ? 1 : count + 1);
-        }
-
-        return map;
     }
 }

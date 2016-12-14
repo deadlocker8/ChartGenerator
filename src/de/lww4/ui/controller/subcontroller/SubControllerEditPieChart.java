@@ -1,5 +1,7 @@
 package de.lww4.ui.controller.subcontroller;
 
+import de.lww4.logic.Chart;
+import de.lww4.logic.ChartSetItem;
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
@@ -20,9 +22,9 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 {
 	@FXML private Label labelX;
 
-	public void init(NewChartController newChartController)
+	public void init(NewChartController newChartController, Chart chart)
 	{
-		super.init(newChartController);
+		super.init(newChartController, chart);
 
 		labelX.setOnDragOver(event -> {
 			event.acceptTransferModes(TransferMode.ANY);
@@ -43,14 +45,14 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 			labelX.setStyle("");
 			super.itemX = item;
 
-			updateChart(itemX, itemY);
+			updateChart(itemX, itemY, chart);
 
 			event.consume();
 		});
 	}
 
 	@Override
-	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY)
+	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY, Chart chart)
 	{
 		if(itemX != null)
 		{
@@ -60,13 +62,13 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 
 			try
             {
-                ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
+				ArrayList<ChartSetItem> chartSetItems = super.newChartController.getController().getDatabase().getData(itemX.getTableUUID(), itemX.getText());			
 
-                PieChartGenerator generator = new PieChartGenerator(itemX.getText(), xValues);
-                PieChart chart = generator.generate();
+                PieChartGenerator generator = new PieChartGenerator(itemX.getText(), chartSetItems, chart);
+                PieChart generatedChart = generator.generate();
 
 				stackPaneChart.getChildren().clear();
-				stackPaneChart.getChildren().add(chart);
+				stackPaneChart.getChildren().add(generatedChart);
 			}
 			catch(Exception e)
 			{
