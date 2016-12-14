@@ -1,5 +1,6 @@
 package de.lww4.ui.controller.subcontroller;
 
+import de.lww4.logic.ChartSetItem;
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
@@ -60,9 +61,9 @@ public class SubControllerEditPieChart extends SubControllerEditChart
 
 			try
             {
-                ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
+				ArrayList<ChartSetItem> chartSetItems = super.newChartController.getController().getDatabase().getData(itemX.getTableUUID(), itemX.getText());			
 
-                PieChartGenerator generator = new PieChartGenerator(itemX.getText(), xValues);
+                PieChartGenerator generator = new PieChartGenerator(itemX.getText(), chartSetItems);
                 PieChart chart = generator.generate();
 
 				stackPaneChart.getChildren().clear();

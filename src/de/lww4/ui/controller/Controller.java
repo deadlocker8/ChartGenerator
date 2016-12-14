@@ -1,10 +1,23 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+import de.lww4.logic.Chart;
+import de.lww4.logic.ChartSet;
+import de.lww4.logic.ChartSetItem;
+import de.lww4.logic.Dashboard;
+import de.lww4.logic.DashboardHandler;
+import de.lww4.logic.DatabaseHandler;
+import de.lww4.logic.ScaleHandler;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
 import de.lww4.logic.utils.AlertGenerator;
+import de.lww4.logic.utils.Utils;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -14,24 +27,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
 
 /**
  * Main Controller Class
@@ -524,26 +541,27 @@ public class Controller
 				currentStackPane.getChildren().clear();
 
 				try
-				{					
-					ArrayList<Double> xValues;
-					ArrayList<Double> yValues;
+				{						
+					ArrayList<ChartSetItem> chartSetItems;
+					ArrayList<ChartSet> sets;
+					
 					switch(chart.getType())
 					{
 						case BAR_HORIZONTAL:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
-							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());			
+							sets = Utils.splitIntoChartSets(chartSetItems);			
+							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), sets, chart.getColor());
 							currentStackPane.getChildren().add(generatorHorizontal.generate());
 							break;
 						case BAR_VERTICAL:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
-							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());			
+							sets = Utils.splitIntoChartSets(chartSetItems);			
+							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), sets, chart.getColor());
 							currentStackPane.getChildren().add(generatorVertical.generate());
 							break;
 						case PIE:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), xValues);
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());
+							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), chartSetItems);
 							currentStackPane.getChildren().add(generatorPie.generate());
 							break;
 

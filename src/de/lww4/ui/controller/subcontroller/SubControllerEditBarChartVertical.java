@@ -1,9 +1,12 @@
 package de.lww4.ui.controller.subcontroller;
 
+import de.lww4.logic.ChartSet;
+import de.lww4.logic.ChartSetItem;
 import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.logic.utils.AlertGenerator;
+import de.lww4.logic.utils.Utils;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -93,10 +96,10 @@ public class SubControllerEditBarChartVertical extends SubControllerEditChart
 
             try
             {
-                ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
-				ArrayList<Double> yValues = super.newChartController.getController().getDatabase().getCSVColumn(itemY.getTableUUID(), itemY.getText());
+            	ArrayList<ChartSetItem> chartSetItems = super.newChartController.getController().getDatabase().getData(itemX.getTableUUID(), itemX.getText(), itemY.getText());			
+				ArrayList<ChartSet> sets = Utils.splitIntoChartSets(chartSetItems);
 
-                BarChartVerticalGenerator generator = new BarChartVerticalGenerator("", "", xValues, yValues, newChartController.getColorPicker().getValue());
+                BarChartVerticalGenerator generator = new BarChartVerticalGenerator("", "", sets, newChartController.getColorPicker().getValue());
                 BarChart<String, Number> chart = generator.generate();
 
                 stackPaneChart.getChildren().clear();
