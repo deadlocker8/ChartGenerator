@@ -3,12 +3,17 @@ package de.lww4.logic;
 
 import java.util.ArrayList;
 
+/**
+ * ErrorType class
+ *
+ * @author max
+ */
 public enum ErrorType
 {
     NO_FILE("Datei","Wählen Sie eine CSV-Datei aus."),
     NO_FILLER("Füllwert","Bitte geben Sie einen Füllwert an."),
     NO_CHARTNAME("Name","Bitte vergeben Sie einen Namen für die importierte Datei"),
-	INVALID_FILLER("Füllwert", "Bitte geben Sie eine gültige Zahl als Füllwert an");
+    INVALID_FILLER("Füllwert", "Bitte geben Sie eine gültige Zahl als Füllwert an");
 
     private String errorMessage;
     private String errorShortMessage;

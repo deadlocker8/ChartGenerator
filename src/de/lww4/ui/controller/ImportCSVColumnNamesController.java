@@ -1,10 +1,5 @@
 package de.lww4.ui.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import de.lww4.logic.Importer;
 import de.lww4.logic.utils.AlertGenerator;
 import javafx.application.Platform;
@@ -16,14 +11,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -32,19 +22,29 @@ import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.ResourceBundle;
+
+/**
+ * ImportCSVColumnNamesController
+ *
+ * @author max
+ */
 public class ImportCSVColumnNamesController
 {
-	@FXML private TableView<ObservableList<StringProperty>> tableView;
-	@FXML private Button buttonCancel;
-	@FXML private Button buttonSave;
-	@FXML private ProgressIndicator progressIndicator;
+    @FXML private TableView<ObservableList<StringProperty>> tableView;
+    @FXML private Button buttonCancel;
+    @FXML private Button buttonSave;
+    @FXML private ProgressIndicator progressIndicator;
 
-	public Stage stage;
-	private Controller mainController;
-	public Image icon = new Image("de/lww4/resources/icon.png");
-	public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
-	private Importer importer;
-	private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
+    public Stage stage;
+    private Controller mainController;
+    public Image icon = new Image("de/lww4/resources/icon.png");
+    public final ResourceBundle bundle = ResourceBundle.getBundle("de/lww4/main/", Locale.GERMANY);
+    private Importer importer;
+    private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
     private ImportCSVController importCSVController;
 
     public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
@@ -53,73 +53,73 @@ public class ImportCSVColumnNamesController
         this.stage = stage;
         this.mainController = mainController;
         this.importer = importer;
-		populateTableViewHead();
-		populateTableViewBody();	
-		progressIndicator.setVisible(false);
-	}
+        populateTableViewHead();
+        populateTableViewBody();
+        progressIndicator.setVisible(false);
+    }
 
-	private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
-	{
-		TextField textField = new TextField(name);
-		TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
-		column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<StringProperty>, String>, ObservableValue<String>>()
-		{
-			@Override
-			public ObservableValue<String> call(CellDataFeatures<ObservableList<StringProperty>, String> cellDataFeatures)
-			{
-				return cellDataFeatures.getValue().get(position);
-			}
-		});
+    private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
+    {
+        TextField textField = new TextField(name);
+        TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
+        column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList<StringProperty>, String>, ObservableValue<String>>()
+        {
+            @Override
+            public ObservableValue<String> call(CellDataFeatures<ObservableList<StringProperty>, String> cellDataFeatures)
+            {
+                return cellDataFeatures.getValue().get(position);
+            }
+        });
 
-		column.setGraphic(textField);
-		column.setSortable(false);
+        column.setGraphic(textField);
+        column.setSortable(false);
 
-		return column;
-	}
+        return column;
+    }
 
-	private void populateTableViewHead()
-	{
-		for(int i = 0; i < importer.getLongestRowSize(); i++)
-		{
+    private void populateTableViewHead()
+    {
+        for(int i = 0; i < importer.getLongestRowSize(); i++)
+        {
             if (i < importer.getColumnNames().size())
             {
-				tableView.getColumns().add(generateColumn(importer.getColumnNames().get(i), i));
-			}
-			else
-			{
-				tableView.getColumns().add(generateColumn(DEFAULT_EMPTY_COLUMN_NAME, i));
-			}			
-		}
-	}
+                tableView.getColumns().add(generateColumn(importer.getColumnNames().get(i), i));
+            }
+            else
+            {
+                tableView.getColumns().add(generateColumn(DEFAULT_EMPTY_COLUMN_NAME, i));
+            }
+        }
+    }
 
-	private void populateTableViewBody()
-	{
-		tableView.widthProperty().addListener(new ChangeListener<Number>()
-		{
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
-			{
-				double width = newValue.doubleValue();
-				int numberOfColumns = tableView.getColumns().size();
-				double itemWidth = width / numberOfColumns - 3;
+    private void populateTableViewBody()
+    {
+        tableView.widthProperty().addListener(new ChangeListener<Number>()
+        {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue)
+            {
+                double width = newValue.doubleValue();
+                int numberOfColumns = tableView.getColumns().size();
+                double itemWidth = width / numberOfColumns - 3;
 
-				for(int i = 0; i < numberOfColumns; i++)
-				{
-					tableView.getColumns().get(i).setPrefWidth(itemWidth);
-				}
-			}
-		});
+                for(int i = 0; i < numberOfColumns; i++)
+                {
+                    tableView.getColumns().get(i).setPrefWidth(itemWidth);
+                }
+            }
+        });
 
-		for(ArrayList<String> currentRow : importer.getData())
-		{
-			ObservableList<StringProperty> data = FXCollections.observableArrayList();
-			for(String value : currentRow)
-			{
-				data.add(new SimpleStringProperty(value));
-			}
-			tableView.getItems().add(data);
-		}
-	}
+        for(ArrayList<String> currentRow : importer.getData())
+        {
+            ObservableList<StringProperty> data = FXCollections.observableArrayList();
+            for(String value : currentRow)
+            {
+                data.add(new SimpleStringProperty(value));
+            }
+            tableView.getItems().add(data);
+        }
+    }
 
     private ArrayList<String> getDuplicateColumns(ArrayList<String> newColumnNamesArrayList)
     {
@@ -209,51 +209,51 @@ public class ImportCSVColumnNamesController
     @FXML
     private void save()
     {
-    	tableView.setDisable(true);
-    	buttonSave.setDisable(true);
-    	buttonCancel.setDisable(true);
-    	progressIndicator.setVisible(true);
-    	
-    	//don't allow stage to close
-    	stage.setOnCloseRequest(new EventHandler<WindowEvent>()
-		{			
-			@Override
-			public void handle(WindowEvent event)
-			{
-				event.consume();				
-			}
-		}); 	
-    	
-    	Worker.runLater(()->{
-	        ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
-	        if(!isUserError(newColumnNamesArrayList))
-	        {
-	            importer.setColumnNamesArrayList(newColumnNamesArrayList);
-	            try
-	            {
-	                mainController.getDatabase().saveCSVTable(importer);
-	            }
-	            catch (Exception e)
-	            {
-	                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-	                Platform.runLater(()->{
-		            	stage.close();
-		            	AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, true);	            	
-		            });
-	            }
-	
-	            Platform.runLater(()->{
-	            	stage.close();
-	            	AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, true);	            	
-	            });
-	        }
-    	});
+        tableView.setDisable(true);
+        buttonSave.setDisable(true);
+        buttonCancel.setDisable(true);
+        progressIndicator.setVisible(true);
+
+        //don't allow stage to close
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>()
+        {
+            @Override
+            public void handle(WindowEvent event)
+            {
+                event.consume();
+            }
+        });
+
+        Worker.runLater(()->{
+            ArrayList<String> newColumnNamesArrayList = getColumnNamesArrayList();
+            if(!isUserError(newColumnNamesArrayList))
+            {
+                importer.setColumnNamesArrayList(newColumnNamesArrayList);
+                try
+                {
+                    mainController.getDatabase().saveCSVTable(importer);
+                }
+                catch (Exception e)
+                {
+                    Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+                    Platform.runLater(()->{
+                        stage.close();
+                        AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, true);
+                    });
+                }
+
+                Platform.runLater(()->{
+                    stage.close();
+                    AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, true);
+                });
+            }
+        });
     }
 
-	@FXML
-	private void cancel()
-	{
-		stage.close();
+    @FXML
+    private void cancel()
+    {
+        stage.close();
         importCSVController.getStage().show();
     }
 }
