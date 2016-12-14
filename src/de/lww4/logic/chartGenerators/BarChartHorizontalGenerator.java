@@ -1,5 +1,7 @@
 package de.lww4.logic.chartGenerators;
 
+import de.lww4.logic.Chart;
+import de.lww4.logic.ChartSet;
 import de.lww4.logic.utils.Utils;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;
@@ -10,48 +12,72 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
-@SuppressWarnings("unchecked")
 public class BarChartHorizontalGenerator
 {
     String xName;
     String yName;
-    ArrayList<Double> xValues;
-    ArrayList<Double> yValues;
+    ArrayList<ChartSet> sets;
     Color color;
+    Chart chart;
 
-    public BarChartHorizontalGenerator(String xName, String yName, ArrayList<Double> xValues, ArrayList<Double> yValues, Color color)
+    public BarChartHorizontalGenerator(String xName, String yName, ArrayList<ChartSet> sets, Color color, Chart chart)
     {
         this.xName = xName;
         this.yName = yName;
-        this.xValues = xValues;
-        this.yValues = yValues;
+        this.sets = sets;
         this.color = color;
+        this.chart = chart;
     }
 
     public BarChart<Number, String> generate()
     {
         final NumberAxis xAxis = new NumberAxis();
         final CategoryAxis yAxis = new CategoryAxis();
-        final BarChart<Number, String> chart = new BarChart<Number, String>(xAxis, yAxis);
-        chart.setTitle(null);
+        final BarChart<Number, String> generatedChart = new BarChart<Number, String>(xAxis, yAxis);
+        generatedChart.setTitle(null);
 
         xAxis.setLabel(xName);
         yAxis.setLabel(yName);
-
-        XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();
-
-        for (int i = 0; i < xValues.size(); i++)
+        
+        for(ChartSet currentSet : sets)
         {
-            series.getData().add(new XYChart.Data<Number, String>(xValues.get(i), String.valueOf(yValues.get(i))));
+	        XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();
+	        
+	        series.setName(String.valueOf(currentSet.getSetName()));        	
+        	if(chart != null && chart.getLegendScale() != null)
+        	{
+        		String name = chart.getLegendScale().getScaleHashMap().get(currentSet.getSetName());
+        		if(name != null)
+        		{
+        			series.setName(name);
+        		}
+        	}       
+	       
+	        for (int i = 0; i < currentSet.getScaleItems().size(); i++)
+	        {
+	        	String label = String.valueOf(currentSet.getScaleItems().get(i).getLabel());        	
+	        	if(chart != null && chart.getScale() != null)
+	        	{
+	        		String scaleLabel = chart.getScale().getScaleHashMap().get(currentSet.getScaleItems().get(i).getLabel());
+	        		if(scaleLabel != null)
+	        		{
+	        			label = scaleLabel;
+	        		}
+	        	}   
+	        	
+	            series.getData().add(new XYChart.Data<Number, String>(currentSet.getScaleItems().get(i).getCount(), label));
+	        }
+	        
+	        generatedChart.getData().add(series);	       
         }
-        chart.getData().addAll(series);
-        chart.setLegendVisible(false);
-
-        for (Node n : chart.lookupAll(".default-color0.chart-bar"))
+        
+        generatedChart.setLegendVisible(true);
+    	
+        for (Node n : generatedChart.lookupAll(".default-color0.chart-bar"))
         {
             n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");
         }
 
-        return chart;
+        return generatedChart;
     }
 }

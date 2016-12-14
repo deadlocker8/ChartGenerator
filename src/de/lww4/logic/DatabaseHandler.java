@@ -276,7 +276,9 @@ public class DatabaseHandler
 				scale = getScale(scaleID);
 			}			
 
-			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale);
+			//TODO load legendScale from DB
+			
+			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale, null);
 			statement.close();
 
 			return chart;
@@ -797,7 +799,7 @@ public class DatabaseHandler
 
 	//endregion
     //region Data
-    public ArrayList<ArrayList<Double>> getData(String uuid, String columnNameX) throws Exception{
+    public ArrayList<ChartSetItem> getData(String uuid, String columnNameX) throws Exception{
         Connection connection = null;
         try
         {
@@ -806,23 +808,17 @@ public class DatabaseHandler
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameX + " HAVING COUNT(*) > 1");
 
-            ArrayList<Double> count = new ArrayList<Double>();
-            ArrayList<Double> label = new ArrayList<Double>();
+            ArrayList<ChartSetItem> items = new ArrayList<>();
 
             while(result.next())
             {
-                count.add(result.getDouble(1));
-                label.add(result.getDouble(2));
-
+            	ChartSetItem newSetItem = new ChartSetItem(0, result.getDouble(1), result.getDouble(2));
+            	items.add(newSetItem);        
             }
 
             statement.close();
-
-            ArrayList<ArrayList<Double>> data = new ArrayList<>();
-            data.add(count);
-            data.add(label);
-
-            return data;
+         
+            return items;
         }
         catch(SQLException e)
         {
@@ -835,7 +831,7 @@ public class DatabaseHandler
         }
     }
 
-    public ArrayList<ArrayList<Double>> getData(String uuid, String columnNameX, String columnNameY) throws Exception{
+    public ArrayList<ChartSetItem> getData(String uuid, String columnNameX, String columnNameY) throws Exception{
         Connection connection = null;
         try
         {
@@ -844,25 +840,17 @@ public class DatabaseHandler
             Statement statement = connection.createStatement();
             ResultSet result = statement.executeQuery("SELECT " + columnNameY + ", COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameY + ", " + columnNameX + " HAVING COUNT(*) > 1");
 
-            ArrayList<Double> count = new ArrayList<Double>();
-            ArrayList<Double> label = new ArrayList<Double>();
-            ArrayList<Double> set = new ArrayList<Double>();
+            ArrayList<ChartSetItem> setItems = new ArrayList<>();
 
             while(result.next())
-            {
-                set.add(result.getDouble(1));
-                count.add(result.getDouble(2));
-                label.add(result.getDouble(3));
-            }
+            {            	
+            	ChartSetItem newSetItem = new ChartSetItem(result.getDouble(1), result.getDouble(2), result.getDouble(3));
+            	setItems.add(newSetItem);               
+            }            
+          
+            statement.close();            
 
-            statement.close();
-
-            ArrayList<ArrayList<Double>> data = new ArrayList<>();
-            data.add(set);
-            data.add(count);
-            data.add(label);
-
-            return data;
+            return setItems;
         }
         catch(SQLException e)
         {

@@ -23,8 +23,10 @@ public class Scale
     }
 
     public Scale(int id, String name)
-    {
-        this(id, name, new HashMap<Double, String>());
+    {   
+    	this.id = id;
+        this.name = name;
+    	scaleHashMap = new HashMap<Double, String>();
     }
 
     public HashMap<Double, String> getScaleHashMap()
@@ -54,10 +56,5 @@ public class Scale
         {
             scaleHashMap.put(currentItem.getKey(), currentItem.getValue());
         }
-    }
-
-    public int getId()
-    {
-        return id;
     }
 }
