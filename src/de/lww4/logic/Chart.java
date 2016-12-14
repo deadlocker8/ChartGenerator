@@ -12,8 +12,9 @@ public class Chart
 	private String tableUUID;
 	private Color color;
 	private Scale scale;
+	private Scale legendScale;
 
-	public Chart(int ID, ChartType type, String title, String x, String y, String tableUUID, Color color, Scale scale)
+	public Chart(int ID, ChartType type, String title, String x, String y, String tableUUID, Color color, Scale scale, Scale legendScale)
 	{
 		this.ID = ID;
 		this.type = type;
@@ -23,6 +24,7 @@ public class Chart
 		this.tableUUID = tableUUID;
 		this.color = color;
 		this.scale = scale;
+		this.legendScale = legendScale;
 	}
 
 	public int getID()
@@ -103,10 +105,21 @@ public class Chart
 	public void setScale(Scale scale)
 	{
 		this.scale = scale;
+	}	
+
+	public Scale getLegendScale()
+	{
+		return legendScale;
 	}
 
+	public void setLegendScale(Scale legendScale)
+	{
+		this.legendScale = legendScale;
+	}
+
+	@Override
 	public String toString()
 	{
-		return "Chart [ID=" + ID + ", type=" + type + ", title=" + title + ", x=" + x + ", y=" + y + ", tableUUID=" + tableUUID + ", color=" + color + "]";
-	}	
+		return "Chart [ID=" + ID + ", type=" + type + ", title=" + title + ", x=" + x + ", y=" + y + ", tableUUID=" + tableUUID + ", color=" + color + ", scale=" + scale + ", legendScale=" + legendScale + "]";
+	}
 }

@@ -39,6 +39,7 @@ public class BarChartVerticalGenerator
         for(ChartSet currentSet : sets)
         {
         	XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
+        	series.setName(String.valueOf(currentSet.getSetName()));
 	        
 	        for (int i = 0; i < currentSet.getScaleItems().size(); i++)
 	        {
@@ -47,7 +48,7 @@ public class BarChartVerticalGenerator
 	        chart.getData().add(series);            
         }
         
-        chart.setLegendVisible(false);       
+        chart.setLegendVisible(true);       
       
         for (Node n : chart.lookupAll(".default-color0.chart-bar"))
         {

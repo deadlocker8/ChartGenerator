@@ -62,6 +62,7 @@ public class NewChartController
 	@FXML private Button buttonCancel;
 	@FXML private HBox hboxChartTypes;
 	@FXML private ComboBox<Scale> comboBoxScale;
+	@FXML private ComboBox<Scale> comboBoxLegendScale;
 
 	private Stage stage;
 	private Controller controller;
@@ -126,7 +127,8 @@ public class NewChartController
 		});
 
 		initTreeView(null);
-		initComboBoxScales(controller.getScaleHandler().getScales());
+		initComboBoxScales(comboBoxScale, controller.getScaleHandler().getScales());
+		initComboBoxScales(comboBoxLegendScale, controller.getScaleHandler().getScales());
 
 		if(edit)
 		{
@@ -289,18 +291,24 @@ public class NewChartController
 			{
 				scale = new Scale(-1, null, null);
 			}
+			
+			Scale legenScale = comboBoxLegendScale.getValue();
+			if(legenScale == null)
+			{
+				legenScale = new Scale(-1, null, null);
+			}
 
 			if(edit)
 			{
 				int chartID = dashboard.getCells().get(position);
-				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale);
+				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legenScale);
 				controller.getDatabase().updateChart(chart);
 				dashboard.getCells().set(position, chartID);
 				controller.getDatabase().updateDashboard(dashboard);
 			}
 			else
 			{
-				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale);
+				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legenScale);
 				int chartID = controller.getDatabase().saveChart(chart);
 				if(chartID != -1)
 				{
@@ -361,12 +369,12 @@ public class NewChartController
 		});
 	}
 
-	private void initComboBoxScales(ArrayList<Scale> scales)
+	private void initComboBoxScales(ComboBox<Scale> comboBox, ArrayList<Scale> scales)
 	{
 		if(scales != null && scales.size() > 0)
 		{
-			comboBoxScale.getItems().addAll(scales);
-			comboBoxScale.setCellFactory(new Callback<ListView<Scale>, ListCell<Scale>>()
+			comboBox.getItems().addAll(scales);
+			comboBox.setCellFactory(new Callback<ListView<Scale>, ListCell<Scale>>()
 			{
 				@Override
 				public ListCell<Scale> call(ListView<Scale> param)
@@ -374,9 +382,9 @@ public class NewChartController
 					return new ComboBoxScaleCell();
 				}
 			});
-			comboBoxScale.setButtonCell(new ComboBoxScaleCell());
+			comboBox.setButtonCell(new ComboBoxScaleCell());
 
-			comboBoxScale.valueProperty().addListener(new ChangeListener<Scale>()
+			comboBox.valueProperty().addListener(new ChangeListener<Scale>()
 			{
 				@Override
 				public void changed(ObservableValue<? extends Scale> observable, Scale oldValue, Scale newValue)
@@ -389,7 +397,7 @@ public class NewChartController
 		}
 		else
 		{
-			comboBoxScale.setDisable(true);
+			comboBox.setDisable(true);
 		}
 	}
 

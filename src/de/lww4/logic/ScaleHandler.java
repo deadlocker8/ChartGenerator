@@ -25,7 +25,7 @@ public class ScaleHandler
     private void initDumpScales()
     {
         //Init dump scale
-        Scale scale = new Scale(0, "Geschlechter", null);
+        Scale scale = new Scale(0, "Geschlechter");
         scale.getScaleHashMap().put(0.0, "Männlich");
         scale.getScaleHashMap().put(1.0, "Weiblich");
         scales.add(scale);
