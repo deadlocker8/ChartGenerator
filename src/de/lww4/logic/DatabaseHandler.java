@@ -1,6 +1,7 @@
 package de.lww4.logic;
 
 import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.utils.JsonHelper;
 import javafx.scene.paint.Color;
 import logger.LogLevel;
 import logger.Logger;
@@ -666,8 +667,8 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, name, data
-			statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getName() + "','" + scale.getData() + "')");
-			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Scale");
+            statement.executeUpdate("INSERT INTO Scale VALUES( NULL,'" + scale.getName() + "','" + JsonHelper.convertScaleHashMapToJson(scale.getScaleHashMap()) + "')");
+            ResultSet result = statement.executeQuery("SELECT max(ID) FROM Scale");
 
 			int id = result.getInt(1);
 			statement.close();
@@ -720,8 +721,8 @@ public class DatabaseHandler
 			String name = result.getString("name");
 			String data = result.getString("data");
 
-			Scale current = new Scale(ID, name, data);
-			scales.add(current);
+            Scale current = new Scale(ID, name, JsonHelper.getScaleHashMapFromJson(data));
+            scales.add(current);
 		}
 		return scales;
 	}
@@ -735,8 +736,8 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM Scale WHERE ID = " + ID);
 
-			Scale scale = new Scale(ID, result.getString("name"), result.getString("data"));
-			statement.close();
+            Scale scale = new Scale(ID, result.getString("name"), JsonHelper.getScaleHashMapFromJson(result.getString("data")));
+            statement.close();
 
 			return scale;
 		}
@@ -760,8 +761,8 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, name, data
-			statement.executeUpdate("UPDATE Scale SET name = '" + scale.getName() + "', data ='" + scale.getData() + "' WHERE ID = " + scale.getID());
-			statement.close();
+            statement.executeUpdate("UPDATE Scale SET name = '" + scale.getName() + "', data ='" + JsonHelper.convertScaleHashMapToJson(scale.getScaleHashMap()) + "' WHERE ID = " + scale.getID());
+            statement.close();
 		}
 		catch(SQLException e)
 		{

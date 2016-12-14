@@ -1,6 +1,11 @@
 package de.lww4.logic.models.Scale;
 
 
+/**
+ * ScaleItem class
+ *
+ * @author max
+ */
 public class ScaleItem
 {
     public ScaleItem(Double key, String value)
