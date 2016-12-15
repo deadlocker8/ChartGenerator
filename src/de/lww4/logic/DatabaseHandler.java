@@ -47,7 +47,7 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			// create chart and dashboard table
 			statement.executeUpdate("PRAGMA foreign_keys = ON");
-			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR, color VARCHAR, scale INTEGER REFERENCES Scale (ID));");
+			statement.executeUpdate("CREATE TABLE Chart (ID INTEGER PRIMARY KEY AUTOINCREMENT, type INTEGER, title VARCHAR, x VARCHAR, y VARCHAR, uuid VARCHAR, color VARCHAR, scale INTEGER REFERENCES Scale (ID), legend INTEGER REFERENCES Scale (ID));");
 			statement.executeUpdate("CREATE TABLE Dashboard (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, cell_1_1 INTEGER REFERENCES Chart (ID), cell_1_2 INTEGER REFERENCES Chart (ID), cell_1_3 INTEGER REFERENCES Chart (ID), cell_2_1 INTEGER REFERENCES Chart (ID), cell_2_2 INTEGER REFERENCES Chart (ID), cell_2_3 INTEGER REFERENCES Chart (ID));");
 			statement.executeUpdate("CREATE TABLE Scale (ID INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, data TEXT);");
 			statement.executeUpdate("CREATE TABLE Settings (ID VARCHAR, value INTEGER REFERENCES Dashboard(ID));");
@@ -274,11 +274,16 @@ public class DatabaseHandler
 			if(scaleID != -1)
 			{
 				scale = getScale(scaleID);
-			}			
+			}
 
-			//TODO load legendScale from DB
+			int legendID = result.getInt("legend");
+			Scale legend = null;
+			if(legendID != -1)
+			{
+				legend = getScale(legendID);
+			}
 			
-			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale, null);
+			Chart chart = new Chart(result.getInt("ID"), type, result.getString("title"), result.getString("x"), result.getString("y"), result.getString("uuid"), color, scale, legend);
 			statement.close();
 
 			return chart;
@@ -308,7 +313,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, type, title, x, y, uuid, color
-			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "'," + chart.getScale().getID() + ")");
+			statement.executeUpdate("INSERT INTO Chart VALUES( NULL,'" + chart.getType().getID() + "','" + chart.getTitle() + "','" + chart.getX() + "','" + chart.getY() + "','" + chart.getTableUUID() + "','" + chart.getColor().toString() + "'," + chart.getScale().getID() + "," + chart.getLegendScale().getID() + ")");
 			ResultSet result = statement.executeQuery("SELECT max(ID) FROM Chart");
 						
 			int id = result.getInt(1);
@@ -341,7 +346,7 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			// id, type, title, x, y, uuid, color
-			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType().getID() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "', scale = " + chart.getScale().getID() + " WHERE ID = " + chart.getID());
+			statement.executeUpdate("UPDATE Chart SET type = '" + chart.getType().getID() + "', title ='" + chart.getTitle() + "', x = '" + chart.getX() + "', y = '" + chart.getY() + "', uuid = '" + chart.getTableUUID() + "', color = '" + chart.getColor() + "', scale = " + chart.getScale().getID() + ", legend = " + chart.getLegendScale().getID() + " WHERE ID = " + chart.getID());
 			statement.close();
 		}
 		catch(SQLException e)
