@@ -130,6 +130,8 @@ public class NewChartController
 				{
 					colorPicker.setDisable(false);
 				}
+				
+				initTreeView(null);
 			}
 		});
 
