@@ -17,7 +17,14 @@ public class Scale
 
     public Scale(int id, String name, HashMap<Double, String> hashMap)
     {
-        scaleHashMap = hashMap;
+    	if(hashMap != null)
+    	{
+    		scaleHashMap = hashMap;
+    	}
+    	else
+    	{
+    		scaleHashMap = new HashMap<Double, String>();
+    	}
         this.id = id;
         this.name = name;
     }
@@ -57,4 +64,13 @@ public class Scale
             scaleHashMap.put(currentItem.getKey(), currentItem.getValue());
         }
     }
+
+	@Override
+	/**
+	 * needed for comboxbox to display correct name for selected item
+	 */
+	public String toString()
+	{
+		return name;
+	}
 }

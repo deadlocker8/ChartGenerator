@@ -16,21 +16,15 @@ public class ScaleHandler
 
     public ScaleHandler()
     {
-        scales = new ArrayList<>();
-        initDumpScales();
+        scales = new ArrayList<>();        
         //TODO add empty object that user can choose if he doesn't want to use a scale anymore
     }
-
-    //TODO REMOVE THIS TEST METHOD!
-    private void initDumpScales()
+    
+    public ScaleHandler(ArrayList<Scale> scales)
     {
-        //Init dump scale
-        Scale scale = new Scale(0, "Geschlechter");
-        scale.getScaleHashMap().put(1.0, "Männlich");
-        scale.getScaleHashMap().put(2.0, "Weiblich");
-        scales.add(scale);
+        this.scales = scales;       
     }
-
+    
     public ArrayList<Scale> getScales()
     {
         return scales;

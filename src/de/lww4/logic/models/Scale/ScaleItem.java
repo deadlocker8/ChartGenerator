@@ -26,4 +26,14 @@ public class ScaleItem
     {
         return value;
     }
+
+	public void setKey(Double key)
+	{
+		this.key = key;
+	}
+
+	public void setValue(String value)
+	{
+		this.value = value;
+	}
 }

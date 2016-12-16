@@ -2,15 +2,20 @@ package de.lww4.ui.controller;
 
 import java.util.ArrayList;
 
+import de.lww4.logic.ScaleHandler;
 import de.lww4.logic.models.Scale.Scale;
 import de.lww4.logic.models.Scale.ScaleItem;
+import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.EditScaleCell;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import logger.LogLevel;
+import logger.Logger;
 
 public class EditScaleController
 {
@@ -23,7 +28,7 @@ public class EditScaleController
 	private ArrayList<ScaleItem> scaleItems;
 
 	public void init(Stage stage, Controller controller, SelectScaleController selectScaleController, Scale scale)
-	{
+	{		
 		this.stage = stage;
 		this.controller = controller;
 		this.scale = scale;
@@ -44,11 +49,12 @@ public class EditScaleController
 			}
 		});				
 		
-		scaleItems = new ArrayList<>();
+		scaleItems = new ArrayList<>();		
+		
 		for(Double key : scale.getScaleHashMap().keySet())
 		{				
 			scaleItems.add(new ScaleItem(key, scale.getScaleHashMap().get(key)));			
-		}	
+		}			
 		
 		refreshListView();
 	}
@@ -60,25 +66,61 @@ public class EditScaleController
 	}
 	
 	public void addRow()
-	{
+	{		
 		scaleItems.add(new ScaleItem(null,  null));
 		refreshListView();
 	}
 	
 	public void deleteRow(ScaleItem scaleItem)
 	{
-		scaleItems.remove(scaleItem);
+		scaleItems.remove(scaleItem);		
 		refreshListView();
+	}
+	
+	public ArrayList<ScaleItem> addRowsDataToScale()
+	{	
+		ArrayList<ScaleItem> newItems = new ArrayList<>();
+				
+		for(ScaleItem currentItem : listView.getItems())
+		{				
+			if(currentItem.getKey() != null && currentItem.getKey() != Double.MIN_VALUE && currentItem.getValue() != null && !currentItem.getValue().equals(""))
+			{
+				newItems.add(new ScaleItem(currentItem.getKey(), currentItem.getValue()));				
+			}
+			else
+			{
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.empty.scaleitems"), controller.getIcon(), true);
+				return null;
+			}
+		}
+		
+		return newItems;
 	}
 	
 	public void save()
 	{
-		scale.setScaleItems(scaleItems);
-		//TODO save to DB
+		ArrayList<ScaleItem> newItems = addRowsDataToScale();
+		
+		if(newItems != null)
+		{
+			scale.setScaleItems(newItems);
+			try
+			{
+				controller.getDatabase().updateScale(scale);						
+				controller.setScaleHandler(new ScaleHandler(controller.getDatabase().getAllScales()));
+				selectScaleController.refreshListView();				
+				stage.close();
+			}
+			catch(Exception e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), true);
+			}	
+		}
 	}
 
 	public void cancel()
-	{
+	{	
 		stage.close();
 	}
 }
