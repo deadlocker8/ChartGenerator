@@ -2,7 +2,6 @@ package de.lww4.ui.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -10,13 +9,12 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
 
 import de.lww4.logic.Chart;
 import de.lww4.logic.utils.AlertGenerator;
+import fontAwesome.FontIcon;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
@@ -242,24 +240,28 @@ public class ExportController
 			{
 				AnchorPane anchor= (AnchorPane) grid.getChildren().get(i);
 				for(int j=0; j < anchor.getChildren().size(); j++)
-				{
-					if(anchor.getChildren().get(j) instanceof HBox)
-					{
-						HBox box = (HBox) anchor.getChildren().get(j);
-						for(int x=0; x < box.getChildren().size(); x++)
-						{
-							if(box.getChildren().get(x) instanceof Button)
-								box.getChildren().remove(x);					
-						}
-					}
+				{ 
 					if(anchor.getChildren().get(j) instanceof StackPane)
 					{
 						StackPane stack = (StackPane) anchor.getChildren().get(j);
 						for(int w= 0; w < stack.getChildren().size();w++)
 						{
 							if(!(stack.getChildren().get(w) instanceof BarChart) &&
-									!(stack.getChildren().get(w) instanceof PieChart))
-								stack.getChildren().clear();							
+							   !(stack.getChildren().get(w) instanceof PieChart))
+								stack.getChildren().clear();	
+						}
+					}
+					
+					if(anchor.getChildren().get(j) instanceof HBox)
+					{
+						HBox box = (HBox) anchor.getChildren().get(j);
+						for(int x=0; x < box.getChildren().size(); x++)
+						{
+							if(box.getChildren().get(x) instanceof Button)
+								box.getChildren().remove(x);
+																
+							if(box.getChildren().get(x) instanceof Label)
+								box.getChildren().remove(x);					
 						}
 					}
 				}
