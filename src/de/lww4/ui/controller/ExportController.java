@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
@@ -52,6 +53,7 @@ public class ExportController
     
     private File file;
     private double widthScale, heightScale;
+    private double width,height;
     private boolean isInputValid;
     
 	
@@ -131,9 +133,13 @@ public class ExportController
 			public void handle(ActionEvent arg0) 
 			{	
 				checkInputValues();
-				grid = clearGridPane(gridPane);
+				
 				if(file != null && isInputValid)
+				{
+					grid = clearGridPane(gridPane);
 					createDashboardSnapshot(grid);
+				}
+					
 			}	
 		});
 		
@@ -166,7 +172,7 @@ public class ExportController
 	
 	private void checkInputValues()
 	{
-		double width, height;
+		//double width, height;
 		if(!heightTextfield.getText().isEmpty() && !widthTextfield.getText().isEmpty() )
 		{
 			try
@@ -189,10 +195,13 @@ public class ExportController
 			}
 		}
 		else
+		{
 			AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung","", 
 					controller.getBundle().getString("warning.values.empty.exportfile"), 
 					controller.getIcon(),true);
-	
+		}
+			
+		
 	}
 	
 	private void createDashboardSnapshot(GridPane grid)
