@@ -1,9 +1,8 @@
 package de.lww4.logic.utils;
 
-import com.google.gson.*;
-
 import java.util.HashMap;
-import java.util.Map;
+
+import com.google.gson.Gson;
 
 /**
  * JsonHelper class
@@ -13,18 +12,20 @@ import java.util.Map;
 
 public class JsonHelper
 {
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public static HashMap<Double, String> getScaleHashMapFromJson(String jsonContent)
 	{
-		HashMap<Double, String> scaleHashMap = new HashMap<>();
-		JsonParser jsonParser = new JsonParser();
-		JsonElement root = jsonParser.parse(jsonContent);
-
-		for(Map.Entry entry : root.getAsJsonObject().entrySet())
+		Gson gson = new Gson();
+		HashMap<String, String> hashMap = gson.fromJson(jsonContent, HashMap.class);
+		
+		HashMap<Double, String> result = new HashMap<>();
+		
+		for(String key : hashMap.keySet())
 		{
-			scaleHashMap.put(Double.valueOf(entry.getKey().toString()), entry.getValue().toString());
-		}
-		return scaleHashMap;
+			result.put(Double.valueOf(key), hashMap.get(key));
+		}		
+		
+		return result;
 	}
 
 	public static String convertScaleHashMapToJson(HashMap<Double, String> hashMap)
