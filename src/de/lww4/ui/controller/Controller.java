@@ -155,9 +155,8 @@ public class Controller
 			{
 				setDashboard(database.getDashboard(lastID));	
 			}
-
-            //TODO get scales from database --> add to method signature
-            scaleHandler = new ScaleHandler();
+           
+            scaleHandler = new ScaleHandler(database.getAllScales());
             initDashboard();
 		}
 		catch(Exception e)
@@ -780,9 +779,8 @@ public class Controller
             newStage.initOwner(stage);
             newStage.setTitle("Skalen verwalten");
             newStage.getIcons().add(icon);
+            newStage.getScene().getStylesheets().add("de/lww4/main/style.css");
             SelectScaleController newController = fxmlLoader.getController();
-
-
             newController.init(this, newStage);
             newStage.initModality(Modality.APPLICATION_MODAL);
             newStage.setResizable(false);
@@ -797,6 +795,11 @@ public class Controller
     public ScaleHandler getScaleHandler()
     {
         return scaleHandler;
+    }
+    
+    public void setScaleHandler(ScaleHandler newScaleHandler)
+    {
+        this.scaleHandler = newScaleHandler;
     }
 
     /**

@@ -164,11 +164,16 @@ public class NewChartController
 			{
 				comboBoxScale.setValue(chart.getScale());
 			}
+			
+			if(chart.getLegendScale() != null)
+			{
+				comboBoxLegendScale.setValue(chart.getLegendScale());
+			}
 
 			ColumnTreeItem itemX = new ColumnTreeItem(chart.getTableUUID(), chart.getX(), false);
 			ColumnTreeItem itemY = new ColumnTreeItem(chart.getTableUUID(), chart.getY(), false);
 			generatePreview(chart.getType(), chart);				
-			subController.updateChart(itemX, itemY, chart);	
+			subController.updateChart(itemX, itemY, chart);				
 		}
 	}
 
@@ -297,23 +302,23 @@ public class NewChartController
 				scale = new Scale(-1, null, null);
 			}
 			
-			Scale legenScale = comboBoxLegendScale.getValue();
-			if(legenScale == null)
+			Scale legendScale = comboBoxLegendScale.getValue();
+			if(legendScale == null)
 			{
-				legenScale = new Scale(-1, null, null);
+				legendScale = new Scale(-1, null, null);
 			}
 
 			if(edit)
 			{
 				int chartID = dashboard.getCells().get(position);
-				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legenScale);
+				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legendScale);
 				controller.getDatabase().updateChart(chart);
 				dashboard.getCells().set(position, chartID);
 				controller.getDatabase().updateDashboard(dashboard);
 			}
 			else
 			{
-				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legenScale);
+				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legendScale);
 				int chartID = controller.getDatabase().saveChart(chart);
 				if(chartID != -1)
 				{
@@ -348,7 +353,7 @@ public class NewChartController
 		row.setOnDragDetected(event -> {
 			if(!row.isEmpty())
 			{
-				if(row.getItem().isDragable())
+				if(row.getItem().isDraggable())
 				{
 					Dragboard db = row.startDragAndDrop(TransferMode.ANY);
 
@@ -404,9 +409,8 @@ public class NewChartController
 						if(comboBox.getId().equals(comboBoxLegendScale.getId()))
 						{
 							chart.setLegendScale(comboBox.getValue());
-						}	
+						}					
 						
-						System.out.println(chart);
 						subController.updateChart(subController.getItemX(), subController.getItemY(), subController.getChart());
 					}
 				}

@@ -4,6 +4,8 @@ import de.lww4.logic.models.Scale.ScaleItem;
 import de.lww4.ui.controller.EditScaleController;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -11,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 
 public class EditScaleCell extends ListCell<ScaleItem>
@@ -30,22 +33,54 @@ public class EditScaleCell extends ListCell<ScaleItem>
 		{
 			HBox hBox = new HBox();
 			hBox.setAlignment(Pos.CENTER);
-			
+
 			String key;
 			if(item.getKey() == null)
 			{
-				key = "";				
+				key = "";
 			}
 			else
 			{
 				key = String.valueOf(item.getKey().intValue());
 			}		
-			
-			//TODO only allow integer values
 			TextField keyTextField = new TextField(key);
-			hBox.getChildren().add(keyTextField);			
-			
+			keyTextField.setTextFormatter(new TextFormatter<>(c -> {
+				if(c.getControlNewText().isEmpty())
+				{
+					item.setKey(Double.MIN_VALUE);
+					return c;
+				}
+
+				if(c.getControlNewText().matches("-?[0-9]*"))
+				{
+					item.setKey(Double.parseDouble(c.getControlNewText()));
+					return c;
+				}
+				else
+				{
+					item.setKey(Double.MIN_VALUE);
+					return null;
+				}
+			}));		
+			hBox.getChildren().add(keyTextField);
+
 			TextField valueTextField = new TextField(item.getValue());
+			valueTextField.textProperty().addListener(new ChangeListener<String>()
+			{
+				@Override
+				public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
+				{
+					if(!newValue.trim().equals(""))
+					{
+						item.setValue(newValue.trim());
+					}
+					else
+					{
+						item.setValue(null);
+						valueTextField.setText("");
+					}
+				}
+			});
 			hBox.getChildren().add(valueTextField);
 			HBox.setMargin(valueTextField, new Insets(0, 0, 0, 5));
 
@@ -59,12 +94,12 @@ public class EditScaleCell extends ListCell<ScaleItem>
 				@Override
 				public void handle(ActionEvent event)
 				{
-					editScaleController.deleteRow(item);					
+					editScaleController.deleteRow(item);
 				}
 			});
-			
+
 			hBox.getChildren().add(buttonDelete);
-			
+
 			setGraphic(hBox);
 		}
 		else

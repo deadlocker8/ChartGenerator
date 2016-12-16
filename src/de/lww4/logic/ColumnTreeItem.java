@@ -7,13 +7,13 @@ public class ColumnTreeItem implements Serializable
 	private static final long serialVersionUID = 4856874725073524494L;
 	private String tableUUID;
 	private String	text;
-	private boolean dragable;
+	private boolean draggable;
 	
 	public ColumnTreeItem(String tableUUID, String text, boolean dragable)
 	{		
 		this.tableUUID = tableUUID;
 		this.text = text;
-		this.dragable = dragable;
+		this.draggable = dragable;
 	}		
 
 	public String getTableUUID()
@@ -26,13 +26,13 @@ public class ColumnTreeItem implements Serializable
 		return text;
 	}
 
-	public boolean isDragable()
+	public boolean isDraggable()
 	{
-		return dragable;
+		return draggable;
 	}
 	
 	public String toString()
 	{
-		return "ColumnTreeItem [text=" + text + ", dragable=" + dragable + "]";
+		return "ColumnTreeItem [text=" + text + ", draggable=" + draggable + "]";
 	}
 }

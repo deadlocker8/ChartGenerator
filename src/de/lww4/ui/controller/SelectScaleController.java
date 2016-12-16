@@ -3,6 +3,7 @@ package de.lww4.ui.controller;
 import java.io.IOException;
 import java.util.Optional;
 
+import de.lww4.logic.ScaleHandler;
 import de.lww4.logic.models.Scale.Scale;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.ScaleCell;
@@ -99,10 +100,18 @@ public class SelectScaleController
 			}
 			else
 			{
-//				Scale scale = new Scale(-1, name, null);
-				//TODO save to db
-				//TODO reload scaleHandler from DB
-				//TODO refresh ListView			
+				Scale scale = new Scale(-1, name, null);				
+				try
+				{
+					controller.getDatabase().saveScale(scale);					
+					controller.setScaleHandler(new ScaleHandler(controller.getDatabase().getAllScales()));
+					refreshListView();
+				}
+				catch(Exception e)
+				{
+					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+					AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), true);
+				}			
 			}
 		}
 	}
@@ -133,6 +142,7 @@ public class SelectScaleController
 
 	public void cancel()
 	{
+		controller.setDashboard(controller.getCurrentDashboard());
 		stage.close();
 	}
 }

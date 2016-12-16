@@ -742,11 +742,17 @@ public class DatabaseHandler
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
 			ResultSet result = statement.executeQuery("SELECT * FROM Scale WHERE ID = " + ID);
-
-            Scale scale = new Scale(ID, result.getString("name"), JsonHelper.getScaleHashMapFromJson(result.getString("data")));
-            statement.close();
-
-			return scale;
+			
+			if(!result.isClosed())
+			{
+			    Scale scale = new Scale(ID, result.getString("name"), JsonHelper.getScaleHashMapFromJson(result.getString("data")));
+	            statement.close();
+	            return scale;
+			}       
+			else
+			{
+				return null;
+			}		
 		}
 		catch(SQLException e)
 		{
@@ -789,7 +795,7 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.executeUpdate("DELETE FROM Scale WHERE ID = " + ID + ")");
+			statement.executeUpdate("DELETE FROM Scale WHERE ID = " + ID);
 			statement.close();
 		}
 		catch(SQLException e)
