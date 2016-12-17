@@ -6,18 +6,14 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type;
-
 import de.lww4.logic.Chart;
 import de.lww4.logic.utils.AlertGenerator;
-import fontAwesome.FontIcon;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
@@ -54,14 +50,9 @@ public class ExportController
 	@FXML private Button cancelButton;
 
 	private File file;
-	private double widthScale, heightScale;
 	private double width, height;
 	private boolean isInputValid;
 
-	// Notes TODO
-	// -Snapshotfunction with preferred size works not correctly -> scale is incorrect
-	// (f.e: User typed 1000. Output is 1400)
-	
 	// this method is called when user wants to export one chart
 	public void init(Stage stage, Controller controller, StackPane stackPaneChart, Chart chart)
 	{
@@ -176,12 +167,10 @@ public class ExportController
 		{
 			try
 			{
-				height = Double.parseDouble(heightTextfield.getText());
-				setHeightScale(height);
+				height = Double.parseDouble(heightTextfield.getText());				
 
 				width = Double.parseDouble(widthTextfield.getText());
-				setWidthScale(width);
-
+				
 				isInputValid = true;
 			}
 			catch(NumberFormatException e)
@@ -201,7 +190,7 @@ public class ExportController
 	private void createDashboardSnapshot(GridPane grid)
 	{
 		SnapshotParameters sp = new SnapshotParameters();
-		sp.setTransform(Transform.scale(getWidthScale(), getHeightScale()));
+		sp.setTransform(Transform.scale(width / gridPane.getWidth(), height / gridPane.getHeight()));
 
 		WritableImage img = grid.snapshot(sp, null);
 
@@ -221,7 +210,7 @@ public class ExportController
 	private void createChartSnapshot()
 	{
 		SnapshotParameters sp = new SnapshotParameters();
-		sp.setTransform(Transform.scale(getWidthScale(), getHeightScale()));
+		sp.setTransform(Transform.scale(width / stackPane.getWidth(), height / stackPane.getHeight()));	
 
 		WritableImage img = stackPane.snapshot(sp, null);
 		try
@@ -286,25 +275,5 @@ public class ExportController
 		fileChooser.getExtensionFilters().add(filter);
 
 		file = fileChooser.showSaveDialog(stage);
-	}
-
-	public double getWidthScale()
-	{
-		return widthScale;
-	}
-
-	public double getHeightScale()
-	{
-		return heightScale;
-	}
-
-	public void setHeightScale(double height)
-	{
-		heightScale = height / stage.getHeight();
-	}
-
-	public void setWidthScale(double width)
-	{
-		widthScale = width / stage.getWidth();
 	}
 }
