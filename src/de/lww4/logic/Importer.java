@@ -1,20 +1,17 @@
 package de.lww4.logic;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import java.io.*;
+import java.util.ArrayList;
+
 /**
  * this class has methods for reading and parsing csv files and returns their column rows and their data
  * from the filesystem
+ * @author max
  */
 public class Importer
 {
@@ -110,7 +107,7 @@ public class Importer
 
             for(int j=0; j < row.size(); j++)
             {
-                if(row.get(j).equals("") || row.get(j).equals(" "))
+                if(row.get(j).trim().equals(""))
                 {
                     row.set(j, fillValue);
                 }

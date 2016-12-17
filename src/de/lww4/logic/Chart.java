@@ -1,5 +1,6 @@
 package de.lww4.logic;
 
+import de.lww4.logic.models.Scale.Scale;
 import javafx.scene.paint.Color;
 
 public class Chart
@@ -10,8 +11,10 @@ public class Chart
 	private String x, y;
 	private String tableUUID;
 	private Color color;
+	private Scale scale;
+	private Scale legendScale;
 
-	public Chart(int ID, ChartType type, String title, String x, String y, String tableUUID, Color color)
+	public Chart(int ID, ChartType type, String title, String x, String y, String tableUUID, Color color, Scale scale, Scale legendScale)
 	{
 		this.ID = ID;
 		this.type = type;
@@ -20,6 +23,8 @@ public class Chart
 		this.y = y;
 		this.tableUUID = tableUUID;
 		this.color = color;
+		this.scale = scale;
+		this.legendScale = legendScale;
 	}
 
 	public int getID()
@@ -92,8 +97,29 @@ public class Chart
 		this.color = color;
 	}
 	
+	public Scale getScale()
+	{
+		return scale;
+	}	
+
+	public void setScale(Scale scale)
+	{
+		this.scale = scale;
+	}	
+
+	public Scale getLegendScale()
+	{
+		return legendScale;
+	}
+
+	public void setLegendScale(Scale legendScale)
+	{
+		this.legendScale = legendScale;
+	}
+
+	@Override
 	public String toString()
 	{
-		return "Chart [ID=" + ID + ", type=" + type + ", title=" + title + ", x=" + x + ", y=" + y + ", tableUUID=" + tableUUID + ", color=" + color + "]";
-	}	
+		return "Chart [ID=" + ID + ", type=" + type + ", title=" + title + ", x=" + x + ", y=" + y + ", tableUUID=" + tableUUID + ", color=" + color + ", scale=" + scale + ", legendScale=" + legendScale + "]";
+	}
 }

@@ -1,0 +1,33 @@
+package de.lww4.logic;
+
+/**
+ * ForbiddenColumnNames
+ * checks if word is forbidden as a column name
+ *
+ * @author max
+ */
+public enum ForbiddenColumnNames
+{
+    ID("id"),
+    NAME("name"),
+    DATE("date");
+
+    private String word;
+
+    ForbiddenColumnNames(String word)
+    {
+        this.word = word;
+    }
+
+    public static boolean isForbidden(String wordToCheck)
+    {
+        for (ForbiddenColumnNames forbiddenColumnName : ForbiddenColumnNames.values())
+        {
+            if (forbiddenColumnName.word.toLowerCase().equals(wordToCheck.toLowerCase()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}

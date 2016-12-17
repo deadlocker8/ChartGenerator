@@ -1,13 +1,23 @@
 package de.lww4.ui.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
 import de.lww4.logic.Chart;
+import de.lww4.logic.ChartSet;
+import de.lww4.logic.ChartSetItem;
 import de.lww4.logic.Dashboard;
 import de.lww4.logic.DashboardHandler;
 import de.lww4.logic.DatabaseHandler;
+import de.lww4.logic.ScaleHandler;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
 import de.lww4.logic.utils.AlertGenerator;
+import de.lww4.logic.utils.Utils;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -17,24 +27,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
 
 /**
  * Main Controller Class
@@ -45,7 +59,6 @@ public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private Label labelTitle;
-	@FXML private MenuItem importCSVMenuItem;
 
 	private Stage stage;
 	private Image icon = new Image("de/lww4/resources/icon.png");
@@ -53,8 +66,9 @@ public class Controller
 	private GridPane gridPane;
 	private DatabaseHandler database;
 	private DashboardHandler dashboardHandler;
-	private Dashboard currentDashboard;	
-	private ArrayList<StackPane> chartStackPanes;
+    private Dashboard currentDashboard;
+    private ScaleHandler scaleHandler;
+    private ArrayList<StackPane> chartStackPanes;
 
 	/**
 	 * init method
@@ -141,8 +155,9 @@ public class Controller
 			{
 				setDashboard(database.getDashboard(lastID));	
 			}
-			
-			initDashboard();
+           
+            scaleHandler = new ScaleHandler(database.getAllScales());
+            initDashboard();
 		}
 		catch(Exception e)
 		{
@@ -150,7 +165,8 @@ public class Controller
 
 			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.database"), icon, true);
 		}
-	}
+
+    }
 
 	/**
 	 * initalizes label for dashboard title and gridPane
@@ -376,9 +392,6 @@ public class Controller
 
 	/**
 	 * inits the dashboard gridPane
-	 * 
-	 * @param empty
-	 *            boolean
 	 */
 	private void initGridPane()
 	{
@@ -524,29 +537,30 @@ public class Controller
 			}
 			else
 			{
-				currentStackPane.getChildren().clear();
-
+				currentStackPane.getChildren().clear();					
+			
 				try
-				{					
-					ArrayList<Double> xValues;
-					ArrayList<Double> yValues;
+				{						
+					ArrayList<ChartSetItem> chartSetItems;
+					ArrayList<ChartSet> sets;
+					
 					switch(chart.getType())
 					{
 						case BAR_HORIZONTAL:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
-							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());			
+							sets = Utils.splitIntoChartSets(chartSetItems);			
+							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), sets, chart.getColor(), chart);
 							currentStackPane.getChildren().add(generatorHorizontal.generate());
 							break;
 						case BAR_VERTICAL:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
-							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());			
+							sets = Utils.splitIntoChartSets(chartSetItems);			
+							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), sets, chart.getColor(), chart);
 							currentStackPane.getChildren().add(generatorVertical.generate());
 							break;
 						case PIE:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), xValues);
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());
+							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), chartSetItems, chart);
 							currentStackPane.getChildren().add(generatorPie.generate());
 							break;
 
@@ -558,7 +572,7 @@ public class Controller
 				{
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
+					AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.data"), icon, true);
 				}
 			}
 
@@ -640,11 +654,13 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
-			currentDashboard.getCells().set(position, -1);
+			int ID = currentDashboard.getCells().get(position);
+			currentDashboard.getCells().set(position, -1);			
 			try
 			{
 				database.updateDashboard(currentDashboard);
 				dashboardHandler = new DashboardHandler(database.getAllDashboards());
+				database.deleteChartFromDB(ID);
 				initDashboard();
 			}
 			catch(Exception e)
@@ -735,15 +751,67 @@ public class Controller
 		}
 	}
 
-	/**
-	 * opens about dialog
+    public void deleteScale(int ID)
+    {
+        scaleHandler.deleteScale(ID);
+        try
+		{
+			database.deleteScaleFromDB(ID);
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.scale"), icon, true);
+		}
+    }
+
+    @FXML
+    private void onScaleManagementClicked()
+    {
+        try
+        {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/SelectScaleGUI.fxml"));
+
+            Parent root = (Parent) fxmlLoader.load();
+            Stage newStage = new Stage();
+            newStage.setScene(new Scene(root));
+            newStage.initOwner(stage);
+            newStage.setTitle("Skalen verwalten");
+            newStage.getIcons().add(icon);
+            newStage.getScene().getStylesheets().add("de/lww4/main/style.css");
+            SelectScaleController newController = fxmlLoader.getController();
+            newController.init(this, newStage);
+            newStage.initModality(Modality.APPLICATION_MODAL);
+            newStage.setResizable(false);
+            newStage.show();
+        }
+        catch (IOException io)
+        {
+            Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+        }
+    }
+
+    public ScaleHandler getScaleHandler()
+    {
+        return scaleHandler;
+    }
+    
+    public void setScaleHandler(ScaleHandler newScaleHandler)
+    {
+        this.scaleHandler = newScaleHandler;
+    }
+
+    /**
+     * opens about dialog
 	 */
-	public void about()
-	{
+    @FXML
+    private void about()
+    {
 		AlertGenerator.showAlert(AlertType.INFORMATION, "über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
 				true);
 	}
-
+    
 	public DatabaseHandler getDatabase()
 	{
 		return database;

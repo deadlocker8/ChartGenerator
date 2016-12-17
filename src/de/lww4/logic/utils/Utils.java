@@ -6,6 +6,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import de.lww4.logic.ChartSet;
+import de.lww4.logic.ChartSetItem;
 
 public class Utils
 {
@@ -36,5 +42,34 @@ public class Utils
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public static ArrayList<ChartSet> splitIntoChartSets(ArrayList<ChartSetItem> items)
+    {
+    	ArrayList<ChartSet> sets = new ArrayList<>();
+    	
+    	Set<Double> possibleSetNames = new HashSet<>();
+    	for(ChartSetItem currentItem : items)
+    	{
+    		possibleSetNames.add(currentItem.getSet());
+    	}
+    	
+    	for(Double currentSetName : possibleSetNames)
+    	{
+    		sets.add(new ChartSet(currentSetName));
+    	}
+    	
+    	for(ChartSetItem currentItem : items)
+    	{
+    		for(ChartSet currentSet : sets)
+    		{
+    			if(Math.abs(currentItem.getSet() - currentSet.getSetName()) < 0.0000001)
+    			{
+    				currentSet.getScaleItems().add(currentItem);
+    			}
+    		}
+    	}    	
+    	
+    	return sets;    	
     }
 }
