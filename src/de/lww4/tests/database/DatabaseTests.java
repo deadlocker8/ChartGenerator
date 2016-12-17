@@ -2,6 +2,7 @@ package de.lww4.tests.database;
 
 import de.lww4.logic.*;
 import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.models.Scale.ScaleItem;
 import de.lww4.logic.utils.Utils;
 import javafx.scene.paint.Color;
 import org.junit.Test;
@@ -102,6 +103,34 @@ public class DatabaseTests
         }
     }
 
+    @Test
+    public void ScaleUpdatedInDatabaseTest()
+    {
+        Scale scale = getTestScale();
+        Scale updatedScale = getTestScale();
+        updatedScale.setName("Updated Name");
+        ArrayList<ScaleItem> scaleItems = new ArrayList<>();
+        scaleItems.add(new ScaleItem(5.0, "Rot"));
+        scaleItems.add(new ScaleItem(2.0, "Grün"));
+        updatedScale.setScaleItems(scaleItems);
+        try
+        {
+            //save scale in db
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            int scaleID = databaseHandler.saveScale(scale);
+            updatedScale.setId(scaleID);
+            databaseHandler.updateScale(updatedScale);
+            Scale updatedDBScale = databaseHandler.getScale(scaleID);
+            assertEquals(updatedScale.getName(), updatedDBScale.getName());
+            assertEquals(updatedScale.getScaleHashMap(), updatedDBScale.getScaleHashMap());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
 
     @Test
     public void ScaleDeletedFromDatabaseTest()
@@ -134,7 +163,7 @@ public class DatabaseTests
     }
 
     @Test
-    public void ChartSavedInDatabase()
+    public void ChartSavedInDatabaseTest()
     {
         Chart chart = getTestChart();
         try
@@ -160,7 +189,7 @@ public class DatabaseTests
     }
 
     @Test
-    public void ChartUpdatedInDatabase()
+    public void ChartUpdatedInDatabaseTest()
     {
         Chart chart = getTestChart();
         Chart updatedChart = getTestChart();
@@ -190,7 +219,7 @@ public class DatabaseTests
     }
 
     @Test
-    public void ChartRemovedFromDatabase()
+    public void ChartRemovedFromDatabaseTest()
     {
         Chart chart = getTestChart();
         try

@@ -36,6 +36,11 @@ public class Scale
     	scaleHashMap = new HashMap<Double, String>();
     }
 
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+
     public HashMap<Double, String> getScaleHashMap()
     {
         return scaleHashMap;
