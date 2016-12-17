@@ -18,10 +18,10 @@ import javafx.scene.SnapshotParameters;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -50,8 +50,7 @@ public class ExportController
 	@FXML private Button cancelButton;
 
 	private File file;
-	private double width, height;
-	private boolean isInputValid;
+	private double width, height;	
 
 	// this method is called when user wants to export one chart
 	public void init(Stage stage, Controller controller, StackPane stackPaneChart, Chart chart)
@@ -80,12 +79,20 @@ public class ExportController
 			@Override
 			public void handle(ActionEvent arg0)
 			{
-				checkInputValues();
-
-				if(file != null && isInputValid && chart != null)
-					createChartSnapshot();
-				else
-					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+				if(chart != null)
+				{
+					if(checkInputValues())
+					{
+						if(file != null)
+						{
+							createChartSnapshot();
+						}
+						else
+						{
+							AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.exportfile"), controller.getIcon(), true);
+						}
+					}
+				}
 			}
 		});
 
@@ -98,6 +105,8 @@ public class ExportController
 			}
 
 		});
+
+		initTextFields();
 	}
 
 	// this method is called when user wants to export the dashboard
@@ -121,14 +130,18 @@ public class ExportController
 			@Override
 			public void handle(ActionEvent arg0)
 			{
-				checkInputValues();
-
-				if(file != null && isInputValid)
+				if(checkInputValues())
 				{
-					grid = clearGridPane(gridPane);
-					createDashboardSnapshot(grid);
+					if(file != null)
+					{
+						grid = clearGridPane(gridPane);
+						createDashboardSnapshot(grid);
+					}
+					else
+					{
+						AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.exportfile"), controller.getIcon(), true);
+					}
 				}
-
 			}
 		});
 
@@ -160,31 +173,57 @@ public class ExportController
 		 */
 	}
 
-	private void checkInputValues()
+	private void initTextFields()
+	{
+		widthTextfield.setTextFormatter(new TextFormatter<>(c -> {
+			if(c.getControlNewText().isEmpty())
+			{
+				return c;
+			}
+
+			if(c.getControlNewText().matches("[0-9]*"))
+			{
+				return c;
+			}
+			else
+			{
+				return null;
+			}
+		}));
+
+		heightTextfield.setTextFormatter(new TextFormatter<>(c -> {
+			if(c.getControlNewText().isEmpty())
+			{
+				return c;
+			}
+
+			if(c.getControlNewText().matches("[0-9]*"))
+			{
+				return c;
+			}
+			else
+			{
+				return null;
+			}
+		}));
+	}
+
+	private boolean checkInputValues()
 	{
 		// double width, height;
 		if(!heightTextfield.getText().isEmpty() && !widthTextfield.getText().isEmpty())
 		{
-			try
-			{
-				height = Double.parseDouble(heightTextfield.getText());				
+			height = Double.parseDouble(heightTextfield.getText());
 
-				width = Double.parseDouble(widthTextfield.getText());
-				
-				isInputValid = true;
-			}
-			catch(NumberFormatException e)
-			{
-				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-				AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.exportfile"), controller.getIcon(), true);
-				isInputValid = false;
-			}
+			width = Double.parseDouble(widthTextfield.getText());
+
+			return true;
 		}
 		else
 		{
 			AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.exportfile"), controller.getIcon(), true);
+			return false;
 		}
-
 	}
 
 	private void createDashboardSnapshot(GridPane grid)
@@ -210,7 +249,7 @@ public class ExportController
 	private void createChartSnapshot()
 	{
 		SnapshotParameters sp = new SnapshotParameters();
-		sp.setTransform(Transform.scale(width / stackPane.getWidth(), height / stackPane.getHeight()));	
+		sp.setTransform(Transform.scale(width / stackPane.getWidth(), height / stackPane.getHeight()));
 
 		WritableImage img = stackPane.snapshot(sp, null);
 		try
@@ -246,14 +285,14 @@ public class ExportController
 					}
 
 					if(anchor.getChildren().get(j) instanceof HBox)
-					{					
+					{
 						HBox box = (HBox)anchor.getChildren().get(j);
 						Iterator<Node> iterator = box.getChildren().iterator();
-						
+
 						while(iterator.hasNext())
 						{
-							Node currentItem = iterator.next();							
-							
+							Node currentItem = iterator.next();
+
 							if(currentItem instanceof Button)
 							{
 								iterator.remove();
