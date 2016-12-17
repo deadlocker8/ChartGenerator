@@ -133,9 +133,28 @@ public class Importer
         return columnNamesArrayList;
     }
 
-    public void setColumnNamesArrayList(ArrayList<String> columnNamesArrayList)
+    public void setColumnNamesArrayList(ArrayList<String> newColumnNamesArrayList)
     {
-        this.columnNamesArrayList = columnNamesArrayList;
+        //also remove data from data columns
+        for(int i=0; i < this.columnNamesArrayList.size(); i++)
+        {
+            //name is not contained anymore in new list
+            if(!newColumnNamesArrayList.contains(columnNamesArrayList.get(i)))
+            {
+                //remove data column
+                removeDataColumn(i);
+            }
+        }
+        this.columnNamesArrayList = newColumnNamesArrayList;
+    }
+
+    private void removeDataColumn(int number)
+    {
+        for(int i=0; i < data.size(); i++)
+        {
+            ArrayList<String> currentRow = data.get(i);
+            currentRow.remove(number);
+        }
     }
 
     /**

@@ -192,29 +192,35 @@ public class ImportCSVColumnNamesController
         boolean hasEmptyColumns = !emptyColumns.isEmpty();
 
         String errorMessage = null;
-        if(hasDuplicateColumns && hasEmptyColumns)
+        if(newColumnNamesArrayList.isEmpty())
         {
-            errorMessage = "Einige Spalten sind leer und/oder doppelt!";
+            errorMessage = "Es muss mindestens eine Spalte zum importieren gewählt werden!";
         }
         else
         {
-            if(hasDuplicateColumns)
+            if (hasDuplicateColumns && hasEmptyColumns)
             {
-                errorMessage = "Folgende Spaltennamen kommen doppelt vor: " + getStringFromArrayList(duplicateColumns.toString());
+                errorMessage = "Einige Spalten sind leer und/oder doppelt!";
             }
-
-            if(hasEmptyColumns)
+            else
             {
-                errorMessage = "Folgende Spalten sind leer: " + getStringFromArrayList(emptyColumns.toString());
-            }
+                if (hasDuplicateColumns)
+                {
+                    errorMessage = "Folgende Spaltennamen kommen doppelt vor: " + getStringFromArrayList(duplicateColumns.toString());
+                }
 
-            if (hasForbiddenColumns)
-            {
-                errorMessage = "Folgende verwendete Spaltennamen sind nicht erlaubt: " + getStringFromArrayList(forbiddenColumnNames.toString());
-            }
+                if (hasEmptyColumns)
+                {
+                    errorMessage = "Folgende Spalten sind leer: " + getStringFromArrayList(emptyColumns.toString());
+                }
 
+                if (hasForbiddenColumns)
+                {
+                    errorMessage = "Folgende verwendete Spaltennamen sind nicht erlaubt: " + getStringFromArrayList(forbiddenColumnNames.toString());
+                }
+
+            }
         }
-
         if (errorMessage != null)
         {
             AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", errorMessage, mainController.getIcon(), true);
