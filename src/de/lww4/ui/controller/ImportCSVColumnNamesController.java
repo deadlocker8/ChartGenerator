@@ -68,6 +68,8 @@ public class ImportCSVColumnNamesController
 	private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
 	{
         CheckBox checkBox = new CheckBox();
+        if(!ForbiddenColumnNames.isForbidden(name))
+            checkBox.setSelected(true);
         TextField textField = new TextField(name);
         VBox vBox = new VBox(checkBox, textField);
         TableColumn<ObservableList<StringProperty>, String> column = new TableColumn<>();
@@ -234,9 +236,11 @@ public class ImportCSVColumnNamesController
             VBox vBox = (VBox) tableColumn.getGraphic();
             CheckBox checkBox = (CheckBox) vBox.getChildren().get(0);
             TextField textField = (TextField) vBox.getChildren().get(1);
-            String newColumnName = textField.getText().trim();
-            newColumnNamesArrayList.add(newColumnName);
-
+            if(checkBox.isSelected())
+            {
+                String newColumnName = textField.getText().trim();
+                newColumnNamesArrayList.add(newColumnName);
+            }
         }
         return newColumnNamesArrayList;
     }
