@@ -1,15 +1,17 @@
 package de.lww4.tests.database;
 
-import de.lww4.logic.CSVTable;
-import de.lww4.logic.DatabaseHandler;
-import de.lww4.logic.DelimiterType;
-import de.lww4.logic.Importer;
+import de.lww4.logic.*;
+import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.utils.Utils;
+import javafx.scene.paint.Color;
 import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DatabaseTests
 {
@@ -65,6 +67,149 @@ public class DatabaseTests
         }
 
         assertTrue(containsAllMultiple(stringArrayList,new String[]{"TestData0", "TestData1", "TestData2", "TestData3"}));
+    }
 
+    private Scale getTestScale()
+    {
+        HashMap<Double, String> testScaleHashMap = new HashMap<>();
+        testScaleHashMap.put(1.0, "Männlich");
+        testScaleHashMap.put(2.0, "Weiblich");
+        testScaleHashMap.put(3.0, "Keine Angabe");
+        Scale scale = new Scale(-1, "TestScale", testScaleHashMap);
+        return scale;
+    }
+
+    @Test
+    public void ScaleSavedInDatabaseTest()
+    {
+        try
+        {
+            Scale testScale = getTestScale();
+            //save scale in db
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+
+            int scaleID = databaseHandler.saveScale(testScale);
+             //check if scale exists
+            Scale dbScale = databaseHandler.getScale(scaleID);
+            assertNotNull(dbScale);
+            assertTrue(dbScale.getName().equals(testScale.getName()));
+            assertTrue(dbScale.getScaleHashMap().equals(testScale.getScaleHashMap()));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+
+    @Test
+    public void ScaleDeletedFromDatabaseTest()
+    {
+        try
+        {
+            Scale testScale = getTestScale();
+            //save scale in db
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            int scaleID = databaseHandler.saveScale(testScale);
+
+            Scale scale = databaseHandler.getScale(scaleID);
+            assertNotNull(scale);
+
+            databaseHandler.deleteScaleFromDB(scaleID);
+            //check if scale exists
+            Scale dbScale = databaseHandler.getScale(scaleID);
+            assertNull(dbScale);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+
+    }
+    private Chart getTestChart()
+    {
+        return new Chart(1, ChartType.BAR_HORIZONTAL, "Test", "XTest", "YTest", UUID.randomUUID().toString(), Color.ALICEBLUE, getTestScale(), getTestScale());
+    }
+
+    @Test
+    public void ChartSavedInDatabase()
+    {
+        Chart chart = getTestChart();
+        try
+        {
+            //save chart
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            int chartId = databaseHandler.saveChart(chart);
+
+            Chart dbChart = databaseHandler.getChart(chartId);
+            assertNotNull(dbChart);
+            assertEquals(dbChart.getColor(), chart.getColor());
+            assertEquals(dbChart.getTitle(), chart.getTitle());
+            assertEquals(dbChart.getType(), chart.getType());
+            assertEquals(dbChart.getTableUUID(), chart.getTableUUID());
+            assertEquals(dbChart.getX(), chart.getX());
+            assertEquals(dbChart.getY(), chart.getY());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void ChartUpdatedInDatabase()
+    {
+        Chart chart = getTestChart();
+        Chart updatedChart = getTestChart();
+        updatedChart.setColor(Color.AQUA);
+        updatedChart.setType(ChartType.PIE);
+        updatedChart.setX("Testing");
+        updatedChart.setY("Update Test");
+        updatedChart.setTitle("Test Update Title");
+        try
+        {
+            //save chart
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            int chartId = databaseHandler.saveChart(chart);
+            updatedChart.setID(chartId);
+            databaseHandler.updateChart(updatedChart);
+
+            Chart dbUpdatedChart = databaseHandler.getChart(chartId);
+            assertEquals(updatedChart.getX(), dbUpdatedChart.getX());
+            assertEquals(updatedChart.getColor(), dbUpdatedChart.getColor());
+            assertEquals(updatedChart.getTitle(), dbUpdatedChart.getTitle());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void ChartRemovedFromDatabase()
+    {
+        Chart chart = getTestChart();
+        try
+        {
+            //save chart
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            int chartId = databaseHandler.saveChart(chart);
+
+            Chart dbChart = databaseHandler.getChart(chartId);
+            assertNotNull(dbChart);
+
+            databaseHandler.deleteChartFromDB(chartId);
+            Chart dbNullChart = databaseHandler.getChart(chartId);
+            assertNull(dbNullChart);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
     }
 }

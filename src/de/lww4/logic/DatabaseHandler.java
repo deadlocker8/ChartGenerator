@@ -372,7 +372,7 @@ public class DatabaseHandler
 			// create a database connection
 			connection = DriverManager.getConnection("jdbc:sqlite:" + path);
 			Statement statement = connection.createStatement();
-			statement.executeUpdate("DELETE FROM Chart WHERE ID = " + ID + ")");
+			statement.executeUpdate("DELETE FROM Chart WHERE ID = " + ID);
 			statement.close();
 		}
 		catch(SQLException e)
