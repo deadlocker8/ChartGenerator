@@ -4,7 +4,9 @@ package de.lww4.ui.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+
 import javax.imageio.ImageIO;
+
 import de.lww4.logic.Chart;
 import de.lww4.logic.utils.AlertGenerator;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,7 +25,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
-import de.lww4.logic.Chart;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -31,6 +32,8 @@ import javafx.scene.transform.Transform;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import logger.LogLevel;
+import logger.Logger;
 
 public class ExportController
 {

@@ -115,7 +115,7 @@ public class ImportCSVController
             {
                 try
                 {
-                    double doubleValue = Double.parseDouble(value);
+                    Double.parseDouble(value);
                 }
                 catch (NumberFormatException e)
                 {
