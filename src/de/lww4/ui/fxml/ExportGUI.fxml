@@ -6,61 +6,94 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane fx:id="anchorPaneMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="300.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.controller.ExportController">
+<AnchorPane fx:id="anchorPaneMain" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="219.0" prefWidth="485.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.lww4.ui.controller.ExportController">
    <children>
-      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="53.0" prefHeight="70.0" prefWidth="580.0">
+      <VBox layoutX="10.0" layoutY="53.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
          <children>
-            <Label alignment="TOP_LEFT" text="Maße des PNG Bildes:">
-               <HBox.margin>
-                  <Insets left="10.0" right="10.0" />
-               </HBox.margin>
-            </Label>
-            <TextField fx:id="widthTextfield" prefHeight="30.0" prefWidth="50.0">
-               <HBox.margin>
-                  <Insets left="10.0" right="10.0" />
-               </HBox.margin>
-            </TextField>
-            <Label text="Breite" />
-            <TextField fx:id="heightTextfield" prefHeight="30.0" prefWidth="50.0">
-               <HBox.margin>
-                  <Insets left="20.0" />
-               </HBox.margin>
-            </TextField>
-            <Label text="Höhe">
-               <HBox.margin>
-                  <Insets left="10.0" />
-               </HBox.margin>
-            </Label>
+            <HBox alignment="CENTER_LEFT" prefHeight="70.0" prefWidth="580.0">
+               <children>
+                  <Label alignment="TOP_LEFT" text="Maße des PNG Bildes:">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="widthTextfield" prefHeight="30.0" prefWidth="65.0">
+                     <HBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Label text="Breite">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="heightTextfield" prefHeight="30.0" prefWidth="65.0">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Label text="Höhe">
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="70.0" prefWidth="580.0">
+               <padding>
+                  <Insets bottom="30.0" top="30.0" />
+               </padding>
+               <children>
+                  <Label text="Speichern unter: ">
+                     <HBox.margin>
+                        <Insets left="10.0" right="20.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="openSaveDialogButton" mnemonicParsing="false" text="Öffnen">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+                  <Label fx:id="labelFile" prefHeight="17.0" prefWidth="252.0">
+                     <HBox.margin>
+                        <Insets left="20.0" />
+                     </HBox.margin>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="35.0" prefWidth="457.0">
+               <children>
+                  <Button fx:id="saveButton" mnemonicParsing="false" text="Speichern">
+                     <HBox.margin>
+                        <Insets right="50.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="cancelButton" alignment="CENTER" mnemonicParsing="false" text="Abbrechen" textAlignment="CENTER">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+               </children>
+            </HBox>
          </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="123.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="70.0" prefWidth="580.0">
-         <padding>
-            <Insets bottom="30.0" top="30.0" />
-         </padding>
-         <children>
-            <Label text="Speichern unter: ">
-               <HBox.margin>
-                  <Insets left="10.0" right="20.0" />
-               </HBox.margin>
-            </Label>
-            <Button fx:id="openSaveDialogButton" mnemonicParsing="false" text="Öffnen" />
-         </children>
-      </HBox>
-      <HBox alignment="CENTER" layoutX="10.0" layoutY="211.0" prefHeight="70.0" prefWidth="580.0">
-         <children>
-            <Button fx:id="saveButton" mnemonicParsing="false" text="Speichern">
-               <HBox.margin>
-                  <Insets right="50.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="cancelButton" alignment="CENTER" mnemonicParsing="false" text="Abbrechen" textAlignment="CENTER">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
-      </HBox>
+      </VBox>
    </children>
 </AnchorPane>

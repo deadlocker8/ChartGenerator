@@ -48,6 +48,7 @@ public class ExportController
 	@FXML private Button openSaveDialogButton;
 	@FXML private Button saveButton;
 	@FXML private Button cancelButton;
+	@FXML private Label labelFile;
 
 	private File file;
 	private double width, height;	
@@ -314,5 +315,9 @@ public class ExportController
 		fileChooser.getExtensionFilters().add(filter);
 
 		file = fileChooser.showSaveDialog(stage);
+		if(file != null)
+		{
+			labelFile.setText(file.getAbsolutePath());
+		}
 	}
 }
