@@ -32,8 +32,13 @@ public class Dashboard
 		cells.add(cell5);
 		cells.add(cell6);
 	}
-	
-	public int getID()
+
+    public void setID(int ID)
+    {
+        this.ID = ID;
+    }
+
+    public int getID()
 	{
 		return ID;
 	}
