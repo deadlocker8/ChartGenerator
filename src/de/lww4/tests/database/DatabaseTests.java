@@ -5,7 +5,6 @@ import de.lww4.logic.models.Scale.Scale;
 import de.lww4.logic.models.Scale.ScaleItem;
 import de.lww4.logic.utils.Utils;
 import javafx.scene.paint.Color;
-import org.junit.Test;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class DatabaseTests
 {
@@ -234,6 +234,87 @@ public class DatabaseTests
             databaseHandler.deleteChartFromDB(chartId);
             Chart dbNullChart = databaseHandler.getChart(chartId);
             assertNull(dbNullChart);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    private Dashboard getTestDashboard()
+    {
+        return new Dashboard("TestDashboard");
+    }
+
+    @Test
+    public void DashboardSavedInDatabaseTest()
+    {
+        try
+        {
+            //save dashboard
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            Dashboard dashboard = getTestDashboard();
+            int dashboardId = databaseHandler.saveDashboard(dashboard);
+
+            //get dashboard from db
+            Dashboard dbDashboard = databaseHandler.getDashboard(dashboardId);
+            assertNotNull(dbDashboard);
+            assertEquals(dbDashboard.getName(), dashboard.getName());
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+
+    @Test
+    public void DashboardUpdatedInDatabaseTest()
+    {
+        try
+        {
+            //save chart
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            Dashboard dashboard = getTestDashboard();
+            int dashboardId = databaseHandler.saveDashboard(dashboard);
+
+            //update existing dashboard
+            Dashboard updatedDashboard = new Dashboard("UpdatedDashboard");
+            updatedDashboard.setID(dashboardId);
+            databaseHandler.updateDashboard(updatedDashboard);
+
+            //check if dashboard was updated
+            Dashboard updatedDBDashboard = databaseHandler.getDashboard(dashboardId);
+            assertNotNull(updatedDBDashboard);
+            assertEquals(updatedDBDashboard.getName(), updatedDashboard.getName());
+            assertNotEquals(updatedDBDashboard.getName(), dashboard.getName());
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            assertTrue(false);
+        }
+    }
+
+    @Test
+    public void DashboardDeletedFromDatabaseTest()
+    {
+        try
+        {
+            //save chart
+            DatabaseHandler databaseHandler = new DatabaseHandler();
+            Dashboard dashboard = getTestDashboard();
+            int dashboardId = databaseHandler.saveDashboard(dashboard);
+
+            //delete dashboard
+            databaseHandler.deleteDashboard(dashboardId);
+
+            //check if null --> successfully deleted
+            assertNull(databaseHandler.getDashboard(dashboardId));
         }
         catch (Exception e)
         {
