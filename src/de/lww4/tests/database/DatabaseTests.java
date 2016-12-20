@@ -14,6 +14,9 @@ import java.util.UUID;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+/**
+ * @author max
+ */
 public class DatabaseTests
 {
     @Test

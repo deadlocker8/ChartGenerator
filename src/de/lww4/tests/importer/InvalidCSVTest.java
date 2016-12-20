@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
+/**
+ * @author max
+ */
 public class InvalidCSVTest
 {
     protected final File file = new File("src/de/lww4/tests/importer/data/invalid.csv");
