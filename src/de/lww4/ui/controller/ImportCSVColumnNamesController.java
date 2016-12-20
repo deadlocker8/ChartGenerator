@@ -117,6 +117,7 @@ public class ImportCSVColumnNamesController
                 for(int i = 0; i < numberOfColumns; i++)
                 {
                     tableView.getColumns().get(i).setPrefWidth(itemWidth);
+                    tableView.getColumns().get(i).setMinWidth(100);
                 }
             }
         });
