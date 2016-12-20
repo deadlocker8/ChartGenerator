@@ -7,6 +7,9 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 
+/**
+ * @author max
+ */
 public class JsonHelperTest
 {
     @Test

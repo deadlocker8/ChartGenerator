@@ -6,7 +6,9 @@ import java.io.File;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
+/**
+ * @author max
+ */
 public class ValidCSVTest
 {
 

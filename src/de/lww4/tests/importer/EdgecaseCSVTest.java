@@ -8,6 +8,9 @@ import java.io.File;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author max
+ */
 public class EdgecaseCSVTest
 {
     protected final File file = new File("src/de/lww4/tests/importer/data/edgecase.csv");
