@@ -49,7 +49,9 @@ public class EditScaleController
 			}
 		});				
 		
-		scaleItems = new ArrayList<>();		
+		scaleItems = new ArrayList<>();	
+		//placeholder --> will be replaced with headings for the two columns in EditScaleCell
+		scaleItems.add(new ScaleItem(Double.MAX_VALUE, ""));
 		
 		for(Double key : scale.getScaleHashMap().keySet())
 		{				
@@ -62,6 +64,7 @@ public class EditScaleController
 	public void refreshListView()
 	{
 		listView.getItems().clear();
+		System.out.println(scaleItems);
 		listView.getItems().addAll(scaleItems);
 	}
 	

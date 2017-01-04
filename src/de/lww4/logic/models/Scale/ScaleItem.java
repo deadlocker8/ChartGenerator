@@ -36,4 +36,10 @@ public class ScaleItem
 	{
 		this.value = value;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "ScaleItem [key=" + key + ", value=" + value + "]";
+	}
 }
