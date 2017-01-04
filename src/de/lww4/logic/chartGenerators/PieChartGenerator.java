@@ -13,6 +13,10 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 
+/**
+ * generates a PieChart 
+ * @author Robert
+ */
 public class PieChartGenerator
 {
     String xName;
@@ -32,6 +36,7 @@ public class PieChartGenerator
 
         for(ChartSetItem currentItem : chartSetItems)
         {
+        	//replace series name with legend value if existing
         	String label = String.valueOf(currentItem.getLabel());        	
         	if(chart != null && chart.getLegendScale() != null)
         	{
@@ -50,6 +55,7 @@ public class PieChartGenerator
         final PieChart chart = new PieChart(pieChartData);
         chart.setTitle(null);
 
+        //add tooltip to every segment that shows percentage as double value
         chart.getData().stream().forEach(tool ->
         {
             Tooltip tooltip = new Tooltip();

@@ -3,6 +3,10 @@ package de.lww4.logic;
 import de.lww4.logic.models.Scale.Scale;
 import javafx.scene.paint.Color;
 
+/**
+ * model class for a chart
+ * @author Maxie
+ */
 public class Chart
 {
 	private int ID;

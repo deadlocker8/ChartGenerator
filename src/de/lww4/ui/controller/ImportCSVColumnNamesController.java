@@ -224,7 +224,7 @@ public class ImportCSVColumnNamesController
         }
         if (errorMessage != null)
         {
-            AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", errorMessage, mainController.getIcon(), true);
+            AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", errorMessage, mainController.getIcon(), stage, null, false);
             return true;
         }
         return false;
@@ -284,13 +284,13 @@ public class ImportCSVColumnNamesController
 	                Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 	                Platform.runLater(()->{
 		            	stage.close();
-		            	AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, true);	            	
+		            	AlertGenerator.showAlert(AlertType.ERROR, "Import fehlgeschlagen", "", bundle.getString("error.import"), icon, stage, null, false);	            	
 		            });
 	            }
 	
 	            Platform.runLater(()->{
 	            	stage.close();
-	            	AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, true);	            	
+	            	AlertGenerator.showAlert(AlertType.INFORMATION, "Import erfolgreich", "", bundle.getString("information.import.success"), icon, stage, null, false);	            	
 	            });
 	        }
 

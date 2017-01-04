@@ -67,7 +67,7 @@ public class SelectScaleController
 		catch(Exception e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+			AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), stage, null, false);
 		}
 	}
 
@@ -94,7 +94,7 @@ public class SelectScaleController
 			name = name.trim();
 			if(name.equals(""))
 			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.scale"), controller.getIcon(), true);
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.scale"), controller.getIcon(), stage, null, false);
 				checkTextInputTitle(dialog);
 			}
 			else
@@ -109,7 +109,7 @@ public class SelectScaleController
 				catch(Exception e)
 				{
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-					AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), true);
+					AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), stage, null, false);
 				}			
 			}
 		}

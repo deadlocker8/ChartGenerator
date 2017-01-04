@@ -12,6 +12,10 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
+/**
+ * generates a BarChart<Number, String> in horizontal orientation 
+ * @author Robert
+ */
 public class BarChartHorizontalGenerator
 {
     String xName;
@@ -43,7 +47,8 @@ public class BarChartHorizontalGenerator
         {
 	        XYChart.Series<Number, String> series = new XYChart.Series<Number, String>();
 	        
-	        series.setName(String.valueOf(currentSet.getSetName()));        	
+	        series.setName(String.valueOf(currentSet.getSetName())); 
+	        //replace series name with legend value if existing
         	if(chart != null && chart.getLegendScale() != null)
         	{
         		String name = chart.getLegendScale().getScaleHashMap().get(currentSet.getSetName());
@@ -55,6 +60,7 @@ public class BarChartHorizontalGenerator
 	       
 	        for (int i = 0; i < currentSet.getScaleItems().size(); i++)
 	        {
+	        	//replace item label with scale value if existing
 	        	String label = String.valueOf(currentSet.getScaleItems().get(i).getLabel());        	
 	        	if(chart != null && chart.getScale() != null)
 	        	{
@@ -73,6 +79,7 @@ public class BarChartHorizontalGenerator
         
         generatedChart.setLegendVisible(true);
     	
+        //style first bar according to color
         for (Node n : generatedChart.lookupAll(".default-color0.chart-bar"))
         {
             n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");
