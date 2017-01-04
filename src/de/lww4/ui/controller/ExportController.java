@@ -91,7 +91,7 @@ public class ExportController
 						}
 						else
 						{
-							AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.exportfile"), controller.getIcon(), true);
+							AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.exportfile"), controller.getIcon(), stage, null, false);
 						}
 					}
 				}
@@ -141,7 +141,7 @@ public class ExportController
 					}
 					else
 					{
-						AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.exportfile"), controller.getIcon(), true);
+						AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.exportfile"), controller.getIcon(), stage, null, false);
 					}
 				}
 			}
@@ -223,7 +223,7 @@ public class ExportController
 		}
 		else
 		{
-			AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.exportfile"), controller.getIcon(), true);
+			AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.exportfile"), controller.getIcon(), stage, null, false);
 			return false;
 		}
 	}
@@ -242,7 +242,7 @@ public class ExportController
 		catch(IOException e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), true);
+			AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), stage, null, false);
 		}
 		stage.close();
 		controller.setDashboard(controller.getCurrentDashboard());
@@ -261,7 +261,7 @@ public class ExportController
 		catch(IOException e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-			AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), true);
+			AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), stage, null, false);
 		}
 		stage.close();
 		controller.setDashboard(controller.getCurrentDashboard());

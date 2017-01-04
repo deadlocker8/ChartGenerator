@@ -92,7 +92,7 @@ public class EditScaleController
 			}
 			else
 			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.empty.scaleitems"), controller.getIcon(), true);
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.empty.scaleitems"), controller.getIcon(), stage, null, false);
 				return null;
 			}
 		}
@@ -117,7 +117,7 @@ public class EditScaleController
 			catch(Exception e)
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), true);
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save"), controller.getIcon(), stage, null, false);
 			}	
 		}
 	}

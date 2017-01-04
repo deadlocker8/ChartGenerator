@@ -91,7 +91,7 @@ public class NewChartController
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 	
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), stage, null, false);
 				return;
 			}
 		}
@@ -286,13 +286,13 @@ public class NewChartController
 		String title = textFieldTitle.getText().trim();
 		if(title.equals(""))
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), stage, null, false);
 			return;
 		}
 
 		if(!subController.isFilled())
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.empty.chart"), controller.getIcon(), stage, null, false);
 			return;
 		}
 
@@ -341,7 +341,7 @@ public class NewChartController
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.save.chart"), controller.getIcon(), stage, null, false);
 		}
 	}
 
@@ -439,6 +439,11 @@ public class NewChartController
 		{
 			comboBox.setDisable(true);
 		}
+	}
+	
+	public Stage getStage()
+	{
+		return stage;
 	}
 
 	public Controller getController()

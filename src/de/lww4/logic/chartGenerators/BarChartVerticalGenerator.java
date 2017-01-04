@@ -12,6 +12,10 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.paint.Color;
 
+/**
+ * generates a BarChart<String, Number> in vertical orientation 
+ * @author Robert
+ */
 public class BarChartVerticalGenerator
 {
 	String xName;
@@ -43,6 +47,7 @@ public class BarChartVerticalGenerator
 		{
 			XYChart.Series<String, Number> series = new XYChart.Series<String, Number>();
 
+			//replace series name with legend value if existing
 			series.setName(String.valueOf(currentSet.getSetName()));
 			if(chart != null && chart.getLegendScale() != null)
 			{
@@ -55,6 +60,7 @@ public class BarChartVerticalGenerator
 
 			for(int i = 0; i < currentSet.getScaleItems().size(); i++)
 			{
+				//replace item label with scale value if existing
 				String label = String.valueOf(currentSet.getScaleItems().get(i).getLabel());
 				if(chart != null && chart.getScale() != null)
 				{
@@ -72,6 +78,7 @@ public class BarChartVerticalGenerator
 
 		generatedChart.setLegendVisible(true);
 
+		  //style first bar according to color
 		for(Node n : generatedChart.lookupAll(".default-color0.chart-bar"))
 		{
 			n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");

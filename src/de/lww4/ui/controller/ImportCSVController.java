@@ -119,7 +119,7 @@ public class ImportCSVController
                 }
                 catch (NumberFormatException e)
                 {
-                    AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", mainController.getBundle().getString("warning.possible.string.values"), mainController.getIcon(), true);
+                    AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", mainController.getBundle().getString("warning.possible.string.values"), mainController.getIcon(), stage, null, false);
                     return true;
                 }
             }
@@ -148,7 +148,7 @@ public class ImportCSVController
             {
                 String errorInvalidDelimiter = mainController.getBundle().getString("error.invalid.delimiter");
                 errorInvalidDelimiter = errorInvalidDelimiter.replace("{}", DelimiterType.getPossibleDelimiterString());
-                AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", errorInvalidDelimiter, mainController.getIcon(), true);
+                AlertGenerator.showAlert(Alert.AlertType.ERROR, "Fehler", "", errorInvalidDelimiter, mainController.getIcon(), stage, null, false);
             }
             else
             {
