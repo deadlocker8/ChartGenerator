@@ -1,7 +1,7 @@
 package de.lww4.ui.controller.subcontroller;
 
-import de.lww4.logic.Chart;
-import de.lww4.logic.ColumnTreeItem;
+import de.lww4.logic.models.ColumnTreeItem;
+import de.lww4.logic.models.chart.Chart;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;

@@ -1,8 +1,9 @@
 package de.lww4.tests.importer;
 
 
-import de.lww4.logic.DelimiterType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.models.enums.DelimiterType;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ public class InvalidCSVTest
     @Test(expected = NumberFormatException.class)
     public void LetterError()
     {
-        double testDouble = Double.parseDouble(importer.getData().get(0).get(0));
+        Double.parseDouble(importer.getData().get(0).get(0));
     }
 
     /**

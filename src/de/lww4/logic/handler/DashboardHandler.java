@@ -1,6 +1,8 @@
-package de.lww4.logic;
+package de.lww4.logic.handler;
 
 import java.util.ArrayList;
+
+import de.lww4.logic.models.Dashboard;
 
 public class DashboardHandler
 {

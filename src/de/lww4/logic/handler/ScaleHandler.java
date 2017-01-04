@@ -1,9 +1,9 @@
-package de.lww4.logic;
+package de.lww4.logic.handler;
 
-
-import de.lww4.logic.models.Scale.Scale;
 
 import java.util.ArrayList;
+
+import de.lww4.logic.models.scale.Scale;
 
 /**
  * ScaleHandler

@@ -1,6 +1,6 @@
 package de.lww4.ui.cells;
 
-import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.models.scale.Scale;
 import javafx.scene.control.cell.ComboBoxListCell;
 
 public class ComboBoxScaleCell extends ComboBoxListCell<Scale>

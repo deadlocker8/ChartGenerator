@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import de.lww4.logic.ChartSet;
-import de.lww4.logic.ChartSetItem;
+import de.lww4.logic.models.chart.ChartSet;
+import de.lww4.logic.models.chart.ChartSetItem;
 
 /**
  * general utils

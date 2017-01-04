@@ -2,9 +2,9 @@ package de.lww4.ui.controller;
 
 import java.util.ArrayList;
 
-import de.lww4.logic.ScaleHandler;
-import de.lww4.logic.models.Scale.Scale;
-import de.lww4.logic.models.Scale.ScaleItem;
+import de.lww4.logic.handler.ScaleHandler;
+import de.lww4.logic.models.scale.Scale;
+import de.lww4.logic.models.scale.ScaleItem;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.EditScaleCell;
 import javafx.fxml.FXML;

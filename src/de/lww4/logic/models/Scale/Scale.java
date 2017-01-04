@@ -1,4 +1,4 @@
-package de.lww4.logic.models.Scale;
+package de.lww4.logic.models.scale;
 
 
 import java.util.ArrayList;

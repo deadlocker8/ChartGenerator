@@ -1,18 +1,28 @@
 package de.lww4.tests.database;
 
-import de.lww4.logic.*;
-import de.lww4.logic.models.Scale.Scale;
-import de.lww4.logic.models.Scale.ScaleItem;
-import de.lww4.logic.utils.Utils;
-import javafx.scene.paint.Color;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
+
+import de.lww4.logic.Importer;
+import de.lww4.logic.handler.DatabaseHandler;
+import de.lww4.logic.models.CSVTable;
+import de.lww4.logic.models.Dashboard;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.enums.ChartType;
+import de.lww4.logic.models.enums.DelimiterType;
+import de.lww4.logic.models.scale.Scale;
+import de.lww4.logic.models.scale.ScaleItem;
+import javafx.scene.paint.Color;
 
 /**
  * @author max

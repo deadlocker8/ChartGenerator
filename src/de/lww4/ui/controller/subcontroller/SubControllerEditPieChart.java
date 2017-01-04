@@ -1,10 +1,10 @@
 package de.lww4.ui.controller.subcontroller;
 
-import de.lww4.logic.Chart;
-import de.lww4.logic.ChartSetItem;
-import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
+import de.lww4.logic.models.ColumnTreeItem;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.chart.ChartSetItem;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;

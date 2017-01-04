@@ -1,6 +1,7 @@
-package de.lww4.logic;
+package de.lww4.logic.models.chart;
 
-import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.models.enums.ChartType;
+import de.lww4.logic.models.scale.Scale;
 import javafx.scene.paint.Color;
 
 /**
