@@ -6,6 +6,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+/**
+ * alert generating utility
+ * @author Robert
+ */
 public class AlertGenerator
 {
 	public static void showAlert(AlertType type, String contentText, Image icon)

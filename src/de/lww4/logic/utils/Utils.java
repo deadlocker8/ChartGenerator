@@ -13,6 +13,10 @@ import java.util.Set;
 import de.lww4.logic.ChartSet;
 import de.lww4.logic.ChartSetItem;
 
+/**
+ * general utils
+ * @author Robert
+ */
 public class Utils
 {
 	public static String toRGBHex(Color color)
@@ -44,6 +48,11 @@ public class Utils
         return null;
     }
     
+    /**
+     * splits given list of ChartSetItems into CharSets
+     * @param items - ArrayList<ChartSetItem>
+     * @return ArrayList<ChartSet> - chartsets
+     */
     public static ArrayList<ChartSet> splitIntoChartSets(ArrayList<ChartSetItem> items)
     {
     	ArrayList<ChartSet> sets = new ArrayList<>();
