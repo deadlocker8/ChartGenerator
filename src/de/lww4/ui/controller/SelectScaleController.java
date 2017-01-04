@@ -95,12 +95,11 @@ public class SelectScaleController
 			if(name.equals(""))
 			{
 				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.scale"), controller.getIcon(), true);
-
 				checkTextInputTitle(dialog);
 			}
 			else
 			{
-				Scale scale = new Scale(-1, name, null);				
+				Scale scale = new Scale(-1, name.trim(), null);
 				try
 				{
 					controller.getDatabase().saveScale(scale);					

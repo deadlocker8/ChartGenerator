@@ -337,7 +337,7 @@ public class Controller
 		if(result.isPresent())
 		{
 			String name = result.get();
-			name.trim();
+			name = name.trim();
 			if(name.equals(""))
 			{
 				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, true);
