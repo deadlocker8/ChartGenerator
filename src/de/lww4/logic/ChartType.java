@@ -9,7 +9,7 @@ public enum ChartType
 	private int ID;
 	private String name;
 
-	private ChartType(int ID, String name)
+	ChartType(int ID, String name)
 	{
 		this.ID = ID;
 		this.name = name;
