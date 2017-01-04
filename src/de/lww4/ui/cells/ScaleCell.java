@@ -3,7 +3,7 @@ package de.lww4.ui.cells;
 
 import java.util.Optional;
 
-import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.models.scale.Scale;
 import de.lww4.ui.controller.Controller;
 import de.lww4.ui.controller.SelectScaleController;
 import fontAwesome.FontIcon;

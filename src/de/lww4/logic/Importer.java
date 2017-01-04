@@ -5,6 +5,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import de.lww4.logic.models.enums.DelimiterType;
+
 import java.io.*;
 import java.util.ArrayList;
 

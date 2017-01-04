@@ -2,12 +2,12 @@ package de.lww4.ui.controller.subcontroller;
 
 import java.util.ArrayList;
 
-import de.lww4.logic.Chart;
-import de.lww4.logic.ChartSet;
-import de.lww4.logic.ChartSetItem;
-import de.lww4.logic.ColumnTreeItem;
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
+import de.lww4.logic.models.ColumnTreeItem;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.chart.ChartSet;
+import de.lww4.logic.models.chart.ChartSetItem;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.logic.utils.Utils;
 import de.lww4.ui.controller.NewChartController;

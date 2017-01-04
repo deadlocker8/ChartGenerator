@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 import javax.imageio.ImageIO;
 
-import de.lww4.logic.Chart;
+import de.lww4.logic.models.chart.Chart;
 import de.lww4.logic.utils.AlertGenerator;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;

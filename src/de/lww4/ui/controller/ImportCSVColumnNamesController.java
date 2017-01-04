@@ -1,8 +1,8 @@
 package de.lww4.ui.controller;
 
 
-import de.lww4.logic.ForbiddenColumnNames;
 import de.lww4.logic.Importer;
+import de.lww4.logic.models.enums.ForbiddenColumnNames;
 import de.lww4.logic.utils.AlertGenerator;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;

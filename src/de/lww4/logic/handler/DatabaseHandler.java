@@ -1,6 +1,12 @@
-package de.lww4.logic;
+package de.lww4.logic.handler;
 
-import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.Importer;
+import de.lww4.logic.models.CSVTable;
+import de.lww4.logic.models.Dashboard;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.chart.ChartSetItem;
+import de.lww4.logic.models.enums.ChartType;
+import de.lww4.logic.models.scale.Scale;
 import de.lww4.logic.utils.JsonHelper;
 import javafx.scene.paint.Color;
 import logger.LogLevel;

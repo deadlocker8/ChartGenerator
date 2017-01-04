@@ -2,8 +2,8 @@ package de.lww4.logic.chartGenerators;
 
 import java.util.ArrayList;
 
-import de.lww4.logic.Chart;
-import de.lww4.logic.ChartSet;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.chart.ChartSet;
 import de.lww4.logic.utils.Utils;
 import javafx.scene.Node;
 import javafx.scene.chart.BarChart;

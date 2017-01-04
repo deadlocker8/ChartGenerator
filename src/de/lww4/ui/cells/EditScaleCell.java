@@ -1,6 +1,6 @@
 package de.lww4.ui.cells;
 
-import de.lww4.logic.models.Scale.ScaleItem;
+import de.lww4.logic.models.scale.ScaleItem;
 import de.lww4.ui.controller.EditScaleController;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;

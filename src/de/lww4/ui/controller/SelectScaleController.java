@@ -3,8 +3,8 @@ package de.lww4.ui.controller;
 import java.io.IOException;
 import java.util.Optional;
 
-import de.lww4.logic.ScaleHandler;
-import de.lww4.logic.models.Scale.Scale;
+import de.lww4.logic.handler.ScaleHandler;
+import de.lww4.logic.models.scale.Scale;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.ScaleCell;
 import javafx.fxml.FXML;

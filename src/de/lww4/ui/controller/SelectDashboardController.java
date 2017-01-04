@@ -1,7 +1,7 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.Dashboard;
-import de.lww4.logic.DashboardHandler;
+import de.lww4.logic.handler.DashboardHandler;
+import de.lww4.logic.models.Dashboard;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.DashboardCell;
 import javafx.event.EventHandler;

@@ -1,6 +1,6 @@
 package de.lww4.ui.cells;
 
-import de.lww4.logic.ColumnTreeItem;
+import de.lww4.logic.models.ColumnTreeItem;
 import javafx.scene.control.TreeCell;
 
 public class ColumnTreeCell extends TreeCell<ColumnTreeItem>

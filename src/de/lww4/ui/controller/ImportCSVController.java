@@ -1,8 +1,8 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.DelimiterType;
-import de.lww4.logic.ErrorType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.models.enums.DelimiterType;
+import de.lww4.logic.models.enums.ErrorType;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.logic.utils.Utils;
 import javafx.collections.FXCollections;
