@@ -19,6 +19,9 @@ import org.junit.Test;
  */
 public class DatabaseTests
 {
+    /**
+     * checks if database file was created
+     */
     @Test
     public void DatabaseCreatedTest()
     {
@@ -34,6 +37,11 @@ public class DatabaseTests
         }
     }
 
+    /**
+     * @param allColumns contains all column names
+     * @param searchArray contains the words that need to be contained
+     * @return true, if all words are contained
+     */
     private boolean containsAllMultiple(ArrayList<String> allColumns, String[] searchArray)
     {
         for(String searchName : searchArray)
@@ -46,6 +54,9 @@ public class DatabaseTests
         return true;
     }
 
+    /**
+     * checks if csv was saved in database
+     */
     @Test
     public void CSVTableSavedInDataBaseTest()
     {
@@ -73,6 +84,10 @@ public class DatabaseTests
         assertTrue(containsAllMultiple(stringArrayList,new String[]{"TestData0", "TestData1", "TestData2", "TestData3"}));
     }
 
+    /**
+     *
+     * @return Scale with some predefined values
+     */
     private Scale getTestScale()
     {
         HashMap<Double, String> testScaleHashMap = new HashMap<>();
@@ -83,6 +98,9 @@ public class DatabaseTests
         return scale;
     }
 
+    /**
+     * checks if scale was saved in the database
+     */
     @Test
     public void ScaleSavedInDatabaseTest()
     {
@@ -106,6 +124,9 @@ public class DatabaseTests
         }
     }
 
+    /**
+     * updates scale already in database and checks if update was successful or not
+     */
     @Test
     public void ScaleUpdatedInDatabaseTest()
     {
@@ -135,6 +156,9 @@ public class DatabaseTests
     }
 
 
+    /**
+     * creates a scale in the database and reports if delete was successful
+     */
     @Test
     public void ScaleDeletedFromDatabaseTest()
     {
@@ -160,11 +184,19 @@ public class DatabaseTests
         }
 
     }
+
+    /**
+     *
+     * @return Chart with some predefined values
+     */
     private Chart getTestChart()
     {
         return new Chart(1, ChartType.BAR_HORIZONTAL, "Test", "XTest", "YTest", UUID.randomUUID().toString(), Color.ALICEBLUE, getTestScale(), getTestScale());
     }
 
+    /**
+     * creates a chart and saves it to the database. Checks if save was successful
+     */
     @Test
     public void ChartSavedInDatabaseTest()
     {
@@ -191,6 +223,9 @@ public class DatabaseTests
         }
     }
 
+    /**
+     * checks if chart update was successful
+     */
     @Test
     public void ChartUpdatedInDatabaseTest()
     {
@@ -221,6 +256,9 @@ public class DatabaseTests
         }
     }
 
+    /**
+     * saves and removes chart from database. Checks if chart was really removed
+     */
     @Test
     public void ChartRemovedFromDatabaseTest()
     {
@@ -250,6 +288,9 @@ public class DatabaseTests
         return new Dashboard("TestDashboard");
     }
 
+    /**
+     * saves dashboard in database and checks if it was successful
+     */
     @Test
     public void DashboardSavedInDatabaseTest()
     {
@@ -273,7 +314,9 @@ public class DatabaseTests
         }
     }
 
-
+    /**
+     * updates dashboard in database
+     */
     @Test
     public void DashboardUpdatedInDatabaseTest()
     {
@@ -303,6 +346,9 @@ public class DatabaseTests
         }
     }
 
+    /**
+     * checks if the deletion of dashboards works
+     */
     @Test
     public void DashboardDeletedFromDatabaseTest()
     {
