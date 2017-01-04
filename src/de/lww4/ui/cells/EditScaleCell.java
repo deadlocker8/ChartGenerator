@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
@@ -33,12 +34,27 @@ public class EditScaleCell extends ListCell<ScaleItem>
 		{
 			HBox hBox = new HBox();
 			hBox.setAlignment(Pos.CENTER);
-
-			String key;
-			if(item.getKey() == null)
+			
+			if(item.getKey() != null && item.getKey() == Double.MAX_VALUE)
 			{
-				key = "";
+				Label labelKey = new Label("Wert");
+				labelKey.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+				hBox.getChildren().add(labelKey);
+				Label labelValue = new Label("Bezeichnung");				
+				labelValue.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+				hBox.getChildren().add(labelValue);
+				HBox.setMargin(labelValue, new Insets(0, 0, 0, 100));
+				
+				setGraphic(hBox);
+				
+				return;
 			}
+			
+			String key;
+			if(item.getKey() == null || item.getKey() == Double.MIN_VALUE)
+			{
+				key = "";			
+			}		
 			else
 			{
 				key = String.valueOf(item.getKey().intValue());
@@ -98,7 +114,7 @@ public class EditScaleCell extends ListCell<ScaleItem>
 				}
 			});
 
-			hBox.getChildren().add(buttonDelete);
+			hBox.getChildren().add(buttonDelete);		
 
 			setGraphic(hBox);
 		}

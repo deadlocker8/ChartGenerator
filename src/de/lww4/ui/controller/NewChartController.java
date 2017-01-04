@@ -385,6 +385,7 @@ public class NewChartController
 	{
 		if(scales != null && scales.size() > 0)
 		{
+			comboBox.getItems().add(new Scale(Integer.MIN_VALUE, ""));
 			comboBox.getItems().addAll(scales);
 			comboBox.setCellFactory(new Callback<ListView<Scale>, ListCell<Scale>>()
 			{
@@ -403,14 +404,30 @@ public class NewChartController
 				{
 					if(subController != null)
 					{
+						Scale selected = comboBox.getValue();
+						
 						if(comboBox.getId().equals(comboBoxScale.getId()))
-						{
-							chart.setScale(comboBox.getValue());
+						{	
+							if(selected.getID() == Integer.MIN_VALUE)
+							{
+								chart.setScale(null);
+							}
+							else
+							{
+								chart.setScale(selected);	
+							}							
 						}	
 						
 						if(comboBox.getId().equals(comboBoxLegendScale.getId()))
 						{
-							chart.setLegendScale(comboBox.getValue());
+							if(selected.getID() == Integer.MIN_VALUE)
+							{
+								chart.setLegendScale(null);
+							}
+							else
+							{
+								chart.setLegendScale(selected);	
+							}	
 						}					
 						
 						subController.updateChart(subController.getItemX(), subController.getItemY(), subController.getChart());
