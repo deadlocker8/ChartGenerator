@@ -24,6 +24,9 @@ public class InvalidCSVTest
         double testDouble = Double.parseDouble(importer.getData().get(0).get(0));
     }
 
+    /**
+     * checks for invalid separator
+     */
     @Test
     public void InvalidSeparator()
     {

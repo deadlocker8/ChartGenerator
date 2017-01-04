@@ -70,10 +70,11 @@ public class Scale
         }
     }
 
-	@Override
+
 	/**
 	 * needed for comboxbox to display correct name for selected item
 	 */
+    @Override
 	public String toString()
 	{
 		return name;

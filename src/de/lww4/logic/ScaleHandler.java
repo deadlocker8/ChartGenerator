@@ -30,6 +30,10 @@ public class ScaleHandler
         return scales;
     }
 
+    /**
+     * delete scale with certain id from ArrayList
+     * @param id certain id
+     */
     public void deleteScale(int id)
     {
         for (int i = 0; i < scales.size(); i++)

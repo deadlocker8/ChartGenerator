@@ -81,6 +81,10 @@ public class Importer
         }
     }
 
+    /**
+     * finds the longest row size
+     * @return int longest row size of all data rows
+     */
     public int getLongestRowSize()
     {
         int length = 0;
@@ -94,6 +98,9 @@ public class Importer
         return length;
     }
 
+    /**
+     * fill empty cells with given fillValue
+     */
     private void fillEmptyCells()
     {
         int longestRow = getLongestRowSize();
@@ -133,6 +140,10 @@ public class Importer
         return columnNamesArrayList;
     }
 
+    /**
+     * is called, if certain rows are disabled. These are then removed from the ArrayList
+     * @param newColumnNamesArrayList ArrayList<String> columnNames
+     */
     public void setColumnNamesArrayList(ArrayList<String> newColumnNamesArrayList)
     {
         //also remove data from data columns
@@ -148,6 +159,10 @@ public class Importer
         this.columnNamesArrayList = newColumnNamesArrayList;
     }
 
+    /**
+     * removes a column from the data
+     * @param number columnToRemove
+     */
     private void removeDataColumn(int number)
     {
         for(int i=0; i < data.size(); i++)
@@ -165,7 +180,7 @@ public class Importer
 
     /**
      * test method for class
-     * @param args
+     * @param args arguments
      */
     public static void main(String args[])
     {

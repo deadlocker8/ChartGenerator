@@ -9,6 +9,9 @@ import java.util.HashMap;
 
 /**
  * @author max
+ *
+ * verifies functionality of the JsonHelper class
+ *
  */
 public class JsonHelperTest
 {

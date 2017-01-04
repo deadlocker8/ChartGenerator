@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 /**
  * ErrorType class
- *
  * @author max
  */
 public enum ErrorType
@@ -18,19 +17,25 @@ public enum ErrorType
     private String errorMessage;
     private String errorShortMessage;
 
-    private ErrorType(String errorShortMessage, String errorMessage)
+    ErrorType(String errorShortMessage, String errorMessage)
     {
         this.errorMessage = errorMessage;
         this.errorShortMessage = errorShortMessage;
     }
 
+    /**
+     * generates error message from an error type ArrayList
+     * @param errorTypes ArrayList with ErrorTypes
+     * @return String with complete error message to be displayed in a dialog
+     */
     public static String getErrorMessage(ArrayList<ErrorType> errorTypes)
     {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Es fehlen einige Eingaben oder sind fehlerhaft.\nBitte füllen Sie die folgenden Felder richtig aus:\n");
         for(ErrorType currentType : errorTypes)
         {
-            stringBuilder.append(currentType.getErrorShortMessage()+"\n");
+            stringBuilder.append(currentType.getErrorShortMessage());
+            stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }

@@ -3,7 +3,7 @@ package de.lww4.logic.models.Scale;
 
 /**
  * ScaleItem class
- *
+ * ScaleHashMapItem as class for the controller to work with
  * @author max
  */
 public class ScaleItem
