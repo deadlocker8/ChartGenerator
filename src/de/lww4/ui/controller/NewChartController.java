@@ -283,8 +283,8 @@ public class NewChartController
 
 	public void save()
 	{
-		String title = textFieldTitle.getText();
-		if(title == null || title.equals(""))
+		String title = textFieldTitle.getText().trim();
+		if(title.equals(""))
 		{
 			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.name.empty.chart"), controller.getIcon(), true);
 			return;
@@ -313,14 +313,14 @@ public class NewChartController
 			if(edit)
 			{
 				int chartID = dashboard.getCells().get(position);
-				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legendScale);
+				Chart chart = new Chart(chartID, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText().trim(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legendScale);
 				controller.getDatabase().updateChart(chart);
 				dashboard.getCells().set(position, chartID);
 				controller.getDatabase().updateDashboard(dashboard);
 			}
 			else
 			{
-				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legendScale);
+				Chart chart = new Chart(-1, (ChartType)toggleGroupChartTypes.getSelectedToggle().getUserData(), textFieldTitle.getText().trim(), subController.getItemX().getText(), subController.getItemY().getText(), subController.getItemX().getTableUUID(), colorPicker.getValue(), scale, legendScale);
 				int chartID = controller.getDatabase().saveChart(chart);
 				if(chartID != -1)
 				{
