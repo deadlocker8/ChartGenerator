@@ -46,6 +46,9 @@ public class ImportCSVController
     private Image icon;
     private Controller mainController;
 
+    /**
+     called after object created
+     */
     public void init(Stage stage, Image icon, Controller mainController)
     {
         this.stage = stage;
@@ -107,6 +110,10 @@ public class ImportCSVController
         }));
     }
 
+    /**
+     * checks if the data contains strings
+     * @return true, if strings are contained
+     */
     private boolean containsStrings()
     {
         for (ArrayList<String> row : importer.getData())
@@ -127,6 +134,10 @@ public class ImportCSVController
         return false;
     }
 
+    /**
+     * loops through file contents and removed delimiters that do not exist from the ComboBox in the UI
+     * @param file file which is imported
+     */
     private void removeImpossibleDelimiters(File file)
     {
         ArrayList<DelimiterType> delimiterTypeArrayList = new ArrayList<>(Arrays.asList(DelimiterType.values()));
@@ -162,6 +173,9 @@ public class ImportCSVController
 
     }
 
+    /**
+     * created new instance of ImportCSVColumnNamesController and opens the UI
+     */
     private void openCSVColumnNameDialog()
     {
         try
@@ -190,6 +204,10 @@ public class ImportCSVController
         }
     }
 
+    /**
+     * checks if a user error occurred
+     * @return true, if an error occurred
+     */
     private boolean isUserError()
     {
         ArrayList<ErrorType> errorTypes = new ArrayList<>();
@@ -224,6 +242,10 @@ public class ImportCSVController
         return false;
     }
 
+    /**
+     * shows a dialog to the user, which is generated from the ArrayList<ErrorType>
+     * @param errorTypes errorTypes ArrayList
+     */
     private void showAlertDialog(ArrayList<ErrorType> errorTypes)
     {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

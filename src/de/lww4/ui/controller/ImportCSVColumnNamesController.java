@@ -53,7 +53,9 @@ public class ImportCSVColumnNamesController
     private boolean isUserError = false;
     private ArrayList<Integer> disabledColumnNumbers;
 
-
+    /**
+     called after object created
+     */
     public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
     {
         disabledColumnNumbers = new ArrayList<>();
@@ -66,7 +68,12 @@ public class ImportCSVColumnNamesController
         progressIndicator.setVisible(false);
     }
 
-
+    /**
+     * helper method to generate a column
+     * @param name
+     * @param position
+     * @return tableColumn
+     */
 	private TableColumn<ObservableList<StringProperty>, String> generateColumn(String name, int position)
 	{
         CheckBox checkBox = new CheckBox();
@@ -90,6 +97,9 @@ public class ImportCSVColumnNamesController
         return column;
     }
 
+    /**
+     * fills the UI with the table head (column name, checkboxes...)
+     */
     private void populateTableViewHead()
     {
         for(int i = 0; i < importer.getLongestRowSize(); i++)
@@ -105,6 +115,9 @@ public class ImportCSVColumnNamesController
         }
     }
 
+    /**
+     * fills UI with the imported values from the Importer
+     */
     private void populateTableViewBody()
     {
         tableView.widthProperty().addListener(new ChangeListener<Number>()
@@ -135,6 +148,11 @@ public class ImportCSVColumnNamesController
         }
     }
 
+    /**
+     *
+     * @param newColumnNamesArrayList columnNames
+     * @return the name of the words, which occur more than once in the table
+     */
     private ArrayList<String> getDuplicateColumns(ArrayList<String> newColumnNamesArrayList)
     {
         //string, occurance
@@ -156,6 +174,11 @@ public class ImportCSVColumnNamesController
         return duplicateIndexArrayList;
     }
 
+    /**
+     *
+     * @param newColumnNamesArrayList columnNames
+     * @return the index of the empty columns
+     */
     private ArrayList<Integer> getEmptyColumnNames(ArrayList<String> newColumnNamesArrayList)
     {
         ArrayList<Integer> emptyColumns = new ArrayList<>();
@@ -170,6 +193,11 @@ public class ImportCSVColumnNamesController
         return emptyColumns;
     }
 
+    /**
+     *
+     * @param newColumnNamesArrayList columnNames
+     * @return the forbidden words from ForbiddenColumnNames Enum
+     */
     private ArrayList<String> getForbiddenKeyWordsColumnNames(ArrayList<String> newColumnNamesArrayList)
     {
         ArrayList<String> forbiddenColumns = new ArrayList<>();
@@ -183,6 +211,11 @@ public class ImportCSVColumnNamesController
         return forbiddenColumns;
     }
 
+    /**
+     * checks if a user error occurs
+     * @param newColumnNamesArrayList the new column names, that the user changed in the UI
+     * @return true, if an error occurred
+     */
     private boolean isUserError(ArrayList<String> newColumnNamesArrayList)
     {
         ArrayList<String> forbiddenColumnNames = getForbiddenKeyWordsColumnNames(newColumnNamesArrayList);
@@ -232,6 +265,11 @@ public class ImportCSVColumnNamesController
         return false;
     }
 
+    /**
+     * helper method
+     * @param arrayString Array.toString()
+     * @return ArrayElement without [, ]
+     */
     private String getStringFromArrayList(String arrayString)
     {
         return arrayString.replace("[", "").replace("]", "");
@@ -260,6 +298,10 @@ public class ImportCSVColumnNamesController
         return newColumnNamesArrayList;
     }
 
+    /**
+     * saves changed column names into Importer and database
+     * called, when save button in UI clicked
+     */
     @FXML
     private void save()
     {
@@ -308,6 +350,10 @@ public class ImportCSVColumnNamesController
         });
     }
 
+    /**
+     * called when cancel button clicked
+     * closes stage and reopens old stage
+     */
     @FXML
     private void cancel()
     {
