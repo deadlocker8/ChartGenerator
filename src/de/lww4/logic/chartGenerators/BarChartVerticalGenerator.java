@@ -1,6 +1,7 @@
 package de.lww4.logic.chartGenerators;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import de.lww4.logic.models.chart.Chart;
 import de.lww4.logic.models.chart.ChartSet;
@@ -10,6 +11,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 
 /**
@@ -78,11 +80,22 @@ public class BarChartVerticalGenerator
 
 		generatedChart.setLegendVisible(true);
 
-		  //style first bar according to color
+		//style first bar according to color
 		for(Node n : generatedChart.lookupAll(".default-color0.chart-bar"))
 		{
 			n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");
 		}
+		
+		Set<Node> nodes = generatedChart.lookupAll(".chart-legend-item");
+		if(nodes.size() > 0)
+		{
+			Node node = nodes.iterator().next();
+			if(node instanceof Label)
+			{
+				Label labelLegendItem = (Label)node;
+				labelLegendItem.getGraphic().setStyle("-fx-background-color: " + Utils.toRGBHex(color) + ";");
+			}
+		}		
 
 		return generatedChart;
 	}
