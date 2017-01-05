@@ -63,8 +63,7 @@ public class EditScaleController
 
 	public void refreshListView()
 	{
-		listView.getItems().clear();
-		System.out.println(scaleItems);
+		listView.getItems().clear();		
 		listView.getItems().addAll(scaleItems);
 	}
 	
@@ -86,14 +85,17 @@ public class EditScaleController
 				
 		for(ScaleItem currentItem : listView.getItems())
 		{				
-			if(currentItem.getKey() != null && currentItem.getKey() != Double.MIN_VALUE && currentItem.getValue() != null && !currentItem.getValue().equals(""))
+			if(currentItem.getKey() != Double.MAX_VALUE)
 			{
-				newItems.add(new ScaleItem(currentItem.getKey(), currentItem.getValue()));				
-			}
-			else
-			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.empty.scaleitems"), controller.getIcon(), stage, null, false);
-				return null;
+				if(currentItem.getKey() != null && currentItem.getKey() != Double.MIN_VALUE && currentItem.getValue() != null && !currentItem.getValue().equals(""))
+				{
+					newItems.add(new ScaleItem(currentItem.getKey(), currentItem.getValue()));				
+				}
+				else
+				{
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.empty.scaleitems"), controller.getIcon(), stage, null, false);
+					return null;
+				}
 			}
 		}
 		

@@ -124,10 +124,11 @@ public class SelectScaleController
 			Stage newStage = new Stage();
 			newStage.initOwner(stage);
 			newStage.initModality(Modality.APPLICATION_MODAL);
-			newStage.setTitle("Skala bearbeiten");
+			newStage.setTitle("Skala bearbeiten");		
 			newStage.setScene(new Scene(root));
 			newStage.getIcons().add(controller.getIcon());
 			newStage.setResizable(false);
+			newStage.getScene().getStylesheets().add("de/lww4/main/style.css");
 			EditScaleController editScaleController = fxmlLoader.getController();
 			editScaleController.init(newStage, controller, this, scale);
 			newStage.show();

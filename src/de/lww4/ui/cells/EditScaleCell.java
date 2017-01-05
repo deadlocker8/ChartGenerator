@@ -39,9 +39,11 @@ public class EditScaleCell extends ListCell<ScaleItem>
 			{
 				Label labelKey = new Label("Wert");
 				labelKey.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+				labelKey.getStyleClass().add("greylabel");
 				hBox.getChildren().add(labelKey);
 				Label labelValue = new Label("Bezeichnung");				
 				labelValue.setStyle("-fx-font-weight: bold; -fx-font-size: 14;");
+				labelValue.getStyleClass().add("greylabel");
 				hBox.getChildren().add(labelValue);
 				HBox.setMargin(labelValue, new Insets(0, 0, 0, 100));
 				
