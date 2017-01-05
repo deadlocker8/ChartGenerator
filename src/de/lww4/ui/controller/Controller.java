@@ -310,7 +310,7 @@ public class Controller
 			Stage newStage = new Stage();
 			newStage.setScene(new Scene(root));
 			newStage.initOwner(stage);
-			newStage.setTitle("Diagramm exportieren");
+			newStage.setTitle("Dashboard exportieren");
 			newStage.getIcons().add(icon);
 			ExportController newController = fxmlLoader.getController();
 			newController.init(newStage, this, gridPane);
