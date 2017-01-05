@@ -13,6 +13,7 @@ import logger.LogLevel;
 import logger.Logger;
 import tools.PathUtils;
 
+import java.io.Console;
 import java.io.File;
 import java.sql.*;
 import java.text.DateFormat;
@@ -915,7 +916,7 @@ public class DatabaseHandler
             connection = DriverManager.getConnection("jdbc:sqlite:" + path);
             Statement statement = connection.createStatement();
             //count the values in the column
-            ResultSet result = statement.executeQuery("SELECT COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameX + " HAVING COUNT(*) > 1");
+            ResultSet result = statement.executeQuery("SELECT COUNT(*), `" + columnNameX + "` FROM `" + uuid + "` GROUP BY `" + columnNameX + "` HAVING COUNT(*) > 1");
 
             ArrayList<ChartSetItem> items = new ArrayList<>();
 
@@ -957,7 +958,7 @@ public class DatabaseHandler
             connection = DriverManager.getConnection("jdbc:sqlite:" + path);
             Statement statement = connection.createStatement();
             // cross columnNameX with columnNameY and count the resulting values
-            ResultSet result = statement.executeQuery("SELECT " + columnNameY + ", COUNT(*), " + columnNameX + " FROM '" + uuid + "' GROUP BY " + columnNameY + ", " + columnNameX + " HAVING COUNT(*) > 1");
+            ResultSet result = statement.executeQuery("SELECT `" + columnNameY + "`, COUNT(*), `" + columnNameX + "` FROM `" + uuid + "` GROUP BY `" + columnNameY + "`, `" + columnNameX + "` HAVING COUNT(*) > 1");
 
             ArrayList<ChartSetItem> setItems = new ArrayList<>();
 
