@@ -807,7 +807,7 @@ public class Controller
 	@FXML
 	private void about()
 	{
-		AlertGenerator.showAlert(AlertType.INFORMATION, "über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
+		AlertGenerator.showAlert(AlertType.INFORMATION, "Über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
 				stage, null, false);
 	}
 
