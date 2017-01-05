@@ -964,7 +964,7 @@ public class DatabaseHandler
             while(result.next())
             {            	
             	ChartSetItem newSetItem = new ChartSetItem(result.getDouble(1), result.getDouble(2), result.getDouble(3));
-            	setItems.add(newSetItem);               
+            	setItems.add(newSetItem);
             }            
           
             statement.close();            

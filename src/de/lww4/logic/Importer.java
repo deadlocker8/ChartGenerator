@@ -148,17 +148,17 @@ public class Importer
      */
     public void setColumnNamesArrayList(ArrayList<String> newColumnNamesArrayList)
     {
-        //also remove data from data columns
-        for(int i=0; i < this.columnNamesArrayList.size(); i++)
-        {
-            //name is not contained anymore in new list
-            if(!newColumnNamesArrayList.contains(columnNamesArrayList.get(i)))
-            {
-                //remove data column
-                removeDataColumn(i);
-            }
-        }
         this.columnNamesArrayList = newColumnNamesArrayList;
+    }
+
+    public void removeColumns(ArrayList<Integer> columnsToDisable)
+    {
+        //also remove data from data columns
+        for(Integer number : columnsToDisable)
+        {
+            //remove data column
+            removeDataColumn(number);
+        }
     }
 
     /**
