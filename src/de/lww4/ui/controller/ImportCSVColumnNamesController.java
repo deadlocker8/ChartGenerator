@@ -51,10 +51,12 @@ public class ImportCSVColumnNamesController
     private final String DEFAULT_EMPTY_COLUMN_NAME = "LEER";
     private ImportCSVController importCSVController;
     private boolean isUserError = false;
+    private ArrayList<Integer> disabledColumnNumbers;
 
 
     public void init(Stage stage, ImportCSVController importCSVController, Controller mainController, Importer importer)
     {
+        disabledColumnNumbers = new ArrayList<>();
         this.importCSVController = importCSVController;
         this.stage = stage;
         this.mainController = mainController;
@@ -238,8 +240,9 @@ public class ImportCSVColumnNamesController
     private ArrayList<String> getColumnNamesArrayList()
     {
         ArrayList<String> newColumnNamesArrayList = new ArrayList<String>();
-        for (TableColumn<ObservableList<StringProperty>, ?> tableColumn : tableView.getColumns())
+        for(int i=0; i < tableView.getColumns().size(); i++)
         {
+            TableColumn<ObservableList<StringProperty>, ?> tableColumn = tableView.getColumns().get(i);
             VBox vBox = (VBox) tableColumn.getGraphic();
             CheckBox checkBox = (CheckBox) vBox.getChildren().get(0);
             TextField textField = (TextField) vBox.getChildren().get(1);
@@ -248,7 +251,12 @@ public class ImportCSVColumnNamesController
                 String newColumnName = textField.getText().trim();
                 newColumnNamesArrayList.add(newColumnName);
             }
+            else
+            {
+                disabledColumnNumbers.add(i);
+            }
         }
+
         return newColumnNamesArrayList;
     }
 
@@ -275,6 +283,8 @@ public class ImportCSVColumnNamesController
                 buttonCancel.setDisable(true);
                 progressIndicator.setVisible(true);
                 importer.setColumnNamesArrayList(newColumnNamesArrayList);
+                importer.removeColumns(disabledColumnNumbers);
+
 	            try
 	            {
 	                mainController.getDatabase().saveCSVTable(importer);
