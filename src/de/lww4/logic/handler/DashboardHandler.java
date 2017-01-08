@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import de.lww4.logic.models.Dashboard;
 
+/**
+ * holds all available dashboards
+ * @author Maxie
+ *
+ */
 public class DashboardHandler
 {
 	private ArrayList<Dashboard> dashboards;

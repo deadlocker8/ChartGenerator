@@ -73,8 +73,7 @@ public class Controller
 	/**
 	 * init method
 	 * 
-	 * @param stage
-	 *            Stage
+	 * @param stage Stage
 	 */
 	public void init(Stage stage)
 	{
@@ -168,7 +167,7 @@ public class Controller
 	}
 
 	/**
-	 * initalizes label for dashboard title and gridPane
+	 * initializes label for dashboard title and gridPane
 	 */
 	private void initDashboard()
 	{
@@ -327,8 +326,7 @@ public class Controller
 	/**
 	 * checks if the input is empty
 	 * 
-	 * @param dialog
-	 *            TextInputDialog
+	 * @param dialog TextInputDialog
 	 */
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
@@ -589,10 +587,8 @@ public class Controller
 	/**
 	 * opens a new UI for new chart generation
 	 * 
-	 * @param position
-	 *            int - position in dashboard [0,5]
-	 * @param edit
-	 *            boolean - editing already existing chart at given position
+	 * @param position int - position in dashboard [0,5]
+	 * @param edit boolean - editing already existing chart at given position
 	 */
 	private void addChart(int position, boolean edit)
 	{
@@ -712,8 +708,7 @@ public class Controller
 	}
 
 	/**
-	 * @param dashboard
-	 *            Dashboard
+	 * @param dashboard Dashboard
 	 */
 	public void setDashboard(Dashboard dashboard)
 	{
@@ -733,7 +728,6 @@ public class Controller
 	 * deletes dashboard with given ID in database
 	 * 
 	 * @param ID
-	 *            int
 	 */
 	public void deleteDashboard(int ID)
 	{
@@ -750,6 +744,10 @@ public class Controller
 		}
 	}
 
+	/**
+	 * deletes scale with given ID in database
+	 * @param ID
+	 */
 	public void deleteScale(int ID)
 	{
 		scaleHandler.deleteScale(ID);
@@ -765,6 +763,9 @@ public class Controller
 		}
 	}
 
+	/**
+	 * handles menuItem "edit scales"
+	 */
 	@FXML
 	private void onScaleManagementClicked()
 	{
@@ -789,17 +790,7 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
 		}
-	}
-
-	public ScaleHandler getScaleHandler()
-	{
-		return scaleHandler;
-	}
-
-	public void setScaleHandler(ScaleHandler newScaleHandler)
-	{
-		this.scaleHandler = newScaleHandler;
-	}
+	}	
 
 	/**
 	 * opens about dialog
@@ -809,8 +800,20 @@ public class Controller
 	{
 		AlertGenerator.showAlert(AlertType.INFORMATION, "Über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
 				stage, null, false);
+	}	
+	
+	//Getter and Setter
+	
+	public ScaleHandler getScaleHandler()
+	{
+		return scaleHandler;
 	}
-
+	
+	public void setScaleHandler(ScaleHandler newScaleHandler)
+	{
+		this.scaleHandler = newScaleHandler;
+	}
+	
 	public DatabaseHandler getDatabase()
 	{
 		return database;

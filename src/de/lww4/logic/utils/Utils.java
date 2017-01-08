@@ -24,6 +24,11 @@ public class Utils
 		return String.format("#%02X%02X%02X%02X", (int)(color.getRed() * 255), (int)(color.getGreen() * 255), (int)(color.getBlue() * 255), (int)(color.getOpacity()* 255));
 	}
 
+	/**
+	 * reads file line by line and append the lines to one String
+	 * @param inputStream
+	 * @return file content as String
+	 */
     public static String getContentsFromInputStream(InputStream inputStream)
     {
         try

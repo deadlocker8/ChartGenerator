@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import de.lww4.logic.models.scale.Scale;
 
 /**
- * ScaleHandler
+ * holds all available scales
  *
  * @author max
  */
@@ -16,8 +16,7 @@ public class ScaleHandler
 
     public ScaleHandler()
     {
-        scales = new ArrayList<>();        
-        //TODO add empty object that user can choose if he doesn't want to use a scale anymore
+        scales = new ArrayList<>();     
     }
     
     public ScaleHandler(ArrayList<Scale> scales)
@@ -32,7 +31,7 @@ public class ScaleHandler
 
     /**
      * delete scale with certain id from ArrayList
-     * @param id certain id
+     * @param id id
      */
     public void deleteScale(int id)
     {

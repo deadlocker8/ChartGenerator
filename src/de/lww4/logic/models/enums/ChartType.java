@@ -1,5 +1,10 @@
 package de.lww4.logic.models.enums;
 
+/**
+ * available chart types
+ * @author Robert
+ * 
+ */
 public enum ChartType
 {	
 	BAR_HORIZONTAL(0, "Balkendiagramm"),

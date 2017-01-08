@@ -1,5 +1,18 @@
 package de.lww4.logic.handler;
 
+import java.io.File;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.UUID;
+
 import de.lww4.logic.Importer;
 import de.lww4.logic.models.CSVTable;
 import de.lww4.logic.models.Dashboard;
@@ -13,18 +26,12 @@ import logger.LogLevel;
 import logger.Logger;
 import tools.PathUtils;
 
-import java.io.Console;
-import java.io.File;
-import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.UUID;
-
+/**
+ * database handler class
+ * @author Alan
+ */
 public class DatabaseHandler
 {
-	//region SetUp
 	private String path = PathUtils.getOSindependentPath() + "ChartGenerator/db.sqlite";
 
     /**
@@ -982,7 +989,6 @@ public class DatabaseHandler
             connection.close();
         }
     }
-    //endregion
 
 	/**
 	 * return path to the db file

@@ -70,7 +70,6 @@ public class Scale
         }
     }
 
-
 	/**
 	 * needed for comboxbox to display correct name for selected item
 	 */

@@ -51,6 +51,10 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+/**
+ * controller class for generating a new chart or editing an existing one
+ * @author Robert
+ */
 public class NewChartController
 {
 	@FXML private AnchorPane anchorPaneMain;
@@ -73,6 +77,14 @@ public class NewChartController
 	private int position;
 	private Chart chart;
 
+	/**
+	 * init method
+	 * @param stage
+	 * @param controller
+	 * @param edit
+	 * @param dashboard
+	 * @param position
+	 */
 	public void init(Stage stage, Controller controller, boolean edit, Dashboard dashboard, int position)
 	{
 		this.stage = stage;
@@ -81,6 +93,7 @@ public class NewChartController
 		this.edit = edit;
 		this.position = position;	
 				
+		//if dashboard contains chart at given position then load chart data from database
 		if(dashboard.getCells().get(position) != -1)
 		{
 			try
@@ -104,8 +117,8 @@ public class NewChartController
 
 		generatePreview(ChartType.BAR_HORIZONTAL, chart);
 
+		//initialize toggle buttons for chart type
 		toggleGroupChartTypes = new ToggleGroup();
-
 		for(ChartType currentType : ChartType.values())
 		{
 			RadioButton currentRadioButton = new RadioButton(currentType.getName());
@@ -135,6 +148,7 @@ public class NewChartController
 			}
 		});
 
+		//initialize color picker
 		colorPicker.setValue(Color.web("#508DC7"));
 		colorPicker.valueProperty().addListener(new ChangeListener<Color>()
 		{
@@ -150,11 +164,13 @@ public class NewChartController
 
 		initTreeView(null);
 		
+		//initialize comboboxes for scale and legend scale 
 		comboBoxScale.setId("comboBoxScale");
 		comboBoxLegendScale.setId("comboBoxLegendScale");
 		initComboBoxScales(comboBoxScale, controller.getScaleHandler().getScales());
 		initComboBoxScales(comboBoxLegendScale, controller.getScaleHandler().getScales());
 
+		//if in edit mode then prefill all inputs with data from existing chart
 		if(edit)
 		{					
 			textFieldTitle.setText(chart.getTitle());
@@ -179,6 +195,10 @@ public class NewChartController
 		}
 	}
 
+	/**
+	 * initializes the TreeView (for CSV column selection)
+	 * @param tableUUID
+	 */
 	public void initTreeView(String tableUUID)
 	{
 		ArrayList<CSVTable> tables;
@@ -202,10 +222,12 @@ public class NewChartController
 		{
 			rootItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(null, "CSV Tabellen", false));
 
+			//for every csv table existing in the database
 			for(CSVTable currentTable : tables)
 			{
 				TreeItem<ColumnTreeItem> currentMainItem = new TreeItem<ColumnTreeItem>(new ColumnTreeItem(null, currentTable.getName(), false));
 
+				//for every column name
 				for(String currentColumn : currentTable.getColumnNames())
 				{
 					TreeItem<ColumnTreeItem> currentSubItem;
@@ -247,10 +269,15 @@ public class NewChartController
 		});
 	}
 
+	/**
+	 * generate chart preview if all necessary inputs are given
+	 * @param type
+	 * @param chart
+	 */
 	private void generatePreview(ChartType type, Chart chart)
 	{
 		stackPaneChart.getChildren().clear();	
-
+		//other fxml files with extra controllers are included for the chart display
 		try
 		{
 			FXMLLoader fxmlLoader = null;
@@ -281,6 +308,9 @@ public class NewChartController
 		}
 	}
 
+	/**
+	 * checks all inputs and saves the chart inthe database
+	 */
 	public void save()
 	{
 		String title = textFieldTitle.getText().trim();
@@ -350,6 +380,10 @@ public class NewChartController
 		stage.close();
 	}
 
+	/**
+	 * prepares drag & drop functionality for the items in the TreeView
+	 * @param row
+	 */
 	private void prepareDragAndDropForTreeCell(TreeCell<ColumnTreeItem> row)
 	{
 		row.setOnDragDetected(event -> {
@@ -359,6 +393,7 @@ public class NewChartController
 				{
 					Dragboard db = row.startDragAndDrop(TransferMode.ANY);
 
+					//create little image that the user can see while dragging around
 					SnapshotParameters snapshotParameters = new SnapshotParameters();
 					snapshotParameters.setFill(Color.TRANSPARENT);
 
@@ -381,10 +416,19 @@ public class NewChartController
 		});
 	}
 
+	/**
+	 * initializes given ComboBox with given Scales
+	 * @param comboBox
+	 * @param scales
+	 */
 	private void initComboBoxScales(ComboBox<Scale> comboBox, ArrayList<Scale> scales)
 	{
 		if(scales != null && scales.size() > 0)
 		{
+			/* Double.MIN_VALUE is a placeholder for an empty object
+			 * this value will not be displayed but replaced with an empty String
+			 * user can choose this item if he doesn't want a scale anymore
+			 */
 			comboBox.getItems().add(new Scale(Integer.MIN_VALUE, ""));
 			comboBox.getItems().addAll(scales);
 			comboBox.setCellFactory(new Callback<ListView<Scale>, ListCell<Scale>>()

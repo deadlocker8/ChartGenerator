@@ -2,8 +2,15 @@ package de.lww4.logic.models;
 
 import java.io.Serializable;
 
+/**
+ * represents one entry in the TreeView in NewChartController
+ * 
+ * @author Robert
+ *
+ */
 public class ColumnTreeItem implements Serializable
 {	
+	//required by Serializable interface
 	private static final long serialVersionUID = 4856874725073524494L;
 	private String tableUUID;
 	private String	text;

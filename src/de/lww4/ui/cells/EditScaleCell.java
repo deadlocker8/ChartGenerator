@@ -17,6 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.HBox;
 
+/**
+ * custom cell for ListView<ScaleItem> in EditScaleController
+ * @author Robert
+ *
+ */
 public class EditScaleCell extends ListCell<ScaleItem>
 {
 	private EditScaleController editScaleController;
@@ -35,6 +40,9 @@ public class EditScaleCell extends ListCell<ScaleItem>
 			HBox hBox = new HBox();
 			hBox.setAlignment(Pos.CENTER);
 			
+			/* Double.MAX_VALUE is a placeholder to mark a scaleItem
+			 * this marked scaleItem will be replaced with two labels describing what to enter into the columns 
+			*/
 			if(item.getKey() != null && item.getKey() == Double.MAX_VALUE)
 			{
 				Label labelKey = new Label("Wert");
@@ -52,6 +60,9 @@ public class EditScaleCell extends ListCell<ScaleItem>
 				return;
 			}
 			
+			/*Double.MIN_VALUE is a placeholder for an empty double value
+			 * this value will not be shown in the textField but replaced as empty String
+			*/
 			String key;
 			if(item.getKey() == null || item.getKey() == Double.MIN_VALUE)
 			{
@@ -60,7 +71,9 @@ public class EditScaleCell extends ListCell<ScaleItem>
 			else
 			{
 				key = String.valueOf(item.getKey().intValue());
-			}		
+			}	
+			
+			//TextFormatter only allows positive or negative integers
 			TextField keyTextField = new TextField(key);
 			keyTextField.setTextFormatter(new TextFormatter<>(c -> {
 				if(c.getControlNewText().isEmpty())

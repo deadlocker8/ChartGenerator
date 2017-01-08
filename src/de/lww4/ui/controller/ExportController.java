@@ -35,6 +35,11 @@ import javafx.stage.Stage;
 import logger.LogLevel;
 import logger.Logger;
 
+/**
+ * export controller
+ * @author Maxie
+ *
+ */
 public class ExportController
 {
 	private Stage stage;
@@ -54,14 +59,19 @@ public class ExportController
 	private File file;
 	private double width, height;	
 
-	// this method is called when user wants to export one chart
+	/**
+	 * this method is called when user wants to export one chart
+	 * @param stage
+	 * @param controller
+	 * @param stackPaneChart
+	 * @param chart
+	 */
 	public void init(Stage stage, Controller controller, StackPane stackPaneChart, Chart chart)
 	{
 		this.stage = stage;
 		this.controller = controller;
 		this.stackPane = stackPaneChart;
-
-		// Set the title of the diagram at the top of the image
+	
 		String name = chart.getTitle();
 		Label label = new Label(name);
 		StackPane.setAlignment(label, Pos.TOP_CENTER);
@@ -111,7 +121,12 @@ public class ExportController
 		initTextFields();
 	}
 
-	// this method is called when user wants to export the dashboard
+	/**
+	 * this method is called when user wants to export the dashboard
+	 * @param stage
+	 * @param controller
+	 * @param gridPane
+	 */
 	public void init(Stage stage, Controller controller, GridPane gridPane)
 	{
 		this.stage = stage;
@@ -156,27 +171,14 @@ public class ExportController
 			}
 
 		});
-		/*
-		 * gridPane is the node to snapshot
-		 * 
-		 * but before snapshotting you have to delete some children (all buttons)
-		 * 
-		 * structure inside gridPane:
-		 * 
-		 * -6 cells (3 columns, 2 rows)
-		 * 
-		 * -every cell contains one AnchorPane
-		 * --> every AnchorPane contains: HBox
-		 * --> loop over all HBox children and remove them if they are instanceof Button
-		 * 
-		 * StackPane (holds chart)
-		 * --> check if StackPane child is instanceof BarChart or PieChart
-		 * and if not just clear stackpane children (so the exported area for this stackPane will appear white)
-		 */
 	}
 
+	/**
+	 * initializes TextFields with TextFormatters
+	 */
 	private void initTextFields()
 	{
+		//textFormatters only allow positive integer values for the width and height TextFields
 		widthTextfield.setTextFormatter(new TextFormatter<>(c -> {
 			if(c.getControlNewText().isEmpty())
 			{
@@ -210,6 +212,10 @@ public class ExportController
 		}));
 	}
 
+	/**
+	 * checks wether one of the input values is missing
+	 * @return
+	 */
 	private boolean checkInputValues()
 	{
 		// double width, height;
@@ -228,6 +234,10 @@ public class ExportController
 		}
 	}
 
+	/**
+	 * snapshots the whole dashboard and saves the image to file
+	 * @param grid
+	 */
 	private void createDashboardSnapshot(GridPane grid)
 	{
 		SnapshotParameters sp = new SnapshotParameters();
@@ -248,6 +258,9 @@ public class ExportController
 		controller.setDashboard(controller.getCurrentDashboard());
 	}
 
+	/**
+	 * snapshots one chart and saves the image to file
+	 */
 	private void createChartSnapshot()
 	{
 		SnapshotParameters sp = new SnapshotParameters();
@@ -267,6 +280,11 @@ public class ExportController
 		controller.setDashboard(controller.getCurrentDashboard());
 	}
 
+	/**
+	 * deletes nodes from the GridPane that are not necessary for the snapshot (buttons, etc.)
+	 * @param grid
+	 * @return
+	 */
 	private GridPane clearGridPane(GridPane grid)
 	{
 		for(int i = 0; i < grid.getChildren().size(); i++)
@@ -307,10 +325,13 @@ public class ExportController
 		return grid;
 	}
 
+	/**
+	 * opens a FileChooser dialog
+	 */
 	private void openFilechooser()
 	{
 		fileChooser = new FileChooser();
-		fileChooser.setTitle("Speichere Diagramm als PNG Bild");
+		fileChooser.setTitle("Exportieren als PNG Bild");
 
 		ExtensionFilter filter = new ExtensionFilter("PNG Dateien (*.png)", "*.png");
 		fileChooser.getExtensionFilters().add(filter);

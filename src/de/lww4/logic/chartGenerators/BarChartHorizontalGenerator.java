@@ -36,6 +36,10 @@ public class BarChartHorizontalGenerator
 		this.chart = chart;
 	}
 
+	/**
+	 * generates a new BarChart<Number, String>
+	 * @return BarChart<Number, String> chart
+	 */
 	public BarChart<Number, String> generate()
 	{
 		final NumberAxis xAxis = new NumberAxis();
@@ -88,6 +92,7 @@ public class BarChartHorizontalGenerator
 			n.setStyle("-fx-bar-fill: " + Utils.toRGBHex(color) + ";");
 		}
 
+		//style first legen item according to color
 		Set<Node> nodes = generatedChart.lookupAll(".chart-legend-item");
 		if(nodes.size() > 0)
 		{

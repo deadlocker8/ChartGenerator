@@ -18,6 +18,11 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+/**
+ * controller class for selecting a dahboard
+ * @author Robert
+ *
+ */
 public class SelectDashboardController
 {
 	@FXML private ListView<Dashboard> listView;
@@ -26,6 +31,11 @@ public class SelectDashboardController
 	private Stage stage;
 	private Controller controller;	
 
+	/**
+	 * init method
+	 * @param stage
+	 * @param controller
+	 */
 	public void init(Stage stage, Controller controller)
 	{
 		this.stage = stage;		

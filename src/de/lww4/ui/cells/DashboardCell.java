@@ -18,6 +18,11 @@ import javafx.stage.Stage;
 
 import java.util.Optional;
 
+/**
+ * custom cell for ListView<Dashboard>
+ * @author Robert
+ *
+ */
 public class DashboardCell extends ListCell<Dashboard>
 {	
 	private Controller controller;

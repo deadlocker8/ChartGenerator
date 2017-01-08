@@ -17,6 +17,11 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+/**
+ * Controller for editing one scale
+ * @author Robert
+ *
+ */
 public class EditScaleController
 {
 	@FXML private ListView<ScaleItem> listView;
@@ -27,6 +32,13 @@ public class EditScaleController
 	private Scale scale;
 	private ArrayList<ScaleItem> scaleItems;
 
+	/**
+	 * init method
+	 * @param stage
+	 * @param controller
+	 * @param selectScaleController
+	 * @param scale
+	 */
 	public void init(Stage stage, Controller controller, SelectScaleController selectScaleController, Scale scale)
 	{		
 		this.stage = stage;
@@ -67,18 +79,32 @@ public class EditScaleController
 		listView.getItems().addAll(scaleItems);
 	}
 	
+	/**
+	 * adds one new row and refreshes listView
+	 */
 	public void addRow()
 	{		
 		scaleItems.add(new ScaleItem(null,  null));
 		refreshListView();
 	}
 	
+	/**
+	 * deletes given ScaleItem from list and refreshes listView
+	 * @param scaleItem
+	 */	
 	public void deleteRow(ScaleItem scaleItem)
 	{
 		scaleItems.remove(scaleItem);		
 		refreshListView();
 	}
 	
+	/**
+	 * checks all listView cells
+	 * (shows alert if one or more of them are empty or partially empty) 
+	 * (adds them to new ArrayList if they are correct)
+	 * 
+	 * @return ArrayList<ScaleItem>
+	 */
 	public ArrayList<ScaleItem> addRowsDataToScale()
 	{	
 		ArrayList<ScaleItem> newItems = new ArrayList<>();
@@ -102,6 +128,10 @@ public class EditScaleController
 		return newItems;
 	}
 	
+	/**
+	 * this method is called when the user clicks the save button
+	 * (saves items to scale and saves scale into database)
+	 */
 	public void save()
 	{
 		ArrayList<ScaleItem> newItems = addRowsDataToScale();

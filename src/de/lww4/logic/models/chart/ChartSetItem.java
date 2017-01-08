@@ -1,5 +1,10 @@
 package de.lww4.logic.models.chart;
 
+/**
+ * represents one result row after joining two columns in the csv tables
+ * @author Robert
+ *
+ */
 public class ChartSetItem
 {
 	private double set;

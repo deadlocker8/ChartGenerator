@@ -30,6 +30,10 @@ public class PieChartGenerator
         this.chart = chart;
     }
 
+    /**
+     * generates a new pie chart
+     * @return PieChart chart
+     */
     public PieChart generate()
     {
         ArrayList<PieChart.Data> data = new ArrayList<>();      

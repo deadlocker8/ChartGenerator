@@ -2,6 +2,12 @@ package de.lww4.logic.models.chart;
 
 import java.util.ArrayList;
 
+/**
+ * represents one set of ChartSetItem belonging to the same setname
+ * (needed for chart generation)
+ * @author Robert
+ *
+ */
 public class ChartSet
 {
 	private double setName;

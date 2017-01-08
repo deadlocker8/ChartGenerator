@@ -1,6 +1,5 @@
 package de.lww4.ui.cells;
 
-
 import java.util.Optional;
 
 import de.lww4.logic.models.scale.Scale;
@@ -22,6 +21,11 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
+/**
+ * custom cell for ListView<Scale> in SelectScaleController
+ * @author Robert
+ *
+ */
 public class ScaleCell extends ListCell<Scale>
 {
     private Controller controller;

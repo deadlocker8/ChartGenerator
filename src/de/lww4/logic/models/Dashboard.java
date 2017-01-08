@@ -2,6 +2,11 @@ package de.lww4.logic.models;
 
 import java.util.ArrayList;
 
+/**
+ * Dashboard class
+ * @author Maxie
+ *
+ */
 public class Dashboard 
 {
 	private int ID;

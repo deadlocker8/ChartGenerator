@@ -24,6 +24,11 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+/**
+ * controller class for selecting a scale
+ * @author Robert
+ *
+ */
 public class SelectScaleController
 {
 	@FXML private ListView<Scale> listView;
@@ -33,6 +38,11 @@ public class SelectScaleController
 	private Controller controller;
 	private SelectScaleController context;
 
+	/**
+	 * init method
+	 * @param controller
+	 * @param stage
+	 */
 	public void init(Controller controller, Stage stage)
 	{
 		this.stage = stage;
@@ -85,6 +95,10 @@ public class SelectScaleController
 		checkTextInputTitle(dialog);
 	}
 
+	/**
+	 * checks wether the title that the user entered for a new scale is empty
+	 * @param dialog
+	 */
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
 		Optional<String> result = dialog.showAndWait();

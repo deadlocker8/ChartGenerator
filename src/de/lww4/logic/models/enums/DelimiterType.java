@@ -1,5 +1,10 @@
 package de.lww4.logic.models.enums;
 
+/**
+ * available delimiter types for csv files
+ * @author max
+ *
+ */
 public enum DelimiterType
 {	
 	SEMICOLON(';', "Semikolon"),

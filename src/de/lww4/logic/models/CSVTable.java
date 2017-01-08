@@ -2,6 +2,11 @@ package de.lww4.logic.models;
 
 import java.util.ArrayList;
 
+/**
+ * represents an imported csv table in the database
+ * @author Robert
+ *
+ */
 public class CSVTable
 {
 	private String uuid;
