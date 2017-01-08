@@ -556,7 +556,7 @@ public class Controller
 							currentStackPane.getChildren().add(generatorVertical.generate());
 							break;
 						case PIE:
-							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX());
 							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), chartSetItems, chart);
 							currentStackPane.getChildren().add(generatorPie.generate());
 							break;
