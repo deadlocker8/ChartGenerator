@@ -1,7 +1,7 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.Dashboard;
-import de.lww4.logic.DashboardHandler;
+import de.lww4.logic.handler.DashboardHandler;
+import de.lww4.logic.models.Dashboard;
 import de.lww4.logic.utils.AlertGenerator;
 import de.lww4.ui.cells.DashboardCell;
 import javafx.event.EventHandler;
@@ -18,6 +18,11 @@ import javafx.util.Callback;
 import logger.LogLevel;
 import logger.Logger;
 
+/**
+ * controller class for selecting a dahboard
+ * @author Robert
+ *
+ */
 public class SelectDashboardController
 {
 	@FXML private ListView<Dashboard> listView;
@@ -26,6 +31,11 @@ public class SelectDashboardController
 	private Stage stage;
 	private Controller controller;	
 
+	/**
+	 * init method
+	 * @param stage
+	 * @param controller
+	 */
 	public void init(Stage stage, Controller controller)
 	{
 		this.stage = stage;		
@@ -57,13 +67,13 @@ public class SelectDashboardController
 				}				
 			}
 		});
-		
-		Label labelPlaceholder = new Label("Keine Dashboards verfügbar.");
-		labelPlaceholder.setStyle("-fx-font-size: 14");
+
+        Label labelPlaceholder = new Label("Keine weiteren Dashboards verfügbar.");
+        labelPlaceholder.setStyle("-fx-font-size: 14");
 		listView.setPlaceholder(labelPlaceholder);
-		
-		refreshListView();			
-	}	
+
+        refreshListView();
+    }
 	
 	public void refreshListView()
 	{
@@ -71,13 +81,20 @@ public class SelectDashboardController
 		{
 			controller.setDashboardHandler(new DashboardHandler(controller.getDatabase().getAllDashboards()));
 			listView.getItems().clear();
-			listView.getItems().addAll(controller.getDashboardHandler().getDashboards());
-		}
+
+            //adds all dashboard to list, except current open dashboard
+            for (Dashboard dashboard : controller.getDashboardHandler().getDashboards())
+            {
+                if (dashboard.getID() != controller.getCurrentDashboard().getID())
+                {
+                    listView.getItems().add(dashboard);
+                }
+            }
+        }
 		catch(Exception e)
 		{			
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
-
-            AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), true);
+            AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", controller.getBundle().getString("error.load.data"), controller.getIcon(), stage, null, false);
         }
     }
 

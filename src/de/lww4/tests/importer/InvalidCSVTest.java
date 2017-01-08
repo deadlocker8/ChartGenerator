@@ -1,15 +1,18 @@
 package de.lww4.tests.importer;
 
 
-import de.lww4.logic.DelimiterType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.models.enums.DelimiterType;
+
 import java.io.File;
 import java.util.ArrayList;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
+/**
+ * @author max
+ */
 public class InvalidCSVTest
 {
     protected final File file = new File("src/de/lww4/tests/importer/data/invalid.csv");
@@ -19,9 +22,12 @@ public class InvalidCSVTest
     @Test(expected = NumberFormatException.class)
     public void LetterError()
     {
-        double testDouble = Double.parseDouble(importer.getData().get(0).get(0));
+        Double.parseDouble(importer.getData().get(0).get(0));
     }
 
+    /**
+     * checks for invalid separator
+     */
     @Test
     public void InvalidSeparator()
     {

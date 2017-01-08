@@ -1,20 +1,19 @@
 package de.lww4.logic;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
+import de.lww4.logic.models.enums.DelimiterType;
+
+import java.io.*;
+import java.util.ArrayList;
+
 /**
  * this class has methods for reading and parsing csv files and returns their column rows and their data
  * from the filesystem
+ * @author max
  */
 public class Importer
 {
@@ -84,6 +83,10 @@ public class Importer
         }
     }
 
+    /**
+     * finds the longest row size
+     * @return int longest row size of all data rows
+     */
     public int getLongestRowSize()
     {
         int length = 0;
@@ -97,6 +100,9 @@ public class Importer
         return length;
     }
 
+    /**
+     * fill empty cells with given fillValue
+     */
     private void fillEmptyCells()
     {
         int longestRow = getLongestRowSize();
@@ -110,7 +116,7 @@ public class Importer
 
             for(int j=0; j < row.size(); j++)
             {
-                if(row.get(j).equals("") || row.get(j).equals(" "))
+                if(row.get(j).trim().equals(""))
                 {
                     row.set(j, fillValue);
                 }
@@ -136,9 +142,36 @@ public class Importer
         return columnNamesArrayList;
     }
 
-    public void setColumnNamesArrayList(ArrayList<String> columnNamesArrayList)
+    /**
+     * is called, if certain rows are disabled. These are then removed from the ArrayList
+     * @param newColumnNamesArrayList ArrayList<String> columnNames
+     */
+    public void setColumnNamesArrayList(ArrayList<String> newColumnNamesArrayList)
     {
-        this.columnNamesArrayList = columnNamesArrayList;
+        this.columnNamesArrayList = newColumnNamesArrayList;
+    }
+
+    public void removeColumns(ArrayList<Integer> columnsToDisable)
+    {
+        //also remove data from data columns
+        for(Integer number : columnsToDisable)
+        {
+            //remove data column
+            removeDataColumn(number);
+        }
+    }
+
+    /**
+     * removes a column from the data
+     * @param number columnToRemove
+     */
+    private void removeDataColumn(int number)
+    {
+        for(int i=0; i < data.size(); i++)
+        {
+            ArrayList<String> currentRow = data.get(i);
+            currentRow.remove(number);
+        }
     }
 
     /**
@@ -149,7 +182,7 @@ public class Importer
 
     /**
      * test method for class
-     * @param args
+     * @param args arguments
      */
     public static void main(String args[])
     {

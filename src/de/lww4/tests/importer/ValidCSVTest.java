@@ -1,12 +1,15 @@
 package de.lww4.tests.importer;
-import de.lww4.logic.DelimiterType;
 import de.lww4.logic.Importer;
+import de.lww4.logic.models.enums.DelimiterType;
+
 import java.io.File;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-
+/**
+ * @author max
+ */
 public class ValidCSVTest
 {
 

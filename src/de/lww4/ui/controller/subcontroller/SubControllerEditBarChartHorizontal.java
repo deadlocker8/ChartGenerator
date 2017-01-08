@@ -1,9 +1,15 @@
 package de.lww4.ui.controller.subcontroller;
 
-import de.lww4.logic.ColumnTreeItem;
+import java.util.ArrayList;
+
 import de.lww4.logic.DataFormats;
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
+import de.lww4.logic.models.ColumnTreeItem;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.chart.ChartSet;
+import de.lww4.logic.models.chart.ChartSetItem;
 import de.lww4.logic.utils.AlertGenerator;
+import de.lww4.logic.utils.Utils;
 import de.lww4.ui.controller.NewChartController;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -15,17 +21,15 @@ import javafx.scene.layout.AnchorPane;
 import logger.LogLevel;
 import logger.Logger;
 
-import java.util.ArrayList;
-
 public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 {
 	@FXML private Label labelX;
 	@FXML private Label labelY;
 	@FXML private AnchorPane anchorPane;
 
-	public void init(NewChartController newChartController)
+	public void init(NewChartController newChartController, Chart chart)
 	{
-		super.init(newChartController);
+		super.init(newChartController, chart);
 
 		labelX.setOnDragOver(event -> {
 			event.acceptTransferModes(TransferMode.ANY);
@@ -46,7 +50,9 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			labelX.setStyle("");
 			super.itemX = item;
 
-			updateChart(itemX, itemY);
+			updateChart(itemX, itemY, chart);
+
+			newChartController.initTreeView(itemX.getTableUUID());
 
 			event.consume();
 		});
@@ -70,16 +76,18 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			labelY.setStyle("");
 			super.itemY = item;
 
-			updateChart(itemX, itemY);
+			updateChart(itemX, itemY, chart);
+
+			newChartController.initTreeView(itemY.getTableUUID());
 
 			event.consume();
 		});
-		
+
 		labelY.prefWidthProperty().bind(anchorPane.heightProperty());
 	}
 
 	@Override
-	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY)
+	public void updateChart(ColumnTreeItem itemX, ColumnTreeItem itemY, Chart chart)
 	{
 		if(itemX != null && itemY != null)
 		{
@@ -87,30 +95,42 @@ public class SubControllerEditBarChartHorizontal extends SubControllerEditChart
 			this.itemY = itemY;
 
 			labelX.setText(itemX.getText());
-            labelY.setText(itemY.getText());
-            try
-            {
-                ArrayList<Double> xValues = super.newChartController.getController().getDatabase().getCSVColumn(itemX.getTableUUID(), itemX.getText());
-				ArrayList<Double> yValues = super.newChartController.getController().getDatabase().getCSVColumn(itemY.getTableUUID(), itemY.getText());
+			labelY.setText(itemY.getText());
+			try
+			{
+				ArrayList<ChartSetItem> chartSetItems = super.newChartController.getController().getDatabase().getData(itemX.getTableUUID(), itemX.getText(), itemY.getText());			
+				ArrayList<ChartSet> sets = Utils.splitIntoChartSets(chartSetItems);			
+									
+				BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", sets, newChartController.getColorPicker().getValue(), chart);
+				BarChart<Number, String> generatedChart = generator.generate();
 
-                BarChartHorizontalGenerator generator = new BarChartHorizontalGenerator("", "", xValues, yValues, newChartController.getColorPicker().getValue());
-                BarChart<Number, String> chart = generator.generate();
-
-                stackPaneChart.getChildren().clear();
-                stackPaneChart.getChildren().add(chart);
-            }
+				stackPaneChart.getChildren().clear();
+				stackPaneChart.getChildren().add(generatedChart);
+			}
 			catch(Exception e)
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-                AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), true);
-            }
-        }
-    }
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", newChartController.getController().getBundle().getString("error.create.chart"), newChartController.getController().getIcon(), newChartController.getStage(), null, false);
+			}
+		}
+	}
 
 	@Override
 	public boolean isFilled()
 	{
 		return itemX != null && itemY != null;
+	}
+
+	@Override
+	public void buttonReset()
+	{
+		itemX = null;
+		itemY = null;
+		labelX.setText("<Daten für X-Achse hier hin ziehen>");
+		labelY.setText("<Daten für Y-Achse hier hin ziehen>");
+		stackPaneChart.getChildren().clear();
+
+		newChartController.initTreeView(null);
 	}
 }

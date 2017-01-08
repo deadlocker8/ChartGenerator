@@ -1,13 +1,23 @@
 package de.lww4.ui.controller;
 
-import de.lww4.logic.Chart;
-import de.lww4.logic.Dashboard;
-import de.lww4.logic.DashboardHandler;
-import de.lww4.logic.DatabaseHandler;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
 import de.lww4.logic.chartGenerators.BarChartHorizontalGenerator;
 import de.lww4.logic.chartGenerators.BarChartVerticalGenerator;
 import de.lww4.logic.chartGenerators.PieChartGenerator;
+import de.lww4.logic.handler.DashboardHandler;
+import de.lww4.logic.handler.DatabaseHandler;
+import de.lww4.logic.handler.ScaleHandler;
+import de.lww4.logic.models.Dashboard;
+import de.lww4.logic.models.chart.Chart;
+import de.lww4.logic.models.chart.ChartSet;
+import de.lww4.logic.models.chart.ChartSetItem;
 import de.lww4.logic.utils.AlertGenerator;
+import de.lww4.logic.utils.Utils;
 import fontAwesome.FontIcon;
 import fontAwesome.FontIconType;
 import javafx.event.ActionEvent;
@@ -17,24 +27,28 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import logger.LogLevel;
 import logger.Logger;
 import tools.Worker;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.ResourceBundle;
 
 /**
  * Main Controller Class
@@ -45,7 +59,6 @@ public class Controller
 {
 	@FXML private AnchorPane anchorPaneMain;
 	@FXML private Label labelTitle;
-	@FXML private MenuItem importCSVMenuItem;
 
 	private Stage stage;
 	private Image icon = new Image("de/lww4/resources/icon.png");
@@ -54,12 +67,13 @@ public class Controller
 	private DatabaseHandler database;
 	private DashboardHandler dashboardHandler;
 	private Dashboard currentDashboard;
+	private ScaleHandler scaleHandler;
+	private ArrayList<StackPane> chartStackPanes;
 
 	/**
 	 * init method
 	 * 
-	 * @param stage
-	 *            Stage
+	 * @param stage Stage
 	 */
 	public void init(Stage stage)
 	{
@@ -129,30 +143,31 @@ public class Controller
 		try
 		{
 			database = new DatabaseHandler();
-			dashboardHandler = new DashboardHandler(database.getAllDashboards());			
-			
-			int lastID = database.getLastDashboard();		
+			dashboardHandler = new DashboardHandler(database.getAllDashboards());
+
+			int lastID = database.getLastDashboard();
 			if(lastID <= 0)
 			{
-				setDashboard(new Dashboard(""));	
+				setDashboard(new Dashboard(""));
 			}
 			else
 			{
-				setDashboard(database.getDashboard(lastID));	
+				setDashboard(database.getDashboard(lastID));
 			}
-			
+
+			scaleHandler = new ScaleHandler(database.getAllScales());
 			initDashboard();
 		}
 		catch(Exception e)
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.database"), icon, true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.database"), icon, stage, null, false);
 		}
 	}
 
 	/**
-	 * initalizes label for dashboard title and gridPane
+	 * initializes label for dashboard title and gridPane
 	 */
 	private void initDashboard()
 	{
@@ -198,7 +213,8 @@ public class Controller
 	/**
 	 * handles menuItem "new Dashboard"
 	 */
-	public void newDashboardMenuItem()
+	@FXML
+	private void newDashboardMenuItem()
 	{
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Neues Dashboard");
@@ -215,7 +231,7 @@ public class Controller
 			name.trim();
 			if(name.equals(""))
 			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, true);
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, stage, null, false);
 
 				newDashboardMenuItem();
 			}
@@ -223,7 +239,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-                    AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.alreadyinuse"), icon, true);
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.alreadyinuse"), icon, stage, null, false);
 
 					newDashboardMenuItem();
 				}
@@ -239,7 +255,7 @@ public class Controller
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-						AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "",  bundle.getString("error.save"), icon, true);
+						AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.save"), icon, stage, null, false);
 					}
 				}
 			}
@@ -249,7 +265,8 @@ public class Controller
 	/**
 	 * handles menuItem "select Dashboard"
 	 */
-	public void selectDashboardMenuItem()
+	@FXML
+	private void selectDashboardMenuItem()
 	{
 		try
 		{
@@ -281,16 +298,35 @@ public class Controller
 	/**
 	 * handles menuItem "export Dashboard"
 	 */
-	public void exportDashboardMenuItem()
+	@FXML
+	private void exportDashboardMenuItem()
 	{
-		// TODO
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ExportGUI.fxml"));
+
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root));
+			newStage.initOwner(stage);
+			newStage.setTitle("Dashboard exportieren");
+			newStage.getIcons().add(icon);
+			ExportController newController = fxmlLoader.getController();
+			newController.init(newStage, this, gridPane);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(false);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}
 	}
 
 	/**
 	 * checks if the input is empty
 	 * 
-	 * @param dialog
-	 *            TextInputDialog
+	 * @param dialog TextInputDialog
 	 */
 	private void checkTextInputTitle(TextInputDialog dialog)
 	{
@@ -298,10 +334,10 @@ public class Controller
 		if(result.isPresent())
 		{
 			String name = result.get();
-			name.trim();
+			name = name.trim();
 			if(name.equals(""))
 			{
-				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, true);
+				AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.empty.dashboard"), icon, stage, null, false);
 
 				checkTextInputTitle(dialog);
 			}
@@ -309,7 +345,7 @@ public class Controller
 			{
 				if(dashboardHandler.isNameAlreadyInUse(name))
 				{
-					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.alreadyinuse"), icon, true);
+					AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.alreadyinuse"), icon, stage, null, false);
 
 					checkTextInputTitle(dialog);
 				}
@@ -344,7 +380,7 @@ public class Controller
 					{
 						Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-						AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.save"), icon, true);
+						AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.save"), icon, stage, null, false);
 					}
 				}
 			}
@@ -353,13 +389,11 @@ public class Controller
 
 	/**
 	 * inits the dashboard gridPane
-	 * 
-	 * @param empty
-	 *            boolean
 	 */
 	private void initGridPane()
 	{
 		gridPane.getChildren().clear();
+		chartStackPanes = new ArrayList<>();
 		boolean empty = true;
 
 		for(int i = 0; i < 6; i++)
@@ -389,7 +423,7 @@ public class Controller
 				{
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
+					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, stage, null, false);
 				}
 			}
 
@@ -467,6 +501,7 @@ public class Controller
 			AnchorPane.setLeftAnchor(hbox, 5.0);
 
 			StackPane currentStackPane = new StackPane();
+			chartStackPanes.add(currentStackPane);
 			currentAnchorPane.getChildren().add(currentStackPane);
 			AnchorPane.setTopAnchor(currentStackPane, 40.0);
 			AnchorPane.setRightAnchor(currentStackPane, 10.0);
@@ -502,26 +537,27 @@ public class Controller
 				currentStackPane.getChildren().clear();
 
 				try
-				{					
-					ArrayList<Double> xValues;
-					ArrayList<Double> yValues;
+				{
+					ArrayList<ChartSetItem> chartSetItems;
+					ArrayList<ChartSet> sets;
+
 					switch(chart.getType())
 					{
 						case BAR_HORIZONTAL:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
-							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());
+							sets = Utils.splitIntoChartSets(chartSetItems);
+							BarChartHorizontalGenerator generatorHorizontal = new BarChartHorizontalGenerator(chart.getX(), chart.getY(), sets, chart.getColor(), chart);
 							currentStackPane.getChildren().add(generatorHorizontal.generate());
 							break;
 						case BAR_VERTICAL:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							yValues = database.getCSVColumn(chart.getTableUUID(), chart.getY());
-							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), xValues, yValues, chart.getColor());
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX(), chart.getY());
+							sets = Utils.splitIntoChartSets(chartSetItems);
+							BarChartVerticalGenerator generatorVertical = new BarChartVerticalGenerator(chart.getX(), chart.getY(), sets, chart.getColor(), chart);
 							currentStackPane.getChildren().add(generatorVertical.generate());
 							break;
 						case PIE:
-							xValues = database.getCSVColumn(chart.getTableUUID(), chart.getX());
-							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), xValues);
+							chartSetItems = database.getData(chart.getTableUUID(), chart.getX());
+							PieChartGenerator generatorPie = new PieChartGenerator(chart.getX(), chartSetItems, chart);
 							currentStackPane.getChildren().add(generatorPie.generate());
 							break;
 
@@ -533,7 +569,7 @@ public class Controller
 				{
 					Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-					AlertGenerator.showAlert(AlertType.ERROR, "ERROR", "", bundle.getString("error.load.data"), icon, true);
+					AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.load.data"), icon, stage, null, false);
 				}
 			}
 
@@ -551,16 +587,14 @@ public class Controller
 	/**
 	 * opens a new UI for new chart generation
 	 * 
-	 * @param position
-	 *            int - position in dashboard [0,5]
-	 * @param edit
-	 *            boolean - editing already existing chart at given position
+	 * @param position int - position in dashboard [0,5]
+	 * @param edit boolean - editing already existing chart at given position
 	 */
 	private void addChart(int position, boolean edit)
-	{	
+	{
 		if(currentDashboard.getName().equals(""))
 		{
-			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.dashboard.first"), icon, true);
+			AlertGenerator.showAlert(AlertType.WARNING, "Warnung", "", bundle.getString("warning.name.dashboard.first"), icon, stage, null, false);
 			return;
 		}
 
@@ -615,18 +649,20 @@ public class Controller
 		Optional<ButtonType> result = alert.showAndWait();
 		if(result.get() == ButtonType.OK)
 		{
+			int ID = currentDashboard.getCells().get(position);
 			currentDashboard.getCells().set(position, -1);
 			try
 			{
 				database.updateDashboard(currentDashboard);
 				dashboardHandler = new DashboardHandler(database.getAllDashboards());
+				database.deleteChartFromDB(ID);
 				initDashboard();
 			}
 			catch(Exception e)
 			{
 				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.chart"), icon, true);
+				AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.chart"), icon, stage, null, false);
 			}
 		}
 	}
@@ -638,12 +674,41 @@ public class Controller
 	 */
 	private void exportChart(int position)
 	{
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/ExportGUI.fxml"));
 
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root));
+			newStage.initOwner(stage);
+			newStage.setTitle("Diagramm exportieren");
+			newStage.getIcons().add(icon);
+			ExportController newController = fxmlLoader.getController();
+
+			Chart chart = null;
+			try
+			{
+				chart = database.getChart(currentDashboard.getCells().get(position));
+			}
+			catch(Exception e)
+			{
+				Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+			}
+
+			newController.init(newStage, this, chartStackPanes.get(position), chart);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(false);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}
 	}
 
 	/**
-	 * @param dashboard
-	 *            Dashboard
+	 * @param dashboard Dashboard
 	 */
 	public void setDashboard(Dashboard dashboard)
 	{
@@ -663,7 +728,6 @@ public class Controller
 	 * deletes dashboard with given ID in database
 	 * 
 	 * @param ID
-	 *            int
 	 */
 	public void deleteDashboard(int ID)
 	{
@@ -676,19 +740,80 @@ public class Controller
 		{
 			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
 
-			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.dashboard"), icon, true);
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.dashboard"), icon, stage, null, false);
 		}
 	}
 
 	/**
-	 * opens about dialog
+	 * deletes scale with given ID in database
+	 * @param ID
 	 */
-	public void about()
+	public void deleteScale(int ID)
 	{
-		AlertGenerator.showAlert(AlertType.INFORMATION, "über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n", icon,
-				true);
+		scaleHandler.deleteScale(ID);
+		try
+		{
+			database.deleteScaleFromDB(ID);
+		}
+		catch(Exception e)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(e));
+
+			AlertGenerator.showAlert(AlertType.ERROR, "Fehler", "", bundle.getString("error.delete.scale"), icon, stage, null, false);
+		}
 	}
 
+	/**
+	 * handles menuItem "edit scales"
+	 */
+	@FXML
+	private void onScaleManagementClicked()
+	{
+		try
+		{
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/de/lww4/ui/fxml/SelectScaleGUI.fxml"));
+
+			Parent root = (Parent)fxmlLoader.load();
+			Stage newStage = new Stage();
+			newStage.setScene(new Scene(root));
+			newStage.initOwner(stage);
+			newStage.setTitle("Skalen verwalten");
+			newStage.getIcons().add(icon);
+			newStage.getScene().getStylesheets().add("de/lww4/main/style.css");
+			SelectScaleController newController = fxmlLoader.getController();
+			newController.init(this, newStage);
+			newStage.initModality(Modality.APPLICATION_MODAL);
+			newStage.setResizable(false);
+			newStage.show();
+		}
+		catch(IOException io)
+		{
+			Logger.log(LogLevel.ERROR, Logger.exceptionToString(io));
+		}
+	}	
+
+	/**
+	 * opens about dialog
+	 */
+	@FXML
+	private void about()
+	{
+		AlertGenerator.showAlert(AlertType.INFORMATION, "Über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n" + "\r\nLizenz:    " + bundle.getString("license"), icon,
+				stage, null, false);
+	}	
+	
+	//Getter and Setter
+	
+	public ScaleHandler getScaleHandler()
+	{
+		return scaleHandler;
+	}
+	
+	public void setScaleHandler(ScaleHandler newScaleHandler)
+	{
+		this.scaleHandler = newScaleHandler;
+	}
+	
 	public DatabaseHandler getDatabase()
 	{
 		return database;
@@ -708,9 +833,14 @@ public class Controller
 	{
 		return icon;
 	}
-	
+
 	public ResourceBundle getBundle()
 	{
 		return bundle;
+	}
+
+	public Dashboard getCurrentDashboard()
+	{
+		return currentDashboard;
 	}
 }
