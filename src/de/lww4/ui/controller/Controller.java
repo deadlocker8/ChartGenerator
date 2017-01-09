@@ -798,8 +798,16 @@ public class Controller
 	@FXML
 	private void about()
 	{
-		AlertGenerator.showAlert(AlertType.INFORMATION, "Über " + bundle.getString("app.name"), bundle.getString("app.name"), "Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n" + "\r\nLizenz:    " + bundle.getString("license"), icon,
-				stage, null, false);
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Über " + bundle.getString("app.name"));
+        alert.setHeaderText(bundle.getString("app.name"));
+        alert.setContentText("Version:     " + bundle.getString("version.name") + "\r\nDatum:      " + bundle.getString("version.date") + "\r\nAutoren:    " + bundle.getString("author") + "\r\n" + "\r\nLizenz:    " + bundle.getString("license"));
+        Stage dialogStage = (Stage)alert.getDialogPane().getScene().getWindow();
+        alert.getDialogPane().setMinHeight(350);
+        dialogStage.getIcons().add(icon);
+        dialogStage.initOwner(stage);
+
+        alert.showAndWait();
 	}	
 	
 	//Getter and Setter
