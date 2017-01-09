@@ -156,21 +156,29 @@ public class Importer
         //also remove data from data columns
         for(Integer number : columnsToDisable)
         {
-            //remove data column
-            removeDataColumn(number);
+            for(int i=0; i < data.size(); i++)
+            {
+                //remove data column
+                ArrayList<String> currentRow = data.get(i);
+                currentRow.set(number, null);
+            }
         }
+        removeNullValues();
+
     }
 
-    /**
-     * removes a column from the data
-     * @param number columnToRemove
-     */
-    private void removeDataColumn(int number)
+    private void removeNullValues()
     {
         for(int i=0; i < data.size(); i++)
         {
             ArrayList<String> currentRow = data.get(i);
-            currentRow.remove(number);
+            for(int s=0; s < currentRow.size(); s++)
+            {
+                if(currentRow.get(s) == null)
+                {
+                    currentRow.remove(s);
+                }
+            }
         }
     }
 

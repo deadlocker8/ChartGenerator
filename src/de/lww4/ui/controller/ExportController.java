@@ -213,7 +213,7 @@ public class ExportController
 	}
 
 	/**
-	 * checks wether one of the input values is missing
+	 * checks wether one of the input values is missing, empty or zero
 	 * @return
 	 */
 	private boolean checkInputValues()
@@ -225,7 +225,14 @@ public class ExportController
 
 			width = Double.parseDouble(widthTextfield.getText());
 
-			return true;
+			if(height != 0 && width != 0)
+				return true;
+			else
+			{
+				AlertGenerator.showAlert(Alert.AlertType.WARNING, "Warnung", "", controller.getBundle().getString("warning.values.null.exportfile"), controller.getIcon(), stage, null, false);
+				return false;
+			}
+				
 		}
 		else
 		{
