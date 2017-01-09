@@ -164,7 +164,6 @@ public class Importer
             }
         }
         removeNullValues();
-        testPrintData();
 
     }
 
@@ -180,19 +179,6 @@ public class Importer
                     currentRow.remove(s);
                 }
             }
-        }
-    }
-
-    private void testPrintData()
-    {
-        for(int i=0; i < data.size(); i++)
-        {
-            ArrayList<String> currentRow = data.get(i);
-            for(String rowString : currentRow)
-            {
-                System.out.print(rowString+" ");
-            }
-            System.out.println("");
         }
     }
 
