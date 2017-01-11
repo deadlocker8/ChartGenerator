@@ -579,7 +579,7 @@ public class DatabaseHandler
 			//query for settings like name and date
 			String sqlMetaData;
 			//query for imported data
-			String sqlData;
+			StringBuilder sqlData = new StringBuilder();
 
 			//get name and create new uuid
 			String name = importer.getName();
@@ -603,40 +603,42 @@ public class DatabaseHandler
 			//set meta data
 			sqlMetaData = "INSERT INTO '" + uuid + "' (name, date) VALUES('" + name + "', '" + dateString + "');";
 			//dynamically add data columns and their data
-			sqlData = "INSERT INTO '" + uuid + "'('";
+			sqlData.append("INSERT INTO '");
+			sqlData.append(uuid);
+			sqlData.append("'('");
 
 			for(int i = 0; i < columnNamesSize; i++)
 			{
 				if(i > 0)
 				{
-					sqlData += "','";
+					sqlData.append("','");
 				}
-				sqlData += columnNames.get(i);
+				sqlData.append(columnNames.get(i));
 			}
 
-			sqlData += "')";
+			sqlData.append("')");
 
-			sqlData += " VALUES";
+			sqlData.append(" VALUES");
 
 			for(int i = 0; i < data.size(); i++)
 			{
-				sqlData += "('";
+				sqlData.append("('");
 				for(int j = 0; j < columnNamesSize; j++)
 				{
 					if(j > 0)
 					{
-						sqlData += "','";
+						sqlData.append("','");
 					}
-					sqlData += data.get(i).get(j);
+					sqlData.append(data.get(i).get(j));
 				}
-				sqlData += "')";
+				sqlData.append("')");
 				if(i < importer.getData().size() - 1)
 				{
-					sqlData += ",";
+					sqlData.append(",");
 				}
 				else
 				{
-					sqlData += ";";
+					sqlData.append(";");
 				}
 			}
 
@@ -645,7 +647,7 @@ public class DatabaseHandler
 			Statement statement = connection.createStatement();
 			statement.executeUpdate(sqlCreateTable);
 			statement.executeUpdate(sqlMetaData);
-			statement.executeUpdate(sqlData);
+			statement.executeUpdate(sqlData.toString());
 
 			statement.close();
 		}
